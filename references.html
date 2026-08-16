@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>References — Threadon</title>
+<meta name="description" content="Threadon references: the ^ operator and pointing at a variable.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / References</p>
+    <h1>References</h1>
+    <p class="tag">the ^ operator</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html" class="here">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What a reference is</h2>
+  <p>The <code>^</code> operator, written after a variable, creates a reference to that variable. A reference and the variable it points to share the same storage. Write through the reference, and the original variable changes too.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">10</span>
+    r: <span class="tok-type">Int32</span> = x^
+    print(r)
+    r += <span class="tok-num">5</span>
+    print(r)
+    print(x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">10
+15
+15</div>
+  <p>Changing <code>r</code> changed <code>x</code>. They are the same slot now.</p>
+</section>
+
+<section id="how">
+  <h2>How to create one</h2>
+  <p>Write a variable's name followed by <code>^</code>, and assign it to a new variable of the same type:</p>
+<pre><code>r: <span class="tok-type">Int32</span> = x^</code></pre>
+  <p>The reference takes on the value the variable holds at that moment, and stays linked to it from then on.</p>
+</section>
+
+<section id="rules">
+  <h2>Rules</h2>
+  <ul>
+    <li>A reference must point at a variable. <code>x^</code> where <code>x</code> is a variable is fine. <code>5^</code> or <code>(a + b)^</code> is a compile error.</li>
+    <li>The reference has the same type as the variable it points at.</li>
+    <li>Chains of references are fine. You can take a reference to a reference.</li>
+    <li>Cycles are not allowed.</li>
+  </ul>
+</section>
+
+<section id="use">
+  <h2>Why you'd use one</h2>
+  <p>References let you update a variable through another name, and plain <code>=</code> works through them too. So while <a href="variables.html#change">reassignment</a> is available for local variables, <code>^</code> is the way to change a variable that lives somewhere else &mdash; from a nested call or a shared slot.</p>
+  <p>Because the reference shares storage, updating it updates the original everywhere it's used. The <a href="examples.html">pointer example</a> in the repo plays with this idea.</p>
+</section>
+
+<p class="pagenav">
+  <a href="structs.html">&larr; Back: Structs</a>
+  <a href="builtins.html">Next: Builtins &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

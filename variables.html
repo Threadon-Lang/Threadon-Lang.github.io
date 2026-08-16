@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables — Threadon</title>
+<meta name="description" content="Threadon variables: declaration, initialization, assignment, and scope rules.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Variables</p>
+    <h1>Variables</h1>
+    <p class="tag">storing values and changing them</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html" class="here">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="declare">
+  <h2>Declaring a variable</h2>
+  <p>A variable is declared with a name, a colon, and a type. You can give it a value in the same line.</p>
+<pre><code>name: <span class="tok-type">String</span> = <span class="tok-str">"John"</span>
+age: <span class="tok-type">Int32</span> = <span class="tok-num">30</span>
+pi: <span class="tok-type">Float32</span> = <span class="tok-num">3.14</span>
+ok: <span class="tok-type">Bool</span> = <span class="tok-type">True</span></code></pre>
+  <p>Or without a value. The variable then starts at zero (0, 0.0, or false). See <a href="types.html#zerovalues">Types</a>.</p>
+<pre><code>count: <span class="tok-type">Int32</span></code></pre>
+  <p>You can't declare a variable without a type. The compiler needs to know what it is.</p>
+</section>
+
+<section id="adapt">
+  <h2>Literal values adapt to the variable</h2>
+  <p>A plain integer literal is an <code>Int32</code>. But when you assign it to a variable of a different integer type, the literal is retyped to match.</p>
+<pre><code>small: <span class="tok-type">Int8</span> = <span class="tok-num">5</span>   <span class="tok-cm"># fine, the literal becomes Int8</span></code></pre>
+  <p>This works for any integer literal, and for arithmetic on integer literals:</p>
+<pre><code>pair: <span class="tok-type">Int8</span> = <span class="tok-num">2</span> * <span class="tok-num">3</span>   <span class="tok-cm"># the whole expression becomes Int8</span></code></pre>
+  <p>It does not apply to non-literal values. If a function returns an <code>Int32</code>, you can't stuff it into an <code>Int8</code> variable without a <a href="casts.html">cast</a>.</p>
+</section>
+
+<section id="change">
+  <h2>Changing a variable</h2>
+  <p>You can overwrite a declared variable with plain <code>=</code>. The new value must have the same type (integer literals adapt, just like at declaration):</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">5</span>
+    print(x)
+    x = <span class="tok-num">3</span>
+    print(x)
+    x = x + <span class="tok-num">1</span>
+    print(x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5
+3
+4</div>
+  <p>Assigning before the variable exists is a compile error, and so is assigning a value of the wrong type:</p>
+<pre><code>y = <span class="tok-num">3</span>     <span class="tok-cm"># Error: Unknown variable 'y'</span>
+x: <span class="tok-type">Int32</span> = <span class="tok-num">5</span>
+x = <span class="tok-str">"hi"</span>   <span class="tok-cm"># Error: Variable 'x' expects type Int32, got String</span></code></pre>
+  <p>Threadon also gives you the update operators, which combine <code>=</code> with an arithmetic operator:</p>
+  <table>
+    <tr><th>Operator</th><th>Means</th></tr>
+    <tr><td><code>+=</code></td><td>add to the current value</td></tr>
+    <tr><td><code>-=</code></td><td>subtract from the current value</td></tr>
+    <tr><td><code>*=</code></td><td>multiply the current value</td></tr>
+    <tr><td><code>/=</code></td><td>divide the current value</td></tr>
+    <tr><td><code>//=</code></td><td>floor-divide the current value</td></tr>
+    <tr><td><code>%=</code></td><td>take the remainder</td></tr>
+  </table>
+  <p>So the counter example looks like this:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">5</span>
+    x += <span class="tok-num">3</span>
+    print(x)
+    x *= <span class="tok-num">2</span>
+    print(x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">8
+16</div>
+  <p>If you really need to set a new value outright, the pattern that works is to redeclare the name inside a fresh block, in every branch. It's clunky. It's a known limitation. It's on the <a href="limits.html">Limits</a> page.</p>
+  <p>One thing to remember: <code>x += 3</code> needs <code>x</code> to already exist. You can't declare and add in one line.</p>
+</section>
+
+<section id="field">
+  <h2>Struct fields</h2>
+  <p>You can write a struct field with this method</p>
+<pre><code>p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<span class="tok-num">0</span>, y=<span class="tok-num">0</span>)
+p.x = <span class="tok-num">3</span>   <span class="tok-cm"># fine</span>
+p.y = p.x + <span class="tok-num">1</span></code></pre>
+  <p>So when you need to overwrite a value, it's often easiest to keep it in a struct. See <a href="structs.html">Structs</a>.</p>
+</section>
+
+<section id="scope">
+  <h2>Scope</h2>
+  <p>Variables live in their function. A variable declared inside a function is visible from its declaration onward, inside that function. It is not visible in other functions.</p>
+  <p>Inside a function you can have nested blocks (from <code>if</code>, <code>elif</code>, <code>else</code>). Here's the rule that matters:</p>
+
+  <p>This works:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">fee</span>(n: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">if</span> n &gt;= <span class="tok-num">18</span>:
+        price: <span class="tok-type">Int32</span> = <span class="tok-num">20</span>
+    <span class="tok-kw">else</span>:
+        price: <span class="tok-type">Int32</span> = <span class="tok-num">10</span>
+    <span class="tok-kw">return</span> price
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(fee(<span class="tok-num">15</span>))
+    print(fee(<span class="tok-num">21</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">10
+20</div>
+  <p>If any branch is missing its <code>price</code>, you get <code>Unknown variable or type 'price'</code> at the <code>return</code> line. The compiler merges the branch values together, but only for names declared in all of them.</p>
+
+  <p>You can't declare the same name twice in the same block:</p>
+<pre><code>x: <span class="tok-type">Int32</span> = <span class="tok-num">1</span>
+x: <span class="tok-type">Int32</span> = <span class="tok-num">2</span>   <span class="tok-cm"># compile error: already declared</span></code></pre>
+</section>
+
+<section id="tips">
+  <h2>Practical tips</h2>
+  <ul>
+    <li>Use <code>+=</code> and friends to update a counter or an accumulator.</li>
+    <li>Use the <code>if</code>-branch pattern (declare in every branch) when a value depends on a condition.</li>
+    <li>Keep state you need to overwrite freely in a struct. Field assignment with <code>=</code> works.</li>
+    <li>Give a variable its value at declaration time. It makes the zero-initialization edge case irrelevant.</li>
+  </ul>
+</section>
+
+<p class="pagenav">
+  <a href="types.html">&larr; Back: Types</a>
+  <a href="operators.html">Next: Operators &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

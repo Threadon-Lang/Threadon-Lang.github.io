@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operators — Threadon</title>
+<meta name="description" content="Threadon operators: arithmetic, comparison, boolean, precedence, and the integer division quirk.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Operators</p>
+    <h1>Operators</h1>
+    <p class="tag">arithmetic, comparison, and logic</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html" class="here">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="arith">
+  <h2>Arithmetic</h2>
+  <table>
+    <tr><th>Operator</th><th>What it does</th><th>Example</th><th>Result</th></tr>
+    <tr><td><code>+</code></td><td>add</td><td><code>2 + 3</code></td><td><code>5</code></td></tr>
+    <tr><td><code>-</code></td><td>subtract</td><td><code>7 - 2</code></td><td><code>5</code></td></tr>
+    <tr><td><code>*</code></td><td>multiply</td><td><code>4 * 3</code></td><td><code>12</code></td></tr>
+    <tr><td><code>/</code></td><td>divide</td><td>see below</td><td>see below</td></tr>
+    <tr><td><code>//</code></td><td>floor divide</td><td><code>7 // 2</code></td><td><code>3</code></td></tr>
+    <tr><td><code>%</code></td><td>remainder</td><td><code>7 % 2</code></td><td><code>1</code></td></tr>
+    <tr><td><code>**</code></td><td>power</td><td><code>2 ** 3</code></td><td><code>8</code></td></tr>
+  </table>
+  <p>Division deserves its own section. Read on.</p>
+</section>
+
+<section id="intdiv">
+  <h2>Division</h2>
+  <p>If the compiler can figure out both operands ahead of time, it folds the division at compile time.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-num">8</span> / <span class="tok-num">2</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">4</div>
+  <p>integer division truncates to 0 it doesn't produce a float as answer nor rounds it up.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int32</span> = <span class="tok-type">Int32</span>(input(<span class="tok-str">"a: "</span>))
+    b: <span class="tok-type">Int32</span> = <span class="tok-type">Int32</span>(input(<span class="tok-str">"b: "</span>))
+    print(a / b)
+    print(a // b)
+    print(a % b)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">a: 7
+b: 3
+2
+2
+1</div>
+  <p>That run typed 7 and 3. <code>7 / 2</code> gave 3, <code>7 // 2</code> gave 3, <code>7 % 2</code> gave 1
+  
+  <h3>Float division</h3>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-num">8.0</span> / <span class="tok-num">2.0</span>)
+    print(<span class="tok-num">7.0</span> / <span class="tok-num">2.0</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">4.000000
+3.500000</div>
+</section>
+
+<section id="cmp">
+  <h2>Comparison</h2>
+  <table>
+    <tr><th>Operator</th><th>What it does</th></tr>
+    <tr><td><code>==</code></td><td>equal to</td></tr>
+    <tr><td><code>!=</code></td><td>not equal to</td></tr>
+    <tr><td><code>&lt;</code></td><td>less than</td></tr>
+    <tr><td><code>&gt;</code></td><td>greater than</td></tr>
+    <tr><td><code>&lt;=</code></td><td>less than or equal</td></tr>
+    <tr><td><code>&gt;=</code></td><td>greater than or equal</td></tr>
+  </table>
+  <p>Comparisons return a <code>Bool</code>. Both sides must be the same type. Comparing an <code>Int32</code> to a <code>Float32</code> is a compile error, even if the values look equal.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-num">3</span> &lt; <span class="tok-num">5</span>)
+    print(<span class="tok-num">3</span> == <span class="tok-num">5</span>)
+    print(<span class="tok-num">3</span> != <span class="tok-num">5</span>)
+    print(<span class="tok-num">5</span> &lt;= <span class="tok-num">5</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True
+False
+True
+True</div>
+</section>
+
+<section id="bool">
+  <h2>Boolean operators</h2>
+  <p>Three keywords combine bools. Both operands must be bools.</p>
+  <table>
+    <tr><th>Operator</th><th>What it does</th></tr>
+    <tr><td><code>and</code></td><td>true only if both sides are true</td></tr>
+    <tr><td><code>or</code></td><td>true if either side is true</td></tr>
+    <tr><td><code>not</code></td><td>flips true to false and back</td></tr>
+  </table>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    b: <span class="tok-type">Bool</span> = <span class="tok-type">False</span>
+    print(<span class="tok-kw">not</span> b)
+    print(<span class="tok-kw">not</span> b == b)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True
+False</div>
+
+  <p class="warn">A number is not a bool. <code>if 1:</code> won't compile, and neither will <code>True and 1</code>. Convert first with <code>Bool(x)</code>.</p>
+</section>
+
+<section id="unary">
+  <h2>Unary operators</h2>
+  <p>Unary minus and plus work on numbers:</p>
+<pre><code>n: <span class="tok-type">Int32</span> = -<span class="tok-num">5</span>
+print(-n)   <span class="tok-cm"># 5</span>
+print(+n)   <span class="tok-cm"># -5, plus does nothing</span></code></pre>
+  <p>They only work on <code>Ints</code> and <code>Floats</code>. Applying <code>-</code> to a bool or a string is a compile error.</p>
+</section>
+
+<section id="reference-op">
+  <h2>The reference operator</h2>
+  <p>The <code>^</code> operator, written after a variable, makes a reference to it. It's the closest thing Threadon has to pointers.</p>
+<pre><code>r: <span class="tok-type">Int32</span> = x^</code></pre>
+  <p>It deserves its own page: <a href="references.html">References</a>.</p>
+</section>
+
+<section id="nobitwise">
+  <h2>What's not here</h2>
+  <p>There are no bitwise operators. No <code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, or <code>&gt;&gt;</code>. There's no way to manipulate individual bits. That's on the <a href="limits.html">Limits</a> page.</p>
+</section>
+
+<section id="precedence">
+  <h2>Operator precedence</h2>
+  <p>From weakest to strongest binding:</p>
+  <table>
+    <tr><th>Level</th><th>Operators</th></tr>
+    <tr><td>1</td><td><code>or</code></td></tr>
+    <tr><td>2</td><td><code>and</code></td></tr>
+    <tr><td>3</td><td><code>not</code></td></tr>
+    <tr><td>4</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td></tr>
+    <tr><td>5</td><td><code>+</code> <code>-</code></td></tr>
+    <tr><td>6</td><td><code>*</code> <code>/</code> <code>//</code> <code>%</code></td></tr>
+    <tr><td>7</td><td><code>**</code> (right to left)</td></tr>
+    <tr><td>8</td><td>unary <code>-</code> <code>+</code></td></tr>
+    <tr><td>9</td><td>function calls, casts, parentheses, field access</td></tr>
+  </table>
+  <p>So <code>2 + 3 * 4</code> is <code>2 + (3 * 4)</code>, which is 14. And <code>not a and b</code> means <code>(not a) and b</code>.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-num">2</span> + <span class="tok-num">3</span> * <span class="tok-num">4</span>)
+    print((<span class="tok-num">2</span> + <span class="tok-num">3</span>) * <span class="tok-num">4</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">14
+20</div>
+  <p>Two limits on <code>**</code>: chained powers like <code>2 ** 3 ** 2</code> are rejected, and a negative exponent doesn't work. Keep your exponents as plain positive numbers.</p>
+</section>
+
+<section id="types">
+  <h2>Operands must match</h2>
+  <p>Both sides of <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>//</code>, <code>%</code>, <code>**</code>, and every comparison must be the same type. Mixing an <code>Int32</code> with a <code>Float32</code> is a compile error:</p>
+<pre><code>x: <span class="tok-type">Float32</span> = <span class="tok-num">1</span> + <span class="tok-num">2.5</span>   <span class="tok-cm"># compile error: Type mismatch</span></code></pre>
+  <p>Convert one side first with a <a href="casts.html">cast</a>, or write literals that already match.</p>
+</section>
+
+<p class="pagenav">
+  <a href="variables.html">&larr; Back: Variables</a>
+  <a href="casts.html">Next: Casts &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

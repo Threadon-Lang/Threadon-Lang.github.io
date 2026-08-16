@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow — Threadon</title>
+<meta name="description" content="Threadon control flow: if, elif, else, and repeating without loops.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Flow</p>
+    <h1>Flow</h1>
+    <p class="tag">decisions and repetition</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html" class="here">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="if">
+  <h2>if, elif, else</h2>
+  <p>The conditional statement looks like Python. An <code>if</code> line, a condition, a colon, and an indented body.</p>
+<pre><code><span class="tok-kw">if</span> score &gt;= <span class="tok-num">90</span>:
+    print(<span class="tok-str">"great"</span>)
+<span class="tok-kw">elif</span> score &gt;= <span class="tok-num">50</span>:
+    print(<span class="tok-str">"ok"</span>)
+<span class="tok-kw">else</span>:
+    print(<span class="tok-str">"try again"</span>)</code></pre>
+  <p>Three rules:</p>
+  <ul>
+    <li>The condition must be a <code>Bool</code>. A number like <code>if score:</code> won't compile. Use <code>if score != 0:</code> or <code>if Bool(score):</code> instead.</li>
+    <li>There can be any number of <code>elif</code> branches, including none. <code>else</code> is optional.</li>
+    <li><code>elif</code> and <code>else</code> must be indented at the same column as their <code>if</code>. The compiler checks this.</li>
+  </ul>
+  <p>A complete example:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">grade</span>(score: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">NoneType</span>
+    <span class="tok-kw">if</span> score &gt;= <span class="tok-num">90</span>:
+        print(<span class="tok-str">"great"</span>)
+    <span class="tok-kw">elif</span> score &gt;= <span class="tok-num">50</span>:
+        print(<span class="tok-str">"ok"</span>)
+    <span class="tok-kw">else</span>:
+        print(<span class="tok-str">"try again"</span>)
+    <span class="tok-kw">return</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    grade(<span class="tok-num">95</span>)
+    grade(<span class="tok-num">60</span>)
+    grade(<span class="tok-num">20</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">great
+ok
+try again</div>
+</section>
+
+<section id="branch-vars">
+  <h2>Variables and branches</h2>
+  <p>If a variable is declared inside a branch and you want to use it afterwards, declare it in every branch. The compiler merges the values. This rule is explained with a working example on the <a href="variables.html#scope">Variables</a> page.</p>
+</section>
+
+<section id="divzero">
+  <h2>Division by zero at compile time</h2>
+  <p>When the compiler can see that you're dividing by the constant zero, it rejects the code before running it:</p>
+<pre><code>x: <span class="tok-type">Int32</span> = <span class="tok-num">1</span> / <span class="tok-num">0</span>   <span class="tok-cm"># compile error</span></code></pre>
+  <p>This applies to <code>/</code>, <code>//</code>, and <code>%</code>. If the divisor comes from somewhere the compiler can't check, like user input, the check happens at runtime instead, and only in <a href="debug.html">debug mode</a>. Without debug mode it's undefined behavior.</p>
+</section>
+
+<section id="recursion">
+  <h2>Recursion</h2>
+  <p>A recursion example:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">fact</span>(n: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">if</span> n &lt;= <span class="tok-num">1</span>:
+        <span class="tok-kw">return</span> <span class="tok-num">1</span>
+    <span class="tok-kw">return</span> n * fact(n - <span class="tok-num">1</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(fact(<span class="tok-num">5</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">120</div>
+  <p>Deep recursion can hit stack limits, so keep the depth sane. Loops are a planned feature, listed in the <a href="limits.html">Limits</a> page.</p>
+</section>
+
+<p class="pagenav">
+  <a href="casts.html">&larr; Back: Casts</a>
+  <a href="functions.html">Next: Functions &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

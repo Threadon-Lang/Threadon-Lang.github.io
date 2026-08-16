@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Functions — Threadon</title>
+<meta name="description" content="Threadon functions: defining them, return rules, recursion, and the entry point.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Functions</p>
+    <h1>Functions</h1>
+    <p class="tag">the building block of every program</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html" class="here">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="def">
+  <h2>Defining a function</h2>
+  <p>A function starts with <code>def</code>, the name, parameters in parentheses, an arrow, and a return type. The line ends with a colon. The body is indented.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">add</span>(a: <span class="tok-type">Int32</span>, b: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> a + b</code></pre>
+  <p>Each parameter is a name, a colon, and a type. Parameters are separated by commas. A trailing comma is not allowed.</p>
+  <p>Call a function by name with arguments in parentheses:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(add(<span class="tok-num">2</span>, <span class="tok-num">3</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5</div>
+  <p>Arguments must match the parameter types exactly. Passing an <code>Int32</code> where an <code>Int8</code> is expected is a compile error. There is no implicit conversion between argument types, and no way to overload a function.</p>
+</section>
+
+<section id="returns">
+  <h2>Return rules</h2>
+  <p>The return type is required. Every function declares one. There is no function without a return type.</p>
+  <p>Two rules enforce it:</p>
+  <ul>
+    <li>A function that declares a non-<code>NoneType</code> return type must return a value on <em>every</em> path. A missing <code>return</code> anywhere is a compile error.</li>
+    <li>A function that returns nothing uses <code>NoneType</code> and must end with a bare <code>return</code>.</li>
+  </ul>
+  <p>This function is missing a return on one path and will not compile:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">absolute</span>(x: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">if</span> x &lt; <span class="tok-num">0</span>:
+        <span class="tok-kw">return</span> -x
+    <span class="tok-cm"># no return here, so this won't compile</span></code></pre>
+  <p>A function that prints and returns nothing:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">say_hi</span>(name: <span class="tok-type">String</span>) -&gt; <span class="tok-type">NoneType</span>
+    print(<span class="tok-str">"Hello,"</span>)
+    print(name)
+    <span class="tok-kw">return</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    say_hi(<span class="tok-str">"John"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Hello,
+Joep</div>
+  <p>The bare <code>return</code> at the end of <code>say_hi</code> is required. Leave it out and the compiler complains that the function doesn't return on all paths.</p>
+</section>
+
+<section id="recursion">
+  <h2>Recursion</h2>
+  <p>A standard recursion example:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">fact</span>(n: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">if</span> n &lt;= <span class="tok-num">1</span>:
+        <span class="tok-kw">return</span> <span class="tok-num">1</span>
+    <span class="tok-kw">return</span> n * fact(n - <span class="tok-num">1</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(fact(<span class="tok-num">5</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">120</div>
+  <p>Keep recursion depth reasonable. Each call uses stack, and very deep recursion will fail at runtime.</p>
+</section>
+<section id="union">
+<h2>Using union types in functions</h2>
+<p>Threadon allows a parameter, return value or variable to accept more than one type by using a <em>union type</em>. A union is written with the vertical bar (<code>|</code>) and means “this value may be any of these types”.</p>
+
+<p>This makes it possible to write a single function that works for multiple numeric types:</p>
+
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">add</span>(a: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>, b: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>) -&gt; <span class="tok-type">Int</span> | <span class="tok-type">Float</span>
+<span class="tok-kw">return</span> a + b
+</code></pre>
+
+<p>When a function uses a union type, the compiler guarantees that every operation inside the function is valid for <em>all</em> types in the union. In the example above, both <code>Int</code> and <code>Float</code> support addition, so the function is safe.</p>
+
+<p>At the call site, the compiler picks the correct branch of the union automatically:</p>
+
+<pre><code>print(add(<span class="tok-num">0.1</span>, <span class="tok-num">0.3</span>))   <span class="tok-cm"># Float + Float → Float</span>
+print(add(<span class="tok-num">1</span>, <span class="tok-num">2</span>))       <span class="tok-cm"># Int + Int → Int</span>
+</code></pre>
+
+<p>Union types are not overloads. Threadon does not choose between multiple function definitions. Instead, the union type describes all allowed types in one definition, and the compiler ensures the body is valid for each of them.</p>
+<p>Union types lose the fact they're an union the moment a value is assigned to them. Then will the union fall back to one type</p>
+<p>This makes union types a simple and predictable way to write functions that operate on several related types without duplication.</p>
+</section>
+<section id="main">
+  <h2>The entry point</h2>
+  <p>A program starts at a function named <code>main</code>. Its return value becomes the process exit code. Return <code>0</code> for success, anything else for failure. That's why every <code>main</code> in these docs ends with <code>return 0</code>.</p>
+  <p>You don't have to use <code>main</code>. The <code>-e</code> flag picks a different function as the entry point:</p>
+<pre><code>python3 -m compiler.main --run -e go file.th</code></pre>
+  <p>The chosen function's return value becomes the exit code. If it returns <code>NoneType</code>, the exit code is 0. There are two conditions: the function must exist, and the file must not also define <code>main</code>.</p>
+  <p>See <a href="cli.html">Command line</a> for the details.</p>
+</section>
+
+<section id="order">
+  <h2>Definition order</h2>
+  <p>A function must be defined before it is called. The compiler reads the file top to bottom. Put helper functions above <code>main</code>. The one exception is the <a href="stdlib.html">standard library</a>, which is loaded before your file starts.</p>
+</section>
+
+<p class="pagenav">
+  <a href="flow.html">&larr; Back: Flow</a>
+  <a href="structs.html">Next: Structs &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

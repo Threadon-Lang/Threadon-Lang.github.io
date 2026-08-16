@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Std lib — Threadon</title>
+<meta name="description" content="The Threadon standard library: abs, max, min, clamp, is_even, is_odd.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Std lib</p>
+    <h1>Std lib</h1>
+    <p class="tag">the small standard library</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html" class="here">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What's in it</h2>
+  <p>The standard library is a single Threadon file, <code>stdlib/std.th</code>, written in the language itself. It has six functions, all taking <code>Int32</code>:</p>
+  <table>
+    <tr><th>Function</th><th>Returns</th><th>Example</th></tr>
+    <tr><td><code>abs(x)</code></td><td><code>Int32</code>, the absolute value of <code>x</code></td><td><code>abs(-5)</code> &rarr; <code>5</code></td></tr>
+    <tr><td><code>max(a, b)</code></td><td><code>Int32</code>, the larger of the two</td><td><code>max(3, 7)</code> &rarr; <code>7</code></td></tr>
+    <tr><td><code>min(a, b)</code></td><td><code>Int32</code>, the smaller of the two</td><td><code>min(3, 7)</code> &rarr; <code>3</code></td></tr>
+    <tr><td><code>clamp(x, lo, hi)</code></td><td><code>Int32</code>, <code>x</code> forced between <code>lo</code> and <code>hi</code></td><td><code>clamp(10, 0, 5)</code> &rarr; <code>5</code></td></tr>
+    <tr><td><code>is_even(n)</code></td><td><code>Bool</code></td><td><code>is_even(4)</code> &rarr; <code>1</code></td></tr>
+    <tr><td><code>is_odd(n)</code></td><td><code>Bool</code></td><td><code>is_odd(4)</code> &rarr; <code>0</code></td></tr>
+  </table>
+</section>
+
+<section id="autoload">
+  <h2>It's loaded automatically</h2>
+  <p>The std lib is imported automatically into the <em>main file</em> of a program. You never write <code>import std</code> yourself; the functions are just available by their plain name.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    n: <span class="tok-type">Int32</span> = <span class="tok-num">127</span>
+    print(clamp(n, <span class="tok-num">0</span>, <span class="tok-num">100</span>))
+    print(min(n, <span class="tok-num">50</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">100
+50</div>
+  <p>Because it's a plain Threadon file, it follows every rule you've learned: functions before use, return types on all paths, <code>NoneType</code> with a bare <code>return</code>, and so on.</p>
+</section>
+
+<section id="modules">
+  <h2>Inside modules</h2>
+  <p>One catch: the automatic import only happens for the main file. If you're writing a <em>module</em> and want a std function, import it yourself. Both of these work inside a module:</p>
+<pre><code><span class="tok-kw">from</span> std <span class="tok-kw">import</span> abs, clamp</code></pre>
+<pre><code><span class="tok-kw">import</span> std   <span class="tok-cm"># then call std.abs(-5)</span></code></pre>
+  <p>The built-ins <code>print</code> and <code>input</code> are not part of <code>std.th</code>; they're always available, in modules and main files alike.</p>
+</section>
+
+<section id="local-shadow">
+  <h2>You can shadow it</h2>
+  <p>The std lib is found on the module search path like anything else. If you put a file named <code>std.th</code> somewhere earlier on the search path, it wins over the real one. The automatic import looks up <code>std</code> through the normal search, so a local <code>std.th</code> is picked up and its functions are what you get. Same for a folder: a <code>std</code> module on the path shadows the library. See <a href="modules.html">Imports</a> for how the search path works.</p>
+</section>
+
+<p class="pagenav">
+  <a href="builtins.html">&larr; Back: Builtins</a>
+  <a href="modules.html">Next: Imports &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Builtins — Threadon</title>
+<meta name="description" content="Threadon built-in functions: print and input.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Builtins</p>
+    <h1>Builtins</h1>
+    <p class="tag">print and input</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html" class="here">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="print">
+  <h2>print</h2>
+  <p><code>print</code> writes values to standard output, separated by spaces, ending with a newline.</p>
+<pre><code>print(<span class="tok-str">"Hello,"</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>.<span class="tok-num">5</span>, <span class="tok-kw">True</span>)</code></pre>
+  <div class="out">Hello, 1 2.500000 1</div>
+  <p>Each type formats its own way:</p>
+  <table>
+    <tr><th>Type</th><th>Output</th><th>Example</th></tr>
+    <tr><td><code>Int32</code>, <code>Int8</code></td><td>digits, with a minus sign if negative</td><td><code>print(-3)</code> &rarr; <code>-3</code></td></tr>
+    <tr><td><code>Float32</code></td><td>always 6 decimal places</td><td><code>print(2.5)</code> &rarr; <code>2.500000</code></td></tr>
+    <tr><td><code>Bool</code></td><td><code>1</code> or <code>0</code>, not true/false</td><td><code>print(True)</code> &rarr; <code>1</code></td></tr>
+    <tr><td><code>String</code></td><td>the text itself, quotes not included</td><td><code>print("hi")</code> &rarr; <code>hi</code></td></tr>
+  </table>
+  <p>Strings are printed as-is, so spaces inside them are preserved:</p>
+<pre><code>print(<span class="tok-str">"a b c"</span>)</code></pre>
+  <div class="out">a b c</div>
+  <p><code>print()</code> with no arguments prints just a newline.</p>
+  <p>One thing <code>print</code> refuses: printing a <code>NoneType</code> value is a compile error. The message spells it out:</p>
+  <div class="out">Error: Function 'print' cannot print a value of type NoneType at line 5</div>
+</section>
+
+<section id="input">
+  <h2>input</h2>
+  <p><code>input</code> reads one line from standard input and returns it as a <code>String</code>. The trailing newline is stripped.</p>
+<pre><code>name: <span class="tok-type">String</span> = input()</code></pre>
+  <p>Give it a prompt and the prompt is printed first, with no trailing newline, so your input lands on the same line:</p>
+<pre><code>n: <span class="tok-type">Int32</span> = <span class="tok-type">Int32</span>(input(<span class="tok-str">"Enter a number: "</span>))
+print(n + <span class="tok-num">1</span>)</code></pre>
+  <div class="out">Enter a number: 41
+42</div>
+  <p>If input runs out of data (for example at the end of a redirected file), it returns an empty string. Watch out: converting that empty string with <code>Int32("")</code> is a runtime error, and only caught in <a href="debug.html">debug mode</a>. The <code>07_conversion</code> example on the <a href="examples.html">Examples</a> page shows the safe pattern.</p>
+</section>
+
+<section id="casting-builtins">
+  <h2>Cast functions</h2>
+  <p><code>Int8</code>, <code>Int16</code>, <code>Int32</code>, <code>Float16</code>, <code>Float32</code>, and <code>Bool</code> are also built-in functions that convert values. (There is no <code>String(...)</code> conversion.) They get their own section on the <a href="casts.html">Casts</a> page.</p>
+</section>
+
+<p class="pagenav">
+  <a href="references.html">&larr; Back: References</a>
+  <a href="stdlib.html">Next: Std lib &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

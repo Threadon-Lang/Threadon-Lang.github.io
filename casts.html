@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casts — Threadon</title>
+<meta name="description" content="Threadon type conversions: changing a value from one type to another.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Casts</p>
+    <h1>Casts</h1>
+    <p class="tag">converting values between types</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html" class="here">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="syntax">
+  <h2>The cast syntax</h2>
+  <p>To convert a value to a type, call the type like a function with the value inside. It's the only conversion mechanism in the language.</p>
+<pre><code><span class="tok-type">Int32</span>(x)     <span class="tok-cm"># to an integer</span>
+<span class="tok-type">Int8</span>(x)
+<span class="tok-type">Int16</span>(x)
+<span class="tok-type">Float32</span>(x)   <span class="tok-cm"># to a float</span>
+<span class="tok-type">Float16</span>(x)
+<span class="tok-type">Bool</span>(x)      <span class="tok-cm"># to true or false</span></code></pre>
+  <p>The value you convert must be a number, a bool, or a string. Casting a struct is a compile error.</p>
+  <p>Here's every working cast, all in one program:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-type">Int32</span>(<span class="tok-num">3.7</span>))      <span class="tok-cm"># float to int</span>
+    print(<span class="tok-type">Int32</span>(<span class="tok-type">True</span>))     <span class="tok-cm"># bool to int</span>
+    print(<span class="tok-type">Float32</span>(<span class="tok-num">5</span>))    <span class="tok-cm"># int to float</span>
+    print(<span class="tok-type">Bool</span>(<span class="tok-num">7</span>))        <span class="tok-cm"># number to bool</span>
+    print(<span class="tok-type">Int32</span>(<span class="tok-str">"123"</span>))   <span class="tok-cm"># string to int</span>
+    print(<span class="tok-type">Float32</span>(<span class="tok-str">"3.5"</span>)) <span class="tok-cm"># string to float</span>
+    print(<span class="tok-type">Bool</span>(<span class="tok-str">"true"</span>))  <span class="tok-cm"># string to bool</span>
+    print(<span class="tok-type">Bool</span>(<span class="tok-str">"0"</span>))     <span class="tok-cm"># string to bool</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">3
+1
+5.000000
+True
+123
+3.500000
+True
+False</div>
+</section>
+
+<section id="float-int">
+  <h2>Float to integer</h2>
+  <p>Converting a float to an integer drops the decimal part. It truncates toward zero, not to the nearest whole number.</p>
+<pre><code>print(<span class="tok-type">Int32</span>(<span class="tok-num">3.7</span>))    <span class="tok-cm"># 3</span>
+print(<span class="tok-type">Int32</span>(<span class="tok-num">3.2</span>))    <span class="tok-cm"># 3</span>
+print(<span class="tok-type">Int32</span>(-<span class="tok-num">3.7</span>))   <span class="tok-cm"># -3, not -4</span></code></pre>
+  <p>Watch out for an integer <a href="types.html#ints">overflow</a>. Converting a float that doesn't fit in the target integer gives an error with --debug enabled.</p>
+</section>
+
+<section id="bool">
+  <h2>Converting to Bool</h2>
+  <p>Numbers: zero becomes false, anything else becomes true.</p>
+<pre><code>print(<span class="tok-type">Bool</span>(<span class="tok-num">0</span>))    <span class="tok-cm"># False</span>
+print(<span class="tok-type">Bool</span>(<span class="tok-num">7</span>))    <span class="tok-cm"># True</span></code></pre>
+  <p>Strings: <code>"0"</code>, <code>"false"</code>, and the empty string are False. Everything else is True. The check ignores capital letters, so <code>"False"</code> is false too.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-type">Bool</span>(<span class="tok-str">"true"</span>))
+    print(<span class="tok-type">Bool</span>(<span class="tok-str">"False"</span>))
+    print(<span class="tok-type">Bool</span>(<span class="tok-str">"0"</span>))
+    print(<span class="tok-type">Bool</span>(<span class="tok-str">""</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True
+False
+False
+False</div>
+</section>
+
+<section id="string-num">
+  <h2>Strings to numbers</h2>
+  <p>A string that holds a number converts to that number. Leading minus signs work. The string is read with <code>strtol</code> for integers and <code>strtod</code> for floats.</p>
+<pre><code>print(<span class="tok-type">Int32</span>(<span class="tok-str">"123"</span>))    <span class="tok-cm"># 123</span>
+print(<span class="tok-type">Float32</span>(<span class="tok-str">"3.5"</span>))  <span class="tok-cm"># 3.5</span></code></pre>
+  <p>What happens when the string is not a number at all, like <code>"abc"</code>? That depends on <a href="debug.html">debug mode</a>:</p>
+  <ul>
+    <li>Without <code>--debug</code>: you get <code>0</code> and no warning.</li>
+    <li>With <code>--debug</code>: the program stops with a runtime error. This is exactly why you want debug mode most of the time on.</li>
+  </ul>
+  <p>The conversion reads as much of the string as it can. A string like <code>"12abc"</code> becomes 12, since the leading digits parse fine.</p>
+</section>
+
+<section id="copy">
+  <h2>Casts make a new value</h2>
+  <p>A cast creates a converted copy. It does not change the original variable.</p>
+<pre><code>x: <span class="tok-type">Int32</span> = <span class="tok-num">7</span>
+print(<span class="tok-type">Float32</span>(x))   <span class="tok-cm"># 7.000000</span>
+print(x)              <span class="tok-cm"># still 7</span></code></pre>
+</section>
+
+<p class="pagenav">
+  <a href="operators.html">&larr; Back: Operators</a>
+  <a href="flow.html">Next: Flow &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

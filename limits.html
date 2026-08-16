@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limits — Threadon</title>
+<meta name="description" content="What Threadon does not do yet, and what's planned.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Limits</p>
+    <h1>Limits</h1>
+    <p class="tag">what's not there yet</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html" class="here">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="loops">
+  <h2>No loops</h2>
+  <p>There is no <code>for</code>. The keywords is reserved, but writing it fails to compile. Repetition is done by <a href="flow.html#noloops">recursion</a>. Loops are the most requested missing feature.</p>
+</section>
+
+<section id="data">
+  <h2>Data structures</h2>
+  <ul>
+    <li><strong>No strings beyond the basics.</strong> You can store them, print them, read them with <code>input</code>, and convert them to numbers, but there's no slicing, indexing, joining, or length.</li>
+  </ul>
+</section>
+
+<section id="functions">
+  <h2>Functions</h2>
+  <ul>
+    <li><strong>No overloading.</strong> Two functions can't share a name, and imported names can collide.</li>
+    <li><strong>No function values.</strong> You can't store a function in a variable or pass one to another function.</li>
+    <li><strong>Functions must be defined before use</strong> in the file. There is no forward declaration.</li>
+  </ul>
+</section>
+
+<section id="safety">
+  <h2>Safety</h2>
+  <ul>
+    <li><strong>Runtime errors need debug mode.</strong> Division by zero and bad string-to-number casts only error when you pass <code>--debug</code>; otherwise the behavior is undefined. See <a href="debug.html">Debug</a>.</li>
+    <li><strong>Missing struct fields are garbage.</strong> <code>Point(x=3)</code> compiles and <code>p.y</code> is whatever memory happens to hold. See <a href="structs.html#init">Structs</a>.</li>
+    <li><strong>Unary plus doesn't work</strong></li>
+  </ul>
+</section>
+
+<p class="pagenav">
+  <a href="examples.html">&larr; Back: Examples</a>
+  <a href="index.html">Home</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

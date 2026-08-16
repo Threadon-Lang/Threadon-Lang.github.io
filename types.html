@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Types — Threadon</title>
+<meta name="description" content="The Threadon type system: integers, floats, bools, strings, NoneType, and how values wrap.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Types</p>
+    <h1>Types</h1>
+    <p class="tag">every value has one, and it's checked</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html" class="here">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="list">
+  <h2>The type list</h2>
+  <p>Threadon has eight built-in types.</p>
+  <table>
+    <tr><th>Type</th><th>What it holds</th><th>Notes</th></tr>
+    <tr><td><code>Int8</code></td><td>8-bit signed integer</td><td>wraps, range -128 to 127</td></tr>
+    <tr><td><code>Int16</code></td><td>16-bit signed integer</td><td>wraps, range -32,768 to 32,767</td></tr>
+    <tr><td><code>Int32</code></td><td>32-bit signed integer</td><td>the default integer, wraps, range -2,147,483,648 to 2,147,483,647</td></tr>
+    <tr><td><code>Int64</code></td><td>64-bit signed integer</td><td>wraps, range -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807</td></tr>
+    <tr><td><code>UInt8</code></td><td>8-bit unsigned integer</td><td>wraps, range 0 to 255</td></tr>
+    <tr><td><code>UInt16</code></td><td>16-bit unsigned integer</td><td>wraps, range from 0 to 65,535</td></tr>
+    <tr><td><code>UInt32</code></td><td>32-bit unsigned integer</td><td>wraps, range from 0 to 4,294,967,295</td></tr>
+    <tr><td><code>UInt64</code></td><td>64-bit unsigned integer</td><td>wraps, range from 0 to 18,446,744,073,709,551,615</td></tr>
+    <tr><td><code>Float16</code></td><td>16-bit float</td><td>prints like a normal float, half precision</td></tr>
+    <tr><td><code>Float32</code></td><td>32-bit float</td><td>the default float, single precision</td></tr>
+    <tr><td><code>Float64</code></td><td>64-bit float</td><td>If you want more precision and a bigger range, double precision</td></tr>
+    <tr><td><code>Bool</code></td><td>boolean value</td><td>true or false (prints contextually based on language)</td></tr>
+    <tr><td><code>String</code></td><td>text</td><td>sequence of characters, no concatenation yet</td></tr>
+    <tr><td><code>NoneType</code></td><td>no value</td><td>only used for return types or representing absence of value</td></tr>
+  </table>
+  <p>Besides these, you can define your own struct types. See <a href="structs.html">Structs</a>.</p>
+</section>
+
+<section id="ints">
+  <h2>Integers</h2>
+  <p>A plain number in your code, like <code>42</code>, is an <code>Int32</code>. Use the cast syntax to store it in a smaller type:</p>
+<pre><code>a: <span class="tok-type">Int8</span> = <span class="tok-type">Int8</span>(<span class="tok-num">10</span>)
+b: <span class="tok-type">Int16</span> = <span class="tok-type">Int16</span>(<span class="tok-num">300</span>)
+c: <span class="tok-type">Int32</span> = <span class="tok-num">70000</span></code></pre>
+  <p>If you go past the range of an integer you'll get an error if you've enabled --debug and if you're using floats you will get an error if you use the flag --flag-inf.</p>
+  <p>Look at what happens as an <code>Int8</code> climbs past its maximum of 127:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-type">Int8</span>(<span class="tok-num">127</span>))
+    print(<span class="tok-type">Int8</span>(<span class="tok-num">128</span>))
+    print(<span class="tok-type">Int8</span>(<span class="tok-num">255</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">RuntimeError: compiler error:
+Error: Integer literal 128 out of range for type 'Int8' at line 3
+      print(Int8(128))
+      ^
+</div>
+<p>It won't even compile. But if you let the user input a number you've still that risk</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-type">Int8</span>(input(<span class="tok-str">"input a number"</span>)))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">input a number: 128
+[RUNTIME ERROR]
+│ Error: Integer overflow in string conversion (value out of range for Int8)
+
+├─> Location: String → Int8 cast
+└─> Process terminated with exit code 1</div>
+
+</section>
+
+<section id="floats">
+  <h2>Floats</h2>
+  <p>A number with a decimal point, like <code>2.5</code>, is a <code>Float32</code>. <code>Float16</code> is the smaller sibling and <code>Float64</code> the bigger sibling.</p>
+  <p>Floats print with six decimals, always. There is no formatting control yet.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-type">Float32</span>(<span class="tok-num">2.5</span>))
+    print(<span class="tok-type">Float64</span>(<span class="tok-num">0.1</span>))
+    print(<span class="tok-type">Float16</span>(<span class="tok-num">1.5</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">2.500000
+0.100000
+1.500000</div>
+  <p>Note that <code>print(2.5)</code> and <code>print(Float32(2.5))</code> print the same thing. The literal is already a float.</p>
+</section>
+
+<section id="bools">
+  <h2>Bools</h2>
+  <p><code>Bool</code> holds true or false. The literals are <code>True</code> and <code>False</code>. Conditions must be bools, so comparisons return bools.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-type">True</span>)
+    print(<span class="tok-type">False</span>)
+    print(<span class="tok-num">3</span> &lt; <span class="tok-num">5</span>)
+    print(<span class="tok-num">3</span> == <span class="tok-num">5</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True
+False
+True
+False</div>
+
+
+<section id="strings">
+  <h2>Strings</h2>
+  <p>A <code>String</code> is a piece of text, written with double quotes.</p>
+<pre><code>name: <span class="tok-type">String</span> = <span class="tok-str">"John"</span></code></pre>
+  <p>Strings have no tools yet. You can't concatenate them, you can't take their length, you can't convert a number into a string. The two things you can do with a string are pass it to <code>print</code> or <code>input</code>, and convert it into a number. All of that is on the <a href="limits.html">Limits</a> page.</p>
+</section>
+
+<section id="nonetype">
+  <h2>NoneType</h2>
+  <p><code>NoneType</code> means "no value". It is used as the return type of functions that don't return anything.</p>
+  <p class="warn">Always have a return in a function. You can type just <code>return</code>Without a value but the program needs to return something on every path</p>
+  <p>This</p>
+  <pre><code>
+  <span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>:
+      <span class="tok-kw">if</span> <span class="tok-num">1</span> == <span class="tok-num">1</span>:
+          <span class="tok-kw">return</span> <span class="tok-num">0</span>
+      <span class="tok-kw">else</span>:
+          print()
+  </code></pre>
+  <p>is illegal.</p>
+  <div class="out">Error: Function must return a value on all code paths at line 5
+          print()
+          ^
+</div>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">say_hi</span>() -&gt; <span class="tok-type">NoneType</span>
+    print(<span class="tok-str">"hi"</span>)
+    <span class="tok-kw">return</span></code></pre>
+
+</section>
+
+<section id="zerovalues">
+  <h2>Values that were never set</h2>
+  <p>If you declare a variable without giving it a value, it starts at zero. Integers start at 0, floats at 0.0, bools at false.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    n: <span class="tok-type">Int32</span>
+    f: <span class="tok-type">Float32</span>
+    b: <span class="tok-type">Bool</span>
+    print(n)
+    print(f)
+    print(b)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">0
+0.000000
+False</div>
+  <p>It's still a good idea to set a value yourself. The zero behavior is a convenience, not a promise, and relying on it makes code harder to read.</p>
+  <p>One exception: struct fields you leave out of an initializer are <em>not</em> zeroed. They hold garbage. See <a href="structs.html">Structs</a>.</p>
+</section>
+
+<section id="checking">
+  <h2>Strict type checking</h2>
+  <p>Threadon checks types at compile time and is strict about it. Two things you will hit immediately:</p>
+  <ul>
+    <li>You can't mix integer and float in the same expression. <code>1 + 2.5</code> is a compile error. Convert first: <code>Float32(1) + 2.5</code>.</li>
+    <li>You can't compare different types. <code>1 == 1.0</code> is a compile error.</li>
+    <li>You can't assign a value to a variable of a different type. <code>x: Int32 = 3.5</code> is a compile error.</li>
+  </ul>
+  <p>The one lenient case: an integer literal can adapt to the type of the variable you assign it to. <code>x: Int8 = 5</code> works, even though <code>5</code> on its own is an <code>Int32</code>. The literal is retyped to fit. See <a href="variables.html">Variables</a>.</p>
+  <p>Everything else has to match exactly, or you convert it with a <a href="casts.html">cast</a>.</p>
+</section>
+
+<p class="pagenav">
+  <a href="basics.html">&larr; Back: Basics</a>
+  <a href="variables.html">Next: Variables &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

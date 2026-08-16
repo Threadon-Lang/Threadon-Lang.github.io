@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Basics — Threadon</title>
+<meta name="description" content="Threadon language basics: file structure, comments, indentation, literals.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Basics</p>
+    <h1>Basics</h1>
+    <p class="tag">what a program looks like</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html" class="here">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="hello">
+  <h2>The smallest program</h2>
+  <p>Every program starts with a <code>main</code> function. That's where execution begins. Put this in a file called <code>hello.th</code>:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"Hello, world!"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <p>Run it:</p>
+<pre><code>python3 -m compiler.main --run hello.th</code></pre>
+  <div class="out">Hello, world!</div>
+  <p>Here's what's going on:</p>
+  <ul>
+    <li><code>def main() -&gt; Int32</code> declares a function called <code>main</code>. The <code>-&gt; Int32</code> says it returns a 32-bit integer.</li>
+    <li>The indented lines are the body of the function.</li>
+    <li><code>print(...)</code> writes text to the screen.</li>
+    <li><code>return 0</code> ends the program. The value <code>0</code> becomes the exit code. Zero means everything went fine.</li>
+  </ul>
+  <p>Notice the <code>def</code> line ends with a colon, like Python. The body is indented. Indentation is what groups statements together, not curly braces.</p>
+</section>
+
+<section id="layout">
+  <h2>How a file is laid out</h2>
+  <p>A <code>.th</code> file is a list of top-level things. In any order:</p>
+  <ul>
+    <li><code>def</code> functions</li>
+    <li><code>struct</code> types</li>
+    <li><code>import</code> statements</li>
+  </ul>
+  <p>That's it. Code that runs must live inside a function. The only statements that can appear at the top level of a file are function definitions, struct definitions, and imports.</p>
+  <p>Order matters. A function must be defined before it is called, and a struct before it is used. If you call something the compiler hasn't seen yet, you get <code>Unknown function 'name'</code>.</p>
+  <p>Put <code>main</code> at the bottom and the functions it calls above it:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">greet</span>(name: <span class="tok-type">String</span>) -&gt; <span class="tok-type">NoneType</span>
+    print(<span class="tok-str">"Hello,"</span>)
+    print(name)
+    <span class="tok-kw">return</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    greet(<span class="tok-str">"John"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Hello,
+John</div>
+  <p>Exceptions to the order rule: the <a href="stdlib.html">standard library</a> is auto-imported into every main program, and anything you <a href="modules.html">import</a> is available as soon as the import line is seen.</p>
+</section>
+
+<section id="comments">
+  <h2>Comments</h2>
+  <p>A <code>#</code> starts a comment. Everything after it on the same line is ignored. Comments can start at the beginning of a line or after code:</p>
+<pre><code><span class="tok-cm"># this whole line is a comment</span>
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">5</span>  <span class="tok-cm"># a comment after code</span>
+    print(x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5</div>
+  <p>There is no multi-line comment. Start each line with <code>#</code> if you want a comment block.</p>
+</section>
+
+<section id="indentation">
+  <h2>Indentation</h2>
+  <p>Indentation groups statements into blocks. The body of a function, the fields of a struct, and the branches of an <code>if</code> are all indented one level deeper than their header line.</p>
+  <p>Use spaces. Blank lines and comment-only lines are fine anywhere.</p>
+  <p>The compiler checks that lines that belong together sit at the same column. For example, an <code>elif</code> must be indented exactly as far as its <code>if</code>. Get it wrong and the compiler complains.</p>
+  <p>This won't compile:</p>
+<pre><code><span class="tok-kw">if</span> a:
+    print(a)
+  <span class="tok-kw">elif</span> b:</code></pre>
+  <p>because <code>elif</code> is not at the same column as <code>if</code>.</p>
+</section>
+
+<section id="literals">
+  <h2>Literals</h2>
+  <p>A literal is a value written directly in the code. There are four kinds.</p>
+
+  <h3>Numbers</h3>
+  <p>A whole number is an integer literal. It gets the type <code>Int32</code>.</p>
+<pre><code>x: <span class="tok-type">Int32</span> = <span class="tok-num">42</span></code></pre>
+  <p>A number with a decimal point is a float literal. It gets the type <code>Float32</code>.</p>
+<pre><code>pi: <span class="tok-type">Float32</span> = <span class="tok-num">3.14</span></code></pre>
+  <p>Scientific notation works, as long as the number has a decimal point:</p>
+<pre><code>big: <span class="tok-type">Float32</span> = <span class="tok-num">1.5e2</span>   <span class="tok-cm"># 150.0</span></code></pre>
+  <p>Two things to know about float literals:</p>
+  <ul>
+    <li>The dot is required. <code>1e3</code> without a dot does not work correctly. Use <code>1.0e3</code>.</li>
+    <li>The exponent must be a positive whole number. <code>1.5e-2</code> won't parse.</li>
+  </ul>
+  <p>Both are listed under <a href="limits.html">Limits</a>.</p>
+
+  <h3>Strings</h3>
+  <p>Strings are written with double quotes:</p>
+<pre><code>name: <span class="tok-type">String</span> = <span class="tok-str">"John"</span></code></pre>
+  <p>Single quotes are not strings in Threadon. Only double quotes.</p>
+  <p>Three escape sequences work inside a string:</p>
+  <table>
+    <tr><th>Escape</th><th>Meaning</th></tr>
+    <tr><td><code>\n</code></td><td>newline</td></tr>
+    <tr><td><code>\t</code></td><td>tab</td></tr>
+    <tr><td><code>\"</code></td><td>a literal double quote</td></tr>
+  </table>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-str">"line one\nline two"</span>)
+    print(<span class="tok-str">"say \"hi\""</span>)
+    print(<span class="tok-str">"tab\there"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">line one
+line two
+say "hi"
+tab	here</div>
+
+  <h3>Bools</h3>
+  <p>The keywords <code>True</code> and <code>False</code> are the two boolean literals.</p>
+<pre><code>ok: <span class="tok-type">Bool</span> = <span class="tok-type">True</span>
+done: <span class="tok-type">Bool</span> = <span class="tok-type">False</span></code></pre>
+
+  <h3>None</h3>
+  <p>The keyword <code>None</code> is the value of type <code>NoneType</code>It behaves just like None in python use it as <code>return</code> for functions that return nothing. More on that in <a href="functions.html">Functions</a>.</p>
+</section>
+
+<section id="naming">
+  <h2>Names</h2>
+  <p>Names of variables, functions, and structs can contain letters, digits, and underscores. They can't start with a digit.</p>
+  <p>These are reserved words. You can't use them as names:</p>
+<pre><code>def if elif else while for return and or not None class struct True False import from lazyimport lazyfrom as</code></pre>
+  <p><code>for</code> is reserved but not implemented yet. See <a href="limits.html">Limits</a>.</p>
+</section>
+
+<section id="errors">
+  <h2>What errors look like</h2>
+  <p>When the compiler rejects your code, it prints the error, the line number, the offending line, and a caret pointing at the problem:</p>
+<pre><code>Error: If condition must be Bool, got Int32 at line 3
+      if x:
+      ^</code></pre>
+  <p>Errors happen at compile time. Threadon does not run your code to find these problems. It checks before anything executes.</p>
+</section>
+
+<p class="pagenav">
+  <span></span>
+  <a href="types.html">Next: Types &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

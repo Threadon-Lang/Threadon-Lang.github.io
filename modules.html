@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imports — Threadon</title>
+<meta name="description" content="Threadon modules and imports: import, from, as, lazyimport, and lazyfrom.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Imports</p>
+    <h1>Imports</h1>
+    <p class="tag">splitting code across files</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html" class="here">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What a module is</h2>
+  <p>A module is just another <code>.th</code> file. The file that starts the program is the main file; any file it imports is a module. Modules export their functions and structs; everything else stays private.</p>
+  <p>There are four import forms: <code>import</code>, <code>from&hellip;import</code>, <code>lazyimport</code>, and <code>lazyfrom</code>.</p>
+</section>
+
+<section id="import">
+  <h2>import: the whole module</h2>
+  <p><code>import</code> makes the module's functions and structs available under the module's name. Call them qualified, with a dot.</p>
+<pre><code><span class="tok-kw">import</span> math
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(math.abs(-<span class="tok-num">5</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <p>An alias renames the module in your file:</p>
+<pre><code><span class="tok-kw">import</span> math <span class="tok-kw">as</span> m
+print(m.abs(-<span class="tok-num">5</span>))</code></pre>
+</section>
+
+<section id="from">
+  <h2>from: pick names</h2>
+  <p><code>from</code> pulls specific members in by their plain name, with optional aliases. Only functions and structs can be imported.</p>
+<pre><code><span class="tok-kw">from</span> math <span class="tok-kw">import</span> abs, clamp
+<span class="tok-kw">from</span> math <span class="tok-kw">import</span> pow <span class="tok-kw">as</span> power</code></pre>
+  <p>Both import styles can be mixed in one file, as in the <code>03_imports</code> example:</p>
+<pre><code><span class="tok-kw">from</span> math <span class="tok-kw">import</span> abs, clamp
+<span class="tok-kw">import</span> math
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int32</span> = abs(-<span class="tok-num">5</span>)
+    b: <span class="tok-type">Int32</span> = math.clamp(<span class="tok-num">99</span>, <span class="tok-num">0</span>, <span class="tok-num">50</span>)
+    c: <span class="tok-type">Int32</span> = math.abs(-<span class="tok-num">9</span>)
+    print(a + b + c)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">64</div>
+</section>
+
+<section id="lazy">
+  <h2>Lazy imports</h2>
+  <p><code>lazyimport</code> and <code>lazyfrom</code> are the same thing, but the module isn't loaded until one of its names is actually used. The module file still needs to exist; the resolution just happens later.</p>
+<pre><code><span class="tok-kw">lazyimport</span> math
+<span class="tok-kw">lazyfrom</span> math <span class="tok-kw">import</span> abs
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(abs(-<span class="tok-num">7</span>))   <span class="tok-cm"># math is loaded here, on first use</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">7</div>
+</section>
+
+<section id="structs">
+  <h2>Importing structs</h2>
+  <p>Structs import the same way as functions, and once imported you use them like any local struct.</p>
+<pre><code><span class="tok-kw">from</span> geom <span class="tok-kw">import</span> Point
+
+p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<span class="tok-num">3</span>, y=<span class="tok-num">4</span>)</code></pre>
+  <p>You can't define a struct and then import it as a function, and vice versa. The compiler checks. Importing a variable is an error:</p>
+  <div class="out">Error: Cannot import variable 'x' from module 'm' (only functions and structs can be imported)</div>
+</section>
+<section id="foreign">
+  <h2>Using C, C++, Rust, and Python modules</h2>
+  <p>Threadon can call functions written in other languages. This is done through manifest files, which describe how the external code should be compiled and linked. Four backends are supported: <code>C</code>, <code>C++</code>, <code>Rust</code>, and <code>Python</code>.</p>
+
+  <p>The <code>lang</code> field in the manifest selects the backend:</p>
+<section id="manifest">
+  <h2>Manifest files</h2>
+  <p>A module written in another language uses a <code>.manifest</code> file to describe how Threadon should load it. The manifest tells the compiler which language the module is written in, where its source file lives, and which functions it exports to Threadon.</p>
+
+  <p>A manifest file is a plain text file with simple key–value pairs. Here is an example:</p>
+
+<pre><code>module PyAdd
+lang python
+source padd.py
+
+export mean List Float64 Float64
+export scale Float64 Float64 Float64
+export normalize List Float64 List Float64
+export describe Dict String Float64 Dict String Float64
+export add Float64 Float64 Float64
+</code></pre>
+
+  <p>The <code>module</code> name becomes the import name inside Threadon. The <code>lang</code> field selects the foreign-language backend. The <code>source</code> field points to the file that implements the module. Each <code>export</code> line declares a function name followed by its parameter types and return type.</p>
+
+  <p>The compiler uses the manifest to generate the glue code needed to call the foreign functions safely. If the manifest is missing a function, Threadon cannot import it. If the types do not match, the compiler rejects the manifest.</p>
+</section>
+
+<pre><code>lang c
+lang cpp
+lang rust
+lang python
+</code></pre>
+
+  <p>Each backend has its own toolchain:</p>
+  <ul>
+    <li><strong>C</strong> modules compile to a shared library using the system C compiler.</li>
+    <li><strong>C++</strong> modules use the C++ compiler and support classes mapped to Threadon structs.</li>
+    <li><strong>Rust</strong> modules are built with <code>cargo</code> and expose <code>extern "C"</code> functions.</li>
+    <li><strong>Python</strong> modules are wrapped automatically using the Python bridge, allowing Python functions to behave like native Threadon functions.</li>
+  </ul>
+
+  <p>Threadon ensures type safety by checking the manifest against the foreign function signatures. If the types do not match, the module will not load. Once imported, foreign functions behave exactly like normal Threadon functions.</p>
+
+  <p>This makes it possible to write performance‑critical code in C or Rust, reuse existing C++ libraries, or call Python code directly from Threadon without rewriting it.</p>
+</section>
+
+<section id="rules">
+  <h2>Rules</h2>
+  <ul>
+    <li><strong>No wildcard imports.</strong> <code>from m import *</code> is rejected: <em>"Wildcard imports (*) are not allowed"</em>.</li>
+    <li><strong>No trailing commas</strong> in the import list.</li>
+    <li><strong>Names must exist.</strong> Importing a member that isn't in the module is an error: <em>"Module 'm' has no member 'x'"</em>.</li>
+    <li><strong>No circular imports.</strong> If <code>a</code> imports <code>b</code> and <code>b</code> imports <code>a</code>, you get: <em>"Circular import detected: a -&gt; b -&gt; a"</em>.</li>
+  </ul>
+</section>
+
+<section id="paths">
+  <h2>How modules are found</h2>
+  <p>The importer searches these places, in order:</p>
+  <ol>
+    <li><code>-I DIR</code> directories from the command line, if any.</li>
+    <li>The folder the main file is in.</li>
+    <li>The <code>stdlib/</code> directory that ships with Threadon.</li>
+  </ol>
+  <p>Dotted names map to subdirectories. <code>import a.b</code> looks for <code>a/b.th</code>. A module that needs its own submodules imports them by their full dotted path, resolved against the same search paths.</p>
+  <p>Because the stdlib is last, a file called <code>std.th</code> in your own project shadows the standard library. That's how the <a href="stdlib.html">std lib</a> itself is found and overridden.</p>
+</section>
+
+<p class="pagenav">
+  <a href="stdlib.html">&larr; Back: Std lib</a>
+  <a href="cli.html">Next: CLI &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLI — Threadon</title>
+<meta name="description" content="The Threadon command-line compiler: flags for running, building, and debugging.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / CLI</p>
+    <h1>CLI</h1>
+    <p class="tag">the command-line compiler</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html" class="here">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="usage">
+  <h2>Usage</h2>
+  <p>Threadon is a Python module that drives LLVM. From the project root:</p>
+<pre><code>python3 -m compiler.main FILE.th [options]</code></pre>
+  <p>With no options, the compiler prints LLVM IR to standard output.</p>
+</section>
+
+<section id="flags">
+  <h2>Flags</h2>
+  <table>
+    <tr><th>Flag</th><th>Meaning</th></tr>
+    <tr><td><code>-o FILE</code></td><td>Write the LLVM IR to FILE instead of stdout.</td></tr>
+    <tr><td><code>--run</code></td><td>Execute the program with <code>lli</code> after compiling.</td></tr>
+    <tr><td><code>--exe FILE</code></td><td>Build a native executable via <code>llc</code> and <code>gcc</code>.</td></tr>
+    <tr><td><code>-e NAME</code></td><td>Use NAME as the entry point instead of <code>main</code>.</td></tr>
+    <tr><td><code>-I DIR</code></td><td>Add an import search path. Repeatable.</td></tr>
+    <tr><td><code>-O N</code></td><td>Optimizer inline threshold. Default <code>0</code> = no inlining.</td></tr>
+    <tr><td><code>--debug</code></td><td>Enable runtime checks. See the <a href="debug.html">Debug</a> page.</td></tr>
+    <tr><td><code>--flag-inf</code></td><td>Flag infinite (<code>inf</code>) and <code>NaN</code> float values: non-finite constants are a compile-time error and values that become non-finite at runtime raise a runtime error. Independent of <code>--debug</code>. Without it, non-finite values are allowed silently.</td></tr>
+  </table>
+</section>
+
+<section id="entry">
+  <h2>Choosing the entry point</h2>
+  <p>By default the program starts at <code>main</code>, and its return value becomes the exit code. Use <code>-e</code> to start somewhere else:</p>
+<pre><code>python3 -m compiler.main --run -e greet file.th</code></pre>
+  <p>Two conditions hold:</p>
+  <ul>
+    <li>The named function must exist. Otherwise: <em>"no function 'greet' found in the compiled module"</em>.</li>
+    <li>The file must not also define <code>main</code>. Otherwise: <em>"the module already defines a 'main' function"</em>.</li>
+  </ul>
+  <p>The entry function's return value becomes the exit code, like <code>main</code>. If it returns <code>NoneType</code>, the exit code is 0.</p>
+</section>
+
+<section id="build">
+  <h2>Building an executable</h2>
+  <p><code>--exe</code> runs the IR through <code>llc</code> and links with <code>gcc</code>, so both need to be installed:</p>
+<pre><code>python3 -m compiler.main --exe hello examples/01_hello/main.th
+./hello</code></pre>
+  <div class="out">211</div>
+</section>
+
+<p class="pagenav">
+  <a href="modules.html">&larr; Back: Imports</a>
+  <a href="debug.html">Next: Debug &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

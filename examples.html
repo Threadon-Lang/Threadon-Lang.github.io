@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examples — Threadon</title>
+<meta name="description" content="The example programs that ship with Threadon, and what each one prints.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Examples</p>
+    <h1>Examples</h1>
+    <p class="tag">the programs in the repo, explained</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html" class="here">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="intro">
+  <h2>Running them</h2>
+  <p>Each example lives in its own folder under <code>examples/</code>. Run one from the project root:</p>
+<pre><code>python3 -m compiler.main --run examples/02_structs/main.th</code></pre>
+  <p>Numbers below are the exact output of each program.</p>
+</section>
+
+<section id="list">
+  <h2>The examples</h2>
+
+  <h3>01_hello &mdash; a first program</h3>
+  <p>The minimal shape of a Threadon program: a helper function, a <code>main</code>, a call, arithmetic, <code>print</code>, and a <code>return 0</code>. Demonstrates <a href="functions.html">functions</a>.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">greet</span>(x: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> x * <span class="tok-num">10</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">21</span>
+    print(greet(x) + <span class="tok-num">1</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">211</div>
+
+  <h3>02_structs &mdash; a struct in action</h3>
+  <p>A <code>Point</code> struct, a function that takes it, and a call. Demonstrates <a href="structs.html">structs</a>.</p>
+<pre><code><span class="tok-kw">struct</span> <span class="tok-type">Point</span>:
+    x: <span class="tok-type">Int32</span>
+    y: <span class="tok-type">Int32</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">length_sq</span>(p: <span class="tok-type">Point</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> p.x * p.x + p.y * p.y
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<span class="tok-num">3</span>, y=<span class="tok-num">4</span>)
+    print(length_sq(p))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">25</div>
+
+  <h3>03_imports &mdash; a module with two import styles</h3>
+  <p>A <code>math.th</code> module with <code>abs</code>, <code>clamp</code>, and <code>mean</code>. The main file imports it both ways, then calls the same functions through both. Demonstrates <a href="modules.html">imports</a>. Note how <code>clamp</code> and <code>abs</code> use the variable-merging trick from the <a href="variables.html#scope">Variables</a> page.</p>
+<pre><code><span class="tok-kw">from</span> math <span class="tok-kw">import</span> abs, clamp
+<span class="tok-kw">import</span> math
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int32</span> = abs(-<span class="tok-num">5</span>)
+    b: <span class="tok-type">Int32</span> = math.clamp(<span class="tok-num">99</span>, <span class="tok-num">0</span>, <span class="tok-num">50</span>)
+    c: <span class="tok-type">Int32</span> = math.abs(-<span class="tok-num">9</span>)
+    print(a + b + c)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">64</div>
+
+  <h3>04_import_structs &mdash; importing structs and functions</h3>
+  <p>A <code>geom.th</code> module that exports <code>Point</code> and a few functions. The main file imports the struct directly and via the module name, then uses the functions. Demonstrates <a href="modules.html#structs">importing structs</a>.</p>
+<pre><code><span class="tok-kw">from</span> geom <span class="tok-kw">import</span> Point, dot, scale, origin
+<span class="tok-kw">import</span> geom
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    p: <span class="tok-type">Point</span> = geom.Point(x=<span class="tok-num">3</span>, y=<span class="tok-num">4</span>)
+    q: <span class="tok-type">Point</span> = scale(<span class="tok-num">2</span>, p)
+    o: <span class="tok-type">Point</span> = origin()
+    print(dot(p, q) + o.x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">50</div>
+  <p>(<code>dot(Point(3,4), Point(6,8))</code> is 3&times;6 + 4&times;8 = 18 + 32 = 50.)</p>
+
+  <h3>05_lazyimports &mdash; lazy from-import</h3>
+  <p>Imports <code>abs</code> lazily from <code>math.th</code> and uses it once. Demonstrates <a href="modules.html#lazy">lazyimport / lazyfrom</a>.</p>
+<pre><code><span class="tok-kw">lazyfrom</span> math <span class="tok-kw">import</span> abs
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(abs(-<span class="tok-num">7</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">7</div>
+
+  <h3>06_input &mdash; reading from the user</h3>
+  <p>Asks for a name and prints a greeting. Demonstrates <a href="builtins.html#input">input</a>. It waits for a line of input.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    name: <span class="tok-type">String</span> = input(<span class="tok-str">"What is your name? "</span>)
+    print(<span class="tok-str">"Hello,"</span>)
+    print(name)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">What is your name? Joep
+Hello,
+Joep</div>
+
+  <h3>07_conversion &mdash; every kind of cast</h3>
+  <p>Exercises all the <a href="casts.html">casts</a>: int to float, float to int, bool to int, string to int and float, string to bool, and number to bool.</p>
+<pre><code>print(Float32(<span class="tok-num">7</span>))       <span class="tok-cm"># 7.000000</span>
+print(Int32(<span class="tok-num">3.7</span>))      <span class="tok-cm"># 3</span>
+print(Int32(True))       <span class="tok-cm"># 1</span>
+print(Int32(<span class="tok-str">"123"</span>))   <span class="tok-cm"># 123</span>
+print(Float32(<span class="tok-str">"3.5"</span>)) <span class="tok-cm"># 3.500000</span>
+print(Bool(<span class="tok-str">"true"</span>))  <span class="tok-cm"># 1</span>
+print(Bool(<span class="tok-str">"0"</span>))     <span class="tok-cm"># 0</span>
+print(Bool(<span class="tok-num">7</span>))       <span class="tok-cm"># 1</span></code></pre>
+  <div class="out">7.000000
+3
+1
+123
+3.500000
+1
+0
+1</div>
+
+  <h3>08_pointer &mdash; references and struct fields</h3>
+  <p>A tour of the <a href="references.html"><code>^</code> operator</a> and struct field assignment. It prints what each value is before and after a change.</p>
+  <div class="out">r = 10
+r = 15
+x = 15
+origin.x = 0
+origin.y = 0
+origin.x = 3
+origin.y = 4</div>
+
+  <h3>09_zero_division &mdash; a runtime check</h3>
+  <p>Reads a number and divides by it. With <code>--debug</code>, entering <code>0</code> triggers the runtime check. Demonstrates <a href="debug.html">debug mode</a>.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int8</span> = <span class="tok-type">Int8</span>(<span class="tok-num">2</span>)/<span class="tok-type">Int8</span>(input(<span class="tok-str">"Enter a number"</span>))
+    print(x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<pre><code>python3 -m compiler.main --run --debug examples/09_zero_division/main.th
+Enter a number: 0</code></pre>
+  <div class="out">[RUNTIME ERROR]
+│ Error: Division by zero
+├─> Location: (null)
+└─> Process terminated with exit code 1</div>
+</section>
+NOT ALL EXAMPLES ARE LISTED. WORK COMING SOON
+<p class="pagenav">
+  <a href="debug.html">&larr; Back: Debug</a>
+  <a href="limits.html">Next: Limits &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

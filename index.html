@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threadon — a compiled programming language</title>
+<meta name="description" content="Documentation for Threadon, a programming language with C-like performance and Python-like syntax.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>Threadon</h1>
+    <p class="tag">a programming language with C-like performance and Python-like syntax</p>
+    <span class="ver">Threadon 3.0 &middot; release name &ldquo;Suicidal wasp&rdquo;</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html" class="here">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="intro">
+  <h2>What it is</h2>
+  <p>Threadon is a compiled programming language. It compiles down to LLVM IR, the intermediate language written by the LLVM project. That means no interpreter, no virtual machine, no garbage collector. The code you write is turned straight into native machine code.</p>
+  <p>The syntax is close to Python. The output is close to C. That's the whole idea: write code easy, run it fast.</p>
+  <p>Threadon is still young. It has functions, structs, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The last page, <a href="limits.html">Limits</a>, lists what's missing.</p>
+  <p>Here's an example:</p>
+<pre><code><span class="tok-kw">struct</span> <span class="tok-type">Point</span>:
+    x: <span class="tok-type">Int32</span>
+    y: <span class="tok-type">Int32</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">length</span>(p: <span class="tok-type">Point</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> p.x * p.x + p.y * p.y
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<span class="tok-num">3</span>, y=<span class="tok-num">4</span>)
+    print(length(p))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">25</div>
+</section>
+
+<section id="quickstart">
+  <h2>Quick start</h2>
+  <p>You need three things to run Threadon:</p>
+  <ul>
+    <li>Python 3.10 or newer. The compiler itself is written in Python.</li>
+    <li>LLVM, which gives you the <code>lli</code> program. Threadon uses it to run it's code.</li>
+    <li>Recommended <code>rustc and g++</code>To use c and rust libraries in Threadon</li>
+    <li>Optionally <code>llc</code> (also part of LLVM) and <code>gcc</code>. You only need these to build a standalone executable.</li>
+  </ul>
+  <p>Clone the repository and you're ready:</p>
+<pre><code>git clone https://github.com/Threadon-Lang/Threadon.git
+cd threadon</code></pre>
+  <p>The compiler lives in the <code>compiler/</code> folder. You call it as a Python module. All examples in this documentation assume you run them from the root of the repository.</p>
+  <p>Put this in a file called <code>hello.th</code>:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"Hello, world!"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <p>Compile and run it:</p>
+<pre><code>python3 -m compiler.main --run hello.th</code></pre>
+  <div class="out">Hello, world!</div>
+  <p>You can also turn it into a real native executable:</p>
+<pre><code>python3 -m compiler.main --exe hello hello.th
+./hello</code></pre>
+  <p>Or just look at the LLVM IR it produces:</p>
+<pre><code>python3 -m compiler.main hello.th</code></pre>
+  <p>That prints the IR to your terminal. Add <code>-o out.ll</code> to save it to a file. See <a href="cli.html">the command line reference</a> for the full list of flags.</p>
+</section>
+
+<section id="tour">
+  <h2>Take the tour</h2>
+  <p>The documentation is split over several pages. Each page covers one topic and stands on its own. Start with <a href="basics.html">Basics</a> if you're new.</p>
+  <div class="cards">
+    <div class="card">
+      <h3><a href="basics.html">Basics</a></h3>
+      <p>What a program looks like. Comments, indentation, literals, the shape of a file.</p>
+    </div>
+    <div class="card">
+      <h3><a href="types.html">Types</a></h3>
+      <p>Integers, floats, bools, strings, and how values wrap around.</p>
+    </div>
+    <div class="card">
+      <h3><a href="variables.html">Variables</a></h3>
+      <p>Declaring and changing variables, and the rules around scope.</p>
+    </div>
+    <div class="card">
+      <h3><a href="operators.html">Operators</a></h3>
+      <p>Arithmetic, comparison, and boolean operators. Precedence too.</p>
+    </div>
+    <div class="card">
+      <h3><a href="casts.html">Casts</a></h3>
+      <p>Converting between types, including strings to numbers.</p>
+    </div>
+    <div class="card">
+      <h3><a href="flow.html">Flow</a></h3>
+      <p><code>if</code>, <code>elif</code>, <code>else</code>, and how to repeat without loops.</p>
+    </div>
+    <div class="card">
+      <h3><a href="functions.html">Functions</a></h3>
+      <p>Defining functions, return rules, recursion, and the entry point.</p>
+    </div>
+    <div class="card">
+      <h3><a href="structs.html">Structs</a></h3>
+      <p>Grouping values together, nesting, and reading and writing fields.</p>
+    </div>
+    <div class="card">
+      <h3><a href="references.html">References</a></h3>
+      <p>The <code>^</code> operator and how to point at a variable.</p>
+    </div>
+    <div class="card">
+      <h3><a href="builtins.html">Builtins</a></h3>
+      <p><code>print</code> and <code>input</code>, the two functions always available.</p>
+    </div>
+    <div class="card">
+      <h3><a href="stdlib.html">Std lib</a></h3>
+      <p>The bundled standard library: <code>abs</code>, <code>max</code>, <code>min</code>, and friends.</p>
+    </div>
+    <div class="card">
+      <h3><a href="modules.html">Imports</a></h3>
+      <p>Splitting code across files, and all the ways to import.</p>
+    </div>
+    <div class="card">
+      <h3><a href="cli.html">CLI</a></h3>
+      <p>Every flag the compiler accepts, and what it does.</p>
+    </div>
+    <div class="card">
+      <h3><a href="debug.html">Debug</a></h3>
+      <p>Runtime checks that catch silent bugs while you develop.</p>
+    </div>
+    <div class="card">
+      <h3><a href="examples.html">Examples</a></h3>
+      <p>The example programs in the repo, with their output.</p>
+    </div>
+    <div class="card">
+      <h3><a href="limits.html">Limits</a></h3>
+      <p>What doesn't work yet, and gotchas that will trip you up.</p>
+    </div>
+  </div>
+</section>
+
+<section id="setup">
+  <h2>Reading this documentation</h2>
+  <p>Every code block that produces output is followed by a box showing the output. That box shows exactly what the compiler printed when the code was run.</p>
+  <p>Some things in Threadon are rough edges right now. They are documented anyway, with a clear note, so you don't waste an hour fighting them. The <a href="limits.html">Limits</a> page collects all of them in one place.</p>
+  <p>The compiler is the source of truth. If this documentation and the compiler disagree, the compiler wins. If you find something wrong here, that's a bug worth reporting.</p>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>
