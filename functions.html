@@ -28,6 +28,7 @@
     <a href="flow.html">Flow</a>
     <a href="functions.html" class="here">Functions</a>
     <a href="structs.html">Structs</a>
+    <a href="unions.html">Unions</a>
     <a href="references.html">References</a>
     <a href="builtins.html">Builtins</a>
     <a href="stdlib.html">Std lib</a>
@@ -97,26 +98,19 @@ Joep</div>
   <p>Keep recursion depth reasonable. Each call uses stack, and very deep recursion will fail at runtime.</p>
 </section>
 <section id="union">
-<h2>Using union types in functions</h2>
-<p>Threadon allows a parameter, return value or variable to accept more than one type by using a <em>union type</em>. A union is written with the vertical bar (<code>|</code>) and means “this value may be any of these types”.</p>
+<h2>Union types in functions</h2>
+<p>Functions can accept union types as parameters and return them. A union lets one function handle several concrete types without writing separate overloads.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">twice</span>(x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>) -&gt; <span class="tok-type">Int</span> | <span class="tok-type">Float</span>
+    <span class="tok-kw">return</span> x * <span class="tok-num">2</span>
 
-<p>This makes it possible to write a single function that works for multiple numeric types:</p>
-
-<pre><code><span class="tok-kw">def</span> <span class="tok-fn">add</span>(a: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>, b: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>) -&gt; <span class="tok-type">Int</span> | <span class="tok-type">Float</span>
-<span class="tok-kw">return</span> a + b
-</code></pre>
-
-<p>When a function uses a union type, the compiler guarantees that every operation inside the function is valid for <em>all</em> types in the union. In the example above, both <code>Int</code> and <code>Float</code> support addition, so the function is safe.</p>
-
-<p>At the call site, the compiler picks the correct branch of the union automatically:</p>
-
-<pre><code>print(add(<span class="tok-num">0.1</span>, <span class="tok-num">0.3</span>))   <span class="tok-cm"># Float + Float → Float</span>
-print(add(<span class="tok-num">1</span>, <span class="tok-num">2</span>))       <span class="tok-cm"># Int + Int → Int</span>
-</code></pre>
-
-<p>Union types are not overloads. Threadon does not choose between multiple function definitions. Instead, the union type describes all allowed types in one definition, and the compiler ensures the body is valid for each of them.</p>
-<p>Union types lose the fact they're an union the moment a value is assigned to them. Then will the union fall back to one type</p>
-<p>This makes union types a simple and predictable way to write functions that operate on several related types without duplication.</p>
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(twice(<span class="tok-num">3</span>))
+    print(twice(<span class="tok-num">4.5</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">6
+9.000000</div>
+<p>The compiler guarantees that every operation inside the function body is valid for all types in the union. That's the tradeoff: you get flexibility, but you can't do anything type-specific inside the function without narrowing first.</p>
+<p>For the full picture — narrowing, control flow reversion, group types, and all the gotchas — see <a href="unions.html">Unions</a>.</p>
 </section>
 <section id="main">
   <h2>The entry point</h2>

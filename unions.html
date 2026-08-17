@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unions — Threadon</title>
+<meta name="description" content="Threadon union types: letting a variable hold one of several concrete types at runtime.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Unions</p>
+    <h1>Unions</h1>
+    <p class="tag">one variable, several possible types</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="references.html">References</a>
+    <a href="unions.html" class="here">Unions</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What is a union type</h2>
+  <p>Sometimes you want a variable that can hold an integer on Monday and a float on Tuesday. That's what union types are for. A union says "this value is one of these concrete types at any given moment, but which one depends on what you last stuck in it."</p>
+  <p>Write a union with the pipe character (<code>|</code>) between types:</p>
+<pre><code>x: <span class="tok-type">Int32</span> | <span class="tok-type">Float32</span> = <span class="tok-num">5</span></code></pre>
+  <p>Right now <code>x</code> holds an <code>Int32</code>. That's not a guess, it's a fact: the compiler knows because you assigned an integer literal to it. This matters later.</p>
+</section>
+
+<section id="groups">
+  <h2>Group types: Int, Float, Number</h2>
+  <p>Writing <code>Int32 | Int64 | Float32 | Float64 | ...</code> would be tedious and honestly kind of dumb. Threadon provides shorthand group names that expand automatically:</p>
+  <table>
+    <tr><th>Group</th><th>Expands to</th></tr>
+    <tr><td><code>Int</code></td><td>Int8, Int16, Int32, Int64, Int256, UInt8, UInt16, UInt32, UInt64, UInt256</td></tr>
+    <tr><td><code>Float</code></td><td>Float16, Float32, Float64</td></tr>
+    <tr><td><code>Number</code></td><td>All integer and float types</td></tr>
+  </table>
+  <p>So when you write:</p>
+<pre><code>x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">42</span></code></pre>
+  <p>the compiler sees <code>Union[Int8|Int16|Int32|Int64|Int256|UInt8|UInt16|UInt32|UInt64|UInt256|Float16|Float32|Float64]</code>. That's a mouthful, but nobody has to type it. The group just blows up into every concrete type it contains, and the union holds all of them.</p>
+  <p>Groups work in function signatures too:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">double_it</span>(n: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>) -&gt; <span class="tok-type">Int</span> | <span class="tok-type">Float</span>
+    <span class="tok-kw">return</span> n * <span class="tok-num">2</span></code></pre>
+  <p>That function accepts any integer or any float. More on functions with unions in a bit.</p>
+</section>
+
+<section id="narrowing">
+  <h2>Narrowing: the compiler keeps track</h2>
+  <p>Here's the part that might surprise you. When you assign a concrete value to a union variable, the compiler narrows its type to that concrete type in the current scope. It remembers what you just did.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    <span class="tok-cm"># here a is narrowed to Int32</span>
+    b: <span class="tok-type">Int32</span> = a   <span class="tok-cm"># this compiles fine</span>
+    print(a)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5</div>
+  <p>After <code>a: Int | Float = 5</code>, the compiler knows <code>a</code> is an <code>Int32</code> right now. You can assign it to a concrete <code>Int32</code> variable without complaint. This is narrowing — the union collapses to a single type based on the last assignment.</p>
+  <p>You can reassign to a different member type:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    a = <span class="tok-num">3.5</span>       <span class="tok-cm"># now a is Float32</span>
+    b: <span class="tok-type">Float32</span> = a
+    print(b)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">3.500000</div>
+  <p>Each assignment reshapes what the compiler believes about the variable. It's not some runtime thing where it checks a tag — the narrowing happens entirely at compile time.</p>
+</section>
+
+<section id="arithmetic">
+  <h2>Arithmetic on union values</h2>
+  <p>You can do math on a narrowed union variable. The compiler checks whether the operation makes sense for whatever type the variable currently holds.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    print(a)
+    a = a * <span class="tok-num">2</span>
+    print(a)
+    a = <span class="tok-num">9.5</span>
+    print(a)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5
+10
+9.500000</div>
+  <p>After <code>a = 5</code>, the variable is narrowed to <code>Int32</code>. So <code>a * 2</code> is <code>Int32 * Int32</code>, which produces an <code>Int32</code>. Fine. Then you reassign <code>a = 9.5</code>, and it becomes a <code>Float32</code>. The print knows to format it as a float.</p>
+  <p>But here's the gotcha. If you narrow to a float and then try to add an integer literal, the compiler will yell at you:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    a = <span class="tok-num">3.5</span>
+    c: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = a + <span class="tok-num">2</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Error: Type mismatch in arithmetic: Float32 vs Int32</div>
+  <p>Why? Because after <code>a = 3.5</code>, the compiler sees <code>a</code> as <code>Float32</code>. And <code>Float32 + Int32</code> is not allowed — Threadon doesn't auto-promote. You'd need to write <code>a + 2.0</code> instead. The strict type checking applies everywhere, even inside arithmetic on union variables.</p>
+</section>
+
+<section id="controlflow">
+  <h2>Control flow: types revert</h2>
+  <p>Something important happens when control flow branches merge back together. Any narrowing that happened inside a branch gets thrown away. The variable reverts to its declared type.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    <span class="tok-kw">if</span> x &gt; <span class="tok-num">3</span>:
+        x = <span class="tok-num">2.5</span>     <span class="tok-cm"># x narrowed to Float32 here</span>
+    <span class="tok-kw">else</span>:
+        x = <span class="tok-num">7</span>       <span class="tok-cm"># x narrowed to Int32 here</span>
+    <span class="tok-cm"># x is back to Int | Float here</span>
+    print(x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">2.500000</div>
+  <p>After the if/else, <code>x</code> is <code>Int | Float</code> again. The compiler doesn't know which branch ran at compile time, so it can't assume a specific type. This means:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    <span class="tok-kw">if</span> x &gt; <span class="tok-num">3</span>:
+        x = <span class="tok-num">2.5</span>
+    <span class="tok-kw">else</span>:
+        x = <span class="tok-num">7</span>
+    b: <span class="tok-type">Int32</span> = x    <span class="tok-cm"># compile error: x might be a float</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Error: Variable 'b' expects type Int32, got Union[Float32|Int32]</div>
+  <p>Assigning back to the union type works, though:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    <span class="tok-kw">if</span> x &gt; <span class="tok-num">3</span>:
+        x = <span class="tok-num">2.5</span>
+    <span class="tok-kw">else</span>:
+        x = <span class="tok-num">7</span>
+    b: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = x   <span class="tok-cm"># fine</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <p>The same reversion happens after <code>while</code> loops. Any narrowing inside the loop body doesn't leak out.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">5</span>
+    <span class="tok-kw">while</span> x &gt; <span class="tok-num">3</span>:
+        x = <span class="tok-num">2.5</span>     <span class="tok-cm"># Float32 inside the loop</span>
+    <span class="tok-cm"># back to Int | Float here</span>
+    b: <span class="tok-type">Int32</span> = x    <span class="tok-cm"># compile error again</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Error: Variable 'b' expects type Int32, got Union[Float32|Int32]</div>
+  <p>It's a bit annoying if you're coming from languages where narrowing "sticks", but it keeps things safe. The compiler won't guess what happened at runtime.</p>
+  <p>A <code>while</code> loop that stays within the same type family works perfectly well though:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    y: <span class="tok-type">Int</span> | <span class="tok-type">Float</span> = <span class="tok-num">1</span>
+    <span class="tok-kw">while</span> y &lt; <span class="tok-num">3</span>:
+        y = y + <span class="tok-num">1</span>
+    print(y)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">3</div>
+  <p>Here <code>y</code> starts as <code>Int32</code> (narrowed from the literal <code>1</code>). Each iteration does <code>Int32 + Int32</code>, keeps it as <code>Int32</code>, reassigns it — narrowing stays consistent. No type mix-up, no errors.</p>
+</section>
+
+<section id="functions">
+  <h2>Functions with union parameters</h2>
+  <p>A function can accept a union type as a parameter. The guarantee: every operation inside the function must be valid for every type in the union.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">twice</span>(x: <span class="tok-type">Int</span> | <span class="tok-type">Float</span>) -&gt; <span class="tok-type">Int</span> | <span class="tok-type">Float</span>
+    <span class="tok-kw">return</span> x * <span class="tok-num">2</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(twice(<span class="tok-num">4.07</span>))
+    print(twice(<span class="tok-num">3</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">8.140000
+6</div>
+  <p>Both <code>Int</code> and <code>Float</code> types support multiplication, so the compiler lets it slide. The function doesn't care what specific type it receives — as long as the operation exists for all possibilities, it's good.</p>
+  <p>Inside the function, the parameter starts as the full union type. Narrowing still applies: if you assign it to a concrete variable, you've narrowed it.</p>
+  <p>Returning from a union function also follows strict rules. You can return any member type or a compatible subset union. The compiler wraps the return value automatically to match the declared return type.</p>
+  <div class="note"><strong>Note:</strong> Union types are not overloads. There's no <code>twice(Int32)</code> and <code>twice(Float32)</code> pair hidden somewhere. There's one function body, and it has to work for all the types listed in the union.</div>
+</section>
+
+<section id="limits">
+  <h2>What you can't do</h2>
+  <p>Unions are useful but they come with friction. Here's what's off-limits:</p>
+  <ul>
+    <li><strong>You can't assign a union to a concrete variable.</strong> If <code>a</code> is <code>Int | Float</code> and you haven't narrowed it (or you're past a branch merge), writing <code>b: Int32 = a</code> is a compile error. The compiler doesn't know which type <code>a</code> actually holds.</li>
+    <li><strong>You can't cast a union.</strong> Writing <code>Int64(a)</code> when <code>a</code> is <code>Int | Float</code> won't work. Narrow it to a specific type first.</li>
+    <li><strong>Mixed arithmetic after narrowing is rejected.</strong> If you narrow to <code>Float32</code> and then add an integer literal, the compiler treats it as <code>Float32 + Int32</code> and refuses. Use a matching literal (<code>2.0</code> instead of <code>2</code>).</li>
+    <li><strong>Control flow resets narrowing.</strong> After if/else blocks and while loops, a union variable always reverts to its full declared type. There's no way to "remember" a narrowing across a branch boundary.</li>
+  </ul>
+  <p>These restrictions feel aggressive coming from dynamically typed languages, but they exist because Threadon checks everything at compile time. No runtime surprises.</p>
+</section>
+
+<section id="under">
+  <h2>Under the hood (if you're curious)</h2>
+  <p>You don't need to know this to use unions, but it's interesting. Under the surface, a union value is a small struct: an <code>i8</code> tag (which records which type is active) followed by storage for the actual value. When you do arithmetic on a union, the compiler generates a runtime switch on the tag, performs the operation for every possible type combination, and merges the results back together.</p>
+  <p>That means union operations are slightly more expensive than concrete operations — there's a branch at runtime. For most programs this doesn't matter at all. But if you're writing something where every cycle counts, concrete types are faster.</p>
+</section>
+
+<p class="pagenav">
+  <a href="structs.html">&larr; Back: Structs</a>
+  <a href="builtins.html">Next: Builtins &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>
