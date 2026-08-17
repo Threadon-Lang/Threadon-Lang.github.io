@@ -45,7 +45,6 @@
 <section id="intro">
   <h2>What it is</h2>
   <p>Threadon is a compiled programming language. It compiles down to LLVM IR, the intermediate language written by the LLVM project. That means no interpreter, no virtual machine, no garbage collector. The code you write is turned straight into native machine code.</p>
-  <p>The syntax is close to Python. The output is close to C. That's the whole idea: write code easy, run it fast.</p>
   <p>Threadon is still young. It has functions, structs, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The last page, <a href="limits.html">Limits</a>, lists what's missing.</p>
   <p>Here's an example:</p>
 <pre><code><span class="tok-kw">struct</span> <span class="tok-type">Point</span>:
@@ -80,13 +79,13 @@ cd threadon</code></pre>
     <span class="tok-fn">print</span>(<span class="tok-str">"Hello, world!"</span>)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <p>Compile and run it:</p>
-<pre><code>python3 -m compiler.main --run hello.th</code></pre>
+<pre><code>python3 -m threadon --run hello.th</code></pre>
   <div class="out">Hello, world!</div>
   <p>You can also turn it into a real native executable:</p>
-<pre><code>python3 -m compiler.main --exe hello hello.th
+<pre><code>python3 -m threadon --exe hello hello.th
 ./hello</code></pre>
   <p>Or just look at the LLVM IR it produces:</p>
-<pre><code>python3 -m compiler.main hello.th</code></pre>
+<pre><code>python3 -m threadon hello.th</code></pre>
   <p>That prints the IR to your terminal. Add <code>-o out.ll</code> to save it to a file. See <a href="cli.html">the command line reference</a> for the full list of flags.</p>
 </section>
 

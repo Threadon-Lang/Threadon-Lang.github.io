@@ -45,7 +45,7 @@
 <section id="usage">
   <h2>Usage</h2>
   <p>Threadon is a Python module that drives LLVM. From the project root:</p>
-<pre><code>python3 -m compiler.main FILE.th [options]</code></pre>
+<pre><code>python3 -m threadon FILE.th [options]</code></pre>
   <p>With no options, the compiler prints LLVM IR to standard output.</p>
 </section>
 
@@ -67,7 +67,7 @@
 <section id="entry">
   <h2>Choosing the entry point</h2>
   <p>By default the program starts at <code>main</code>, and its return value becomes the exit code. Use <code>-e</code> to start somewhere else:</p>
-<pre><code>python3 -m compiler.main --run -e greet file.th</code></pre>
+<pre><code>python3 -m threadon --run -e greet file.th</code></pre>
   <p>Two conditions hold:</p>
   <ul>
     <li>The named function must exist. Otherwise: <em>"no function 'greet' found in the compiled module"</em>.</li>
@@ -79,7 +79,7 @@
 <section id="build">
   <h2>Building an executable</h2>
   <p><code>--exe</code> runs the IR through <code>llc</code> and links with <code>gcc</code>, so both need to be installed:</p>
-<pre><code>python3 -m compiler.main --exe hello examples/01_hello/main.th
+<pre><code>python3 -m threadon --exe hello examples/01_hello/main.th
 ./hello</code></pre>
   <div class="out">211</div>
 </section>
