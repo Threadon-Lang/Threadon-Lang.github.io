@@ -63,16 +63,17 @@
 
 <section id="quickstart">
   <h2>Quick start</h2>
-  <p>You need three things to run Threadon:</p>
+  <p>You need four things to run Threadon:</p>
   <ul>
     <li>Python 3.10 or newer. The compiler itself is written in Python.</li>
     <li>LLVM, which gives you the <code>lli</code> program. Threadon uses it to run it's code.</li>
     <li>Recommended <code>rustc and g++</code>To use c and rust libraries in Threadon</li>
     <li>Optionally <code>llc</code> (also part of LLVM) and <code>gcc</code>. You only need these to build a standalone executable.</li>
   </ul>
-  <p>Clone the repository and you're ready:</p>
-<pre><code>git clone https://github.com/Threadon-Lang/Threadon.git
-cd threadon</code></pre>
+  <p>Install with pip and you're ready</p>
+<pre><code>sudo apt install llvm
+pip3 install threadon
+</code></pre>
   <p>The compiler lives in the <code>compiler/</code> folder. You call it as a Python module. All examples in this documentation assume you run them from the root of the repository.</p>
   <p>Put this in a file called <code>hello.th</code>:</p>
 <pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
