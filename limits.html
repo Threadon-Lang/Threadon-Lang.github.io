@@ -43,14 +43,20 @@
 <main class="wrap">
 
 <section id="loops">
-  <h2>No loops</h2>
-  <p>There is no <code>for</code>. The keywords is reserved, but writing it fails to compile. Repetition is done by <a href="flow.html#noloops">recursion</a>. Loops are the most requested missing feature.</p>
+  <h2>Loops</h2>
+  <p>There are <code>while</code> and <code>for</code> loops now &mdash; see <a href="flow.html#while">Flow</a> &mdash; but they're missing a few conveniences other languages have:</p>
+  <ul>
+    <li><strong>No <code>break</code> or <code>continue</code>.</strong> Writing them fails to compile (the compiler answers with <code>What for random things where you doing there</code>). To leave a loop early, you have to make its condition false.</li>
+    <li><strong>No <code>for</code>&hellip;<code>else</code>, no <code>enumerate</code>.</strong> If you want an index along with the element, loop over <code>range(len(xs))</code> and index with that.</li>
+  </ul>
 </section>
 
 <section id="data">
   <h2>Data structures</h2>
   <ul>
-    <li><strong>No strings beyond the basics.</strong> You can store them, print them, read them with <code>input</code>, and convert them to numbers, but there's no slicing, indexing, joining, or length.</li>
+    <li><strong>Strings are a small feature set.</strong> You can join them with <code>+</code>, turn numbers and bools into text with <code>String(...)</code>, and convert them back with <a href="casts.html">casts</a>. What's missing: slicing, indexing (<code>"hi"[0]</code> fails with <code>'String' is not indexable</code>), searching, replacing, and <code>len</code> for strings (<code>len</code> only accepts <code>List</code> and <code>Dict</code>).</li>
+    <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, and a list or dict holds exactly one row of types. There are no sets and no tuples.</li>
+    <li><strong>Dict lookups don't fail.</strong> Reading a key that isn't in a dict gives you the <em>zero value</em> of the value type (so <code>0</code> for numbers, <code>false</code> for bools), silently. There is no error and no way to tell the key was missing.</li>
   </ul>
 </section>
 
@@ -68,7 +74,6 @@
   <ul>
     <li><strong>Runtime errors need debug mode.</strong> Division by zero and bad string-to-number casts only error when you pass <code>--debug</code>; otherwise the behavior is undefined. See <a href="debug.html">Debug</a>.</li>
     <li><strong>Missing struct fields are garbage.</strong> <code>Point(x=3)</code> compiles and <code>p.y</code> is whatever memory happens to hold. See <a href="structs.html#init">Structs</a>.</li>
-    <li><strong>Unary plus doesn't work</strong></li>
   </ul>
 </section>
 

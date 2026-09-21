@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Std lib — Threadon</title>
-<meta name="description" content="The Threadon standard library: abs, max, min, clamp, is_even, is_odd.">
+<meta name="description" content="The Threadon standard library: abs, max, min, clamp, is_even, is_odd, range, and Iterable.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -44,16 +44,36 @@
 
 <section id="what">
   <h2>What's in it</h2>
-  <p>The standard library is a single Threadon file, <code>stdlib/std.th</code>, written in the language itself. It has six functions, all taking <code>Int32</code>:</p>
+  <p>The standard library is a single Threadon file, <code>stdlib/std.th</code>, written in the language itself. It has six helper functions and one class used for looping:</p>
+  <p>Six <code>Int32</code> helpers:</p>
   <table>
     <tr><th>Function</th><th>Returns</th><th>Example</th></tr>
     <tr><td><code>abs(x)</code></td><td><code>Int32</code>, the absolute value of <code>x</code></td><td><code>abs(-5)</code> &rarr; <code>5</code></td></tr>
     <tr><td><code>max(a, b)</code></td><td><code>Int32</code>, the larger of the two</td><td><code>max(3, 7)</code> &rarr; <code>7</code></td></tr>
     <tr><td><code>min(a, b)</code></td><td><code>Int32</code>, the smaller of the two</td><td><code>min(3, 7)</code> &rarr; <code>3</code></td></tr>
     <tr><td><code>clamp(x, lo, hi)</code></td><td><code>Int32</code>, <code>x</code> forced between <code>lo</code> and <code>hi</code></td><td><code>clamp(10, 0, 5)</code> &rarr; <code>5</code></td></tr>
-    <tr><td><code>is_even(n)</code></td><td><code>Bool</code></td><td><code>is_even(4)</code> &rarr; <code>1</code></td></tr>
-    <tr><td><code>is_odd(n)</code></td><td><code>Bool</code></td><td><code>is_odd(4)</code> &rarr; <code>0</code></td></tr>
+    <tr><td><code>is_even(n)</code></td><td><code>Bool</code></td><td><code>is_even(4)</code> &rarr; <code>True</code></td></tr>
+    <tr><td><code>is_odd(n)</code></td><td><code>Bool</code></td><td><code>is_odd(4)</code> &rarr; <code>False</code></td></tr>
   </table>
+</section>
+
+<section id="iterables">
+  <h2>range and Iterable</h2>
+  <p>The one <code>Int64</code> iterable maker, <code>range</code>, powers <a href="flow.html#for"><code>for</code></a> loops:</p>
+  <table>
+    <tr><th>Call</th><th>Yields</th></tr>
+    <tr><td><code>range(n)</code></td><td>0, 1, 2, &hellip;, n-1</td></tr>
+    <tr><td><code>range(a, b)</code></td><td>a, a+1, a+2, &hellip;, b-1</td></tr>
+    <tr><td><code>range(a, b, step)</code></td><td>a, then plus <code>step</code> each time, stopping before b; a negative <code>step</code> counts down</td></tr>
+  </table>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">3</span>):
+        print(i)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">0
+1
+2</div>
+  <p>All three forms return an <code>Iterable</code>, a class with three methods &mdash; <code>done()</code>, <code>value()</code>, and <code>advance()</code> &mdash; that a <code>for</code> loop calls to walk through the sequence. Because iteration lives in an ordinary class, you can loop over your own classes too if you give them those methods. See <a href="flow.html#for">Flow</a>.</p>
 </section>
 
 <section id="autoload">

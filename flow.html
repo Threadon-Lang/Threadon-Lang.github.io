@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flow — Threadon</title>
-<meta name="description" content="Threadon control flow: if, elif, else, and repeating without loops.">
+<meta name="description" content="Threadon control flow: if, elif, else, while, and for loops.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -89,6 +89,92 @@ try again</div>
   <p>This applies to <code>/</code>, <code>//</code>, and <code>%</code>. If the divisor comes from somewhere the compiler can't check, like user input, the check happens at runtime instead, and only in <a href="debug.html">debug mode</a>. Without debug mode it's undefined behavior.</p>
 </section>
 
+<section id="while">
+  <h2>while</h2>
+  <p><code>while</code> repeats a block as long as its condition stays true. The condition must be a <code>Bool</code>, same as an <code>if</code>. There is no <code>break</code> or <code>continue</code>: the only way out is for the condition to become false.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    n: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
+    <span class="tok-kw">while</span> n &lt; <span class="tok-num">3</span>:
+        print(n)
+        n += <span class="tok-num">1</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">0
+1
+2</div>
+  <p>A <code>while</code> whose condition is already false never runs its body. One whose condition can't become false runs forever.</p>
+  <p>Union narrowing is reset by a loop. Any type a union variable was narrowed to inside the body is thrown away afterwards; it reverts to its declared type. This is covered on the <a href="unions.html#controlflow">Unions</a> page.</p>
+</section>
+
+<section id="for">
+  <h2>for</h2>
+  <p><code>for</code> runs a block once per item, with the loop variable holding each item in turn. Three things are iterable: the <code>range</code> helper from the <a href="stdlib.html">standard library</a>, <code>List</code>s, and <code>Dict</code>s. (Any type with the right three methods is iterable too &mdash; see below.)</p>
+
+  <h3>for ... in range(...)</h3>
+  <p><code>range</code> counts whole numbers. It takes one, two, or three arguments:</p>
+  <table>
+    <tr><th>Call</th><th>Yields</th></tr>
+    <tr><td><code>range(n)</code></td><td>0, 1, 2, &hellip;, n-1</td></tr>
+    <tr><td><code>range(a, b)</code></td><td>a, a+1, a+2, &hellip;, b-1</td></tr>
+    <tr><td><code>range(a, b, step)</code></td><td>a, then plus <code>step</code> each time, stopping before b. A negative <code>step</code> counts down.</td></tr>
+    <tr><td><code>range(0)</code> or <code>range(a, a)</code></td><td>nothing: an empty run</td></tr>
+  </table>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">5</span>):
+        print(i)
+    <span class="tok-kw">for</span> j <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">2</span>, <span class="tok-num">5</span>):
+        print(j)
+    <span class="tok-kw">for</span> k <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">10</span>, <span class="tok-num">0</span>, -<span class="tok-num">3</span>):
+        print(k)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">0
+1
+2
+3
+4
+2
+3
+4
+10
+7
+4
+1</div>
+  <p><code>range</code> works with <code>Int64</code>, and the loop variable is an <code>Int64</code> too. Count sums and accumulating loops, and you'll need an <code>Int64</code> accumulator to add into:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    total: <span class="tok-type">Int64</span> = <span class="tok-num">0</span>
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">5</span>):
+        total += i
+    print(total)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">10</div>
+
+  <h3>for ... in List</h3>
+  <p>Looping over a list yields each element in order. The loop variable has the list's element type. Working with a list of strings:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    names: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = [<span class="tok-str">"ann"</span>, <span class="tok-str">"bob"</span>, <span class="tok-str">"clyde"</span>]
+    <span class="tok-kw">for</span> name <span class="tok-kw">in</span> names:
+        print(name)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">ann
+bob
+clyde</div>
+  <p>A list literal works too, so <code>for n in [1, 2, 3]:</code> loops over the numbers 1, 2, and 3.</p>
+
+  <h3>for ... in Dict</h3>
+  <p>Looping over a dictionary yields its <em>keys</em>, one at a time &mdash; not the values. Look the value up with the key inside the body:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    ages: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>] = {<span class="tok-str">"ann"</span>: <span class="tok-num">30</span>, <span class="tok-str">"bob"</span>: <span class="tok-num">40</span>}
+    <span class="tok-kw">for</span> key <span class="tok-kw">in</span> ages:
+        print(key, ages[key])
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">ann 30
+bob 40</div>
+  <p>The loop variable carries the dictionary's key type, <code>String</code> here.</p>
+
+  <h3>Your own iterables</h3>
+  <p>Any type that provides three methods can be looped over: <code>done()</code> returning a <code>Bool</code> that says whether iteration is finished, <code>value()</code> returning the current item, and <code>advance()</code> returning a fresh value of the same type that moves to the next item. The standard library's <code>range</code> is built on exactly this &mdash; see <a href="stdlib.html#iterables">Std lib</a>.</p>
+  <p>The loop variable of a <code>for</code> behaves like a normal variable: it keeps its last value after the loop ends, and if you use the same name in a later loop the element type has to match. A <code>for</code> loop is a <code>while</code> loop in disguise, so &mdash; as with <code>while</code> &mdash; there is no <code>break</code> or <code>continue</code>.</p>
+</section>
+
 <section id="recursion">
   <h2>Recursion</h2>
   <p>A recursion example:</p>
@@ -101,7 +187,7 @@ try again</div>
     print(fact(<span class="tok-num">5</span>))
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">120</div>
-  <p>Deep recursion can hit stack limits, so keep the depth sane. Loops are a planned feature, listed in the <a href="limits.html">Limits</a> page.</p>
+  <p>Deep recursion can hit stack limits, so keep the depth sane. If you want repetition without eating stack, use <a href="#while"><code>while</code></a> or <a href="#for"><code>for</code></a> instead.</p>
 </section>
 
 <p class="pagenav">

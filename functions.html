@@ -116,7 +116,7 @@ Joep</div>
   <h2>The entry point</h2>
   <p>A program starts at a function named <code>main</code>. Its return value becomes the process exit code. Return <code>0</code> for success, anything else for failure. That's why every <code>main</code> in these docs ends with <code>return 0</code>.</p>
   <p>You don't have to use <code>main</code>. The <code>-e</code> flag picks a different function as the entry point:</p>
-<pre><code>python3 -m compiler.main --run -e go file.th</code></pre>
+<pre><code>python3 -m threadon --run -e go file.th</code></pre>
   <p>The chosen function's return value becomes the exit code. If it returns <code>NoneType</code>, the exit code is 0. There are two conditions: the function must exist, and the file must not also define <code>main</code>.</p>
   <p>See <a href="cli.html">Command line</a> for the details.</p>
 </section>

@@ -45,7 +45,7 @@
 <section id="intro">
   <h2>Running them</h2>
   <p>Each example lives in its own folder under <code>examples/</code>. Run one from the project root:</p>
-<pre><code>python3 -m compiler.main --run examples/02_structs/main.th</code></pre>
+<pre><code>python3 -m threadon --run examples/02_structs/main.th</code></pre>
   <p>Numbers below are the exact output of each program.</p>
 </section>
 
@@ -160,14 +160,125 @@ origin.y = 4</div>
     x: <span class="tok-type">Int8</span> = <span class="tok-type">Int8</span>(<span class="tok-num">2</span>)/<span class="tok-type">Int8</span>(input(<span class="tok-str">"Enter a number"</span>))
     print(x)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
-<pre><code>python3 -m compiler.main --run --debug examples/09_zero_division/main.th
+<pre><code>python3 -m threadon --run --debug examples/09_zero_division/main.th
 Enter a number: 0</code></pre>
   <div class="out">[RUNTIME ERROR]
 │ Error: Division by zero
 ├─> Location: (null)
 └─> Process terminated with exit code 1</div>
+<h3>10_stack_overflow &mdash; how the runtime handles deep recursion</h3>
+  <p>Recurses without a base case. The runtime stops it with a stack-depth check. Demonstrates why <a href="flow.html#while"><code>while</code></a> and <a href="flow.html#for"><code>for</code></a> loops exist.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">stack_overflow</span>(x: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">NoneType</span>
+    stack_overflow(<span class="tok-num">68</span>)
+    <span class="tok-kw">return</span></code></pre>
+  <div class="out">[RUNTIME ERROR]
+│ Error: stack overflow detected
+├─> Location: Runtime stack depth exceeded (max 10000)
+└─> Process terminated with exit code 1</div>
+
+  <h3>11_native_c &mdash; calling a C function</h3>
+  <p>A C module described by a manifest, imported and called from Threadon. Demonstrates the <a href="modules.html#foreign">foreign backends</a>. Needs a C compiler and the module's shared library built.</p>
+<pre><code><span class="tok-kw">import</span> cadd
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(cadd.add(<span class="tok-num">20</span>, <span class="tok-num">22</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">42</div>
+
+  <h3>12_native_cpp &mdash; calling a C++ function</h3>
+  <p>Like the C example, but through the C++ backend, which can map C++ classes onto Threadon structs.</p>
+<pre><code><span class="tok-kw">import</span> cpppow
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(cpppow.square(<span class="tok-num">6</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">36</div>
+
+  <h3>13_native_rust &mdash; calling a Rust function</h3>
+  <p>Rust modules are built with <code>cargo</code> and expose <code>extern "C"</code> functions.</p>
+<pre><code><span class="tok-kw">import</span> rsum
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(rsum.sum(<span class="tok-num">2</span>, <span class="tok-num">40</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">42</div>
+
+  <h3>14_python_example &mdash; calling Python</h3>
+  <p>Python functions wrapped into Threadon via the <code>python</code> backend. Passes a list (for <code>mean</code>) and a dict (for <code>describe</code>) to a Python module and prints the results, which come back as Threadon values.</p>
+<pre><code><span class="tok-kw">import</span> PyAdd
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(PyAdd.add(<span class="tok-num">2.0</span>, <span class="tok-num">23.0</span>))
+    print(PyAdd.mean([<span class="tok-num">1.0</span>, <span class="tok-num">2.0</span>, <span class="tok-num">3.0</span>]))
+    print(PyAdd.describe({<span class="tok-str">"1"</span>: <span class="tok-num">1.0</span>, <span class="tok-str">"2"</span>: <span class="tok-num">2.0</span>, <span class="tok-str">"3"</span>: <span class="tok-num">3.0</span>}))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">25.000000
+2.000000
+{1: 2.000000, 2: 4.000000, 3: 6.000000}</div>
+
+  <h3>15_string_ops &mdash; the string features</h3>
+  <p>Joining strings with <code>+</code>, converting numbers and bools to text with <code>String(...)</code>, and converting text back with casts. Demonstrates the <a href="types.html#strings">string</a> and <a href="casts.html">cast</a> pages.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">String</span> = <span class="tok-str">"Hello"</span>
+    b: <span class="tok-type">String</span> = <span class="tok-str">" World"</span>
+    c: <span class="tok-type">String</span> = a + b
+    print(c)
+    print(<span class="tok-type">String</span>(<span class="tok-num">42</span>))
+    print(<span class="tok-type">String</span>(<span class="tok-num">3.14</span>))
+    print(<span class="tok-type">String</span>(<span class="tok-type">True</span>))
+    print(<span class="tok-type">Int32</span>(<span class="tok-str">"123"</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Hello World
+42
+3.140000
+true
+123</div>
+
+  <h3>16_python_classes &mdash; Python classes as Threadon classes</h3>
+  <p>A Python class wrapped by the <code>python</code> backend and used like a Threadon value, methods included. Needs Python and the bridge installed.</p>
+<pre><code><span class="tok-kw">import</span> PyVec3
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    v: <span class="tok-type">PyVec3</span>.<span class="tok-type">Vec3</span> = <span class="tok-type">PyVec3</span>.<span class="tok-type">Vec3</span>(<span class="tok-num">3.0</span>, <span class="tok-num">4.0</span>, <span class="tok-num">0.0</span>)
+    print(v.length())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5.000000</div>
+
+  <h3>17_for_range &mdash; loops, from range to dicts</h3>
+  <p>A tour of the <a href="flow.html#for"><code>for</code></a> loop: counting with <code>range</code> in three forms (including a negative step and an empty run), then iterating a <code>List</code> and the keys of a <code>Dict</code>.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    total: <span class="tok-type">Int64</span> = <span class="tok-num">0</span>
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">5</span>):
+        print(<span class="tok-str">"i ="</span>, i)
+        total = total + i
+    print(<span class="tok-str">"sum ="</span>, total)
+    <span class="tok-kw">for</span> j <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">10</span>, <span class="tok-num">0</span>, -<span class="tok-num">3</span>):
+        print(<span class="tok-str">"j ="</span>, j)
+    <span class="tok-kw">for</span> k <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">15</span>, <span class="tok-num">10</span>):
+        print(<span class="tok-str">"k ="</span>, k)  <span class="tok-cm"># empty: a step of +1 never reaches 15 from 10</span>
+    names: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = [<span class="tok-str">"ann"</span>, <span class="tok-str">"bob"</span>, <span class="tok-str">"clyde"</span>]
+    <span class="tok-kw">for</span> name <span class="tok-kw">in</span> names:
+        print(<span class="tok-str">"name ="</span>, name)
+    ages: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>] = {<span class="tok-str">"ann"</span>: <span class="tok-num">30</span>, <span class="tok-str">"bob"</span>: <span class="tok-num">40</span>}
+    <span class="tok-kw">for</span> key <span class="tok-kw">in</span> ages:
+        print(<span class="tok-str">"key ="</span>, key, <span class="tok-str">"value ="</span>, ages[key])
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">i = 0
+i = 1
+i = 2
+i = 3
+i = 4
+sum = 10
+j = 10
+j = 7
+j = 4
+j = 1
+name = ann
+name = bob
+name = clyde
+key = ann value = 30
+key = bob value = 40</div>
 </section>
-NOT ALL EXAMPLES ARE LISTED. WORK COMING SOON
 <p class="pagenav">
   <a href="debug.html">&larr; Back: Debug</a>
   <a href="limits.html">Next: Limits &rarr;</a>

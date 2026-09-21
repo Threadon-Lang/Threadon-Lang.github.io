@@ -49,7 +49,7 @@
     <span class="tok-fn">print</span>(<span class="tok-str">"Hello, world!"</span>)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <p>Run it:</p>
-<pre><code>python3 -m compiler.main --run hello.th</code></pre>
+<pre><code>python3 -m threadon --run hello.th</code></pre>
   <div class="out">Hello, world!</div>
   <p>Here's what's going on:</p>
   <ul>
@@ -161,8 +161,8 @@ done: <span class="tok-type">Bool</span> = <span class="tok-type">False</span></
   <h2>Names</h2>
   <p>Names of variables, functions, and structs can contain letters, digits, and underscores. They can't start with a digit.</p>
   <p>These are reserved words. You can't use them as names:</p>
-<pre><code>def if elif else while for return and or not None class struct True False import from lazyimport lazyfrom as</code></pre>
-  <p><code>for</code> is reserved but not implemented yet. See <a href="limits.html">Limits</a>.</p>
+<pre><code>def if elif else while for in return and or not None class struct True False import from lazyimport lazyfrom as</code></pre>
+  <p><code>for</code> and <code>while</code> are the <a href="flow.html#for">loops</a>, <code>class</code> is another way to group data (see <a href="stdlib.html#iterables">Std lib</a> for one in action), and the <code>lazy</code> forms are explained on the <a href="modules.html">Imports</a> page.</p>
 </section>
 
 <section id="errors">

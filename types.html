@@ -44,7 +44,7 @@
 
 <section id="list">
   <h2>The type list</h2>
-  <p>Threadon has eight built-in types.</p>
+  <p>Threadon has sixteen built-in types.</p>
   <table>
     <tr><th>Type</th><th>What it holds</th><th>Notes</th></tr>
     <tr><td><code>Int8</code></td><td>8-bit signed integer</td><td>wraps, range -128 to 127</td></tr>
@@ -59,10 +59,13 @@
     <tr><td><code>Float32</code></td><td>32-bit float</td><td>the default float, single precision</td></tr>
     <tr><td><code>Float64</code></td><td>64-bit float</td><td>If you want more precision and a bigger range, double precision</td></tr>
     <tr><td><code>Bool</code></td><td>boolean value</td><td>true or false (prints contextually based on language)</td></tr>
-    <tr><td><code>String</code></td><td>text</td><td>sequence of characters, no concatenation yet</td></tr>
+    <tr><td><code>String</code></td><td>text</td><td>sequence of characters, join with <code>+</code></td></tr>
     <tr><td><code>NoneType</code></td><td>no value</td><td>only used for return types or representing absence of value</td></tr>
+    <tr><td><code>List[T]</code></td><td>an ordered collection of items all of one type</td><td>e.g. <code>[1, 2, 3]</code>; index with <code>xs[0]</code>; loop over it</td></tr>
+    <tr><td><code>Dict[K, V]</code></td><td>an unordered map from one type to another</td><td>e.g. <code>{"a": 1}</code>; look up with <code>d["a"]</code>; loop over the keys</td></tr>
   </table>
-  <p>Besides these, you can define your own struct types. See <a href="structs.html">Structs</a>.</p>
+  <p>Besides these, you can define your own struct and class types. See <a href="structs.html">Structs</a> and the <a href="stdlib.html">standard library</a> (which defines an <code>Iterable</code> class for <code>range</code>).</p>
+  <p>The two collection types are covered in more detail on the <a href="flow.html#for">Flow</a> page, which shows looping over them, and the <a href="builtins.html#len">Builtins</a> page, which shows their length.</p>
 </section>
 
 <section id="ints">
@@ -124,13 +127,20 @@ Error: Integer literal 128 out of range for type 'Int8' at line 3
 False
 True
 False</div>
+</section>
 
 
 <section id="strings">
   <h2>Strings</h2>
   <p>A <code>String</code> is a piece of text, written with double quotes.</p>
 <pre><code>name: <span class="tok-type">String</span> = <span class="tok-str">"John"</span></code></pre>
-  <p>Strings have no tools yet. You can't concatenate them, you can't take their length, you can't convert a number into a string. The two things you can do with a string are pass it to <code>print</code> or <code>input</code>, and convert it into a number. All of that is on the <a href="limits.html">Limits</a> page.</p>
+  <p>You can join strings with <code>+</code>, and turn numbers and bools into strings with <code>String(...)</code>:</p>
+<pre><code>greeting: <span class="tok-type">String</span> = <span class="tok-str">"Hello "</span> + name
+print(greeting)
+print(<span class="tok-type">String</span>(<span class="tok-num">42</span>))</code></pre>
+  <div class="out">Hello John
+42</div>
+  <p>Strings have no indexing (<code>"hi"[0]</code> is a compile error), no slicing, and no <code>len</code>. What you can do with one is join it, print it, pass it to <code>input</code>, and convert it into a number with a <a href="casts.html">cast</a>. The rough edges are collected on the <a href="limits.html">Limits</a> page.</p>
 </section>
 
 <section id="nonetype">

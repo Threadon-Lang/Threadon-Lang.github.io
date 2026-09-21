@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Builtins — Threadon</title>
-<meta name="description" content="Threadon built-in functions: print and input.">
+<meta name="description" content="Threadon built-in functions: print, input, and len.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
   <div class="wrap">
     <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Builtins</p>
     <h1>Builtins</h1>
-    <p class="tag">print and input</p>
+    <p class="tag">print, input, and len</p>
   </div>
 </header>
 
@@ -46,14 +46,16 @@
   <h2>print</h2>
   <p><code>print</code> writes values to standard output, separated by spaces, ending with a newline.</p>
 <pre><code>print(<span class="tok-str">"Hello,"</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>.<span class="tok-num">5</span>, <span class="tok-kw">True</span>)</code></pre>
-  <div class="out">Hello, 1 2.500000 1</div>
+  <div class="out">Hello, 1 2.500000 True</div>
   <p>Each type formats its own way:</p>
   <table>
     <tr><th>Type</th><th>Output</th><th>Example</th></tr>
     <tr><td><code>Int32</code>, <code>Int8</code></td><td>digits, with a minus sign if negative</td><td><code>print(-3)</code> &rarr; <code>-3</code></td></tr>
     <tr><td><code>Float32</code></td><td>always 6 decimal places</td><td><code>print(2.5)</code> &rarr; <code>2.500000</code></td></tr>
-    <tr><td><code>Bool</code></td><td><code>1</code> or <code>0</code>, not true/false</td><td><code>print(True)</code> &rarr; <code>1</code></td></tr>
+    <tr><td><code>Bool</code></td><td><code>True</code> or <code>False</code></td><td><code>print(True)</code> &rarr; <code>True</code></td></tr>
     <tr><td><code>String</code></td><td>the text itself, quotes not included</td><td><code>print("hi")</code> &rarr; <code>hi</code></td></tr>
+    <tr><td><code>List</code></td><td>the items between square brackets</td><td><code>print([1, 2])</code> &rarr; <code>[1, 2]</code></td></tr>
+    <tr><td><code>Dict</code></td><td>the key/value pairs between braces</td><td><code>print({"a": 1})</code> &rarr; <code>{a: 1}</code></td></tr>
   </table>
   <p>Strings are printed as-is, so spaces inside them are preserved:</p>
 <pre><code>print(<span class="tok-str">"a b c"</span>)</code></pre>
@@ -75,9 +77,22 @@ print(n + <span class="tok-num">1</span>)</code></pre>
   <p>If input runs out of data (for example at the end of a redirected file), it returns an empty string. Watch out: converting that empty string with <code>Int32("")</code> is a runtime error, and only caught in <a href="debug.html">debug mode</a>. The <code>07_conversion</code> example on the <a href="examples.html">Examples</a> page shows the safe pattern.</p>
 </section>
 
+<section id="len">
+  <h2>len</h2>
+  <p><code>len</code> returns the number of items in a collection, as an <code>Int64</code>. It only takes a <code>List</code> or a <code>Dict</code> &mdash; passing a <code>String</code> fails to compile with <code>Function 'len' expects a List or Dict, got String</code>.</p>
+<pre><code>names: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = [<span class="tok-str">"ann"</span>, <span class="tok-str">"bob"</span>, <span class="tok-str">"clyde"</span>]
+print(len(names))</code></pre>
+  <div class="out">3</div>
+  <p>The empty collection has length 0. <code>len</code> is handy with <a href="flow.html#for"><code>for</code></a> loops and indexing.</p>
+  <p>Related builtin: <code>dict_key(d, i)</code> returns the key of a <code>Dict</code> at position <code>i</code> (an <code>Int64</code>). It exists mostly as the machinery behind <code>for key in d</code>, but you can call it yourself if you want to step through a dict by index.</p>
+<pre><code>ages: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>] = {<span class="tok-str">"ann"</span>: <span class="tok-num">30</span>, <span class="tok-str">"bob"</span>: <span class="tok-num">40</span>}
+print(dict_key(ages, <span class="tok-type">Int64</span>(<span class="tok-num">0</span>)))</code></pre>
+  <div class="out">ann</div>
+</section>
+
 <section id="casting-builtins">
   <h2>Cast functions</h2>
-  <p><code>Int8</code>, <code>Int16</code>, <code>Int32</code>, <code>Float16</code>, <code>Float32</code>, and <code>Bool</code> are also built-in functions that convert values. (There is no <code>String(...)</code> conversion.) They get their own section on the <a href="casts.html">Casts</a> page.</p>
+  <p><code>Int8</code>, <code>Int16</code>, <code>Int32</code>, <code>Int64</code>, <code>Float16</code>, <code>Float32</code>, <code>Float64</code>, <code>Bool</code>, and <code>String</code> are all built-in functions that convert values. <code>String(...)</code> turns numbers and bools into text &mdash; <code>print(String(3.5))</code> prints <code>3.500000</code> &mdash; and is covered on the <a href="casts.html">Casts</a> page together with the rest.</p>
 </section>
 
 <p class="pagenav">

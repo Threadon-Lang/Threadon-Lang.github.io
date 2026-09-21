@@ -45,7 +45,7 @@
 <section id="intro">
   <h2>What it is</h2>
   <p>Threadon is a compiled programming language. It compiles down to LLVM IR, the intermediate language written by the LLVM project. That means no interpreter, no virtual machine, no garbage collector. The code you write is turned straight into native machine code.</p>
-  <p>Threadon is still young. It has functions, structs, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The last page, <a href="limits.html">Limits</a>, lists what's missing.</p>
+  <p>Threadon is still young. It has functions, structs, collections, loops, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The last page, <a href="limits.html">Limits</a>, lists what's missing.</p>
   <p>Here's an example:</p>
 <pre><code><span class="tok-kw">struct</span> <span class="tok-type">Point</span>:
     x: <span class="tok-type">Int32</span>
@@ -116,7 +116,7 @@ pip3 install threadon
     </div>
     <div class="card">
       <h3><a href="flow.html">Flow</a></h3>
-      <p><code>if</code>, <code>elif</code>, <code>else</code>, and how to repeat without loops.</p>
+      <p><code>if</code>, <code>elif</code>, <code>else</code>, plus <code>while</code> and <code>for</code> loops.</p>
     </div>
     <div class="card">
       <h3><a href="functions.html">Functions</a></h3>
@@ -136,11 +136,11 @@ pip3 install threadon
     </div>
     <div class="card">
       <h3><a href="builtins.html">Builtins</a></h3>
-      <p><code>print</code> and <code>input</code>, the two functions always available.</p>
+      <p><code>print</code>, <code>input</code>, and <code>len</code>, the functions always available.</p>
     </div>
     <div class="card">
       <h3><a href="stdlib.html">Std lib</a></h3>
-      <p>The bundled standard library: <code>abs</code>, <code>max</code>, <code>min</code>, and friends.</p>
+      <p>The bundled standard library: <code>abs</code>, <code>max</code>, <code>min</code>, <code>range</code>, and friends.</p>
     </div>
     <div class="card">
       <h3><a href="modules.html">Imports</a></h3>
