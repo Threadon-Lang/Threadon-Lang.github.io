@@ -142,7 +142,7 @@
     print(d.v())
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">50</div>
-  <p>Here <code>Double</code> reuses <code>Base</code>&rsquo;s constructor and overrides <code>v</code>. A subclass inherits its base&rsquo;s fields (new fields on a subclass are not supported yet).</p>
+  <p>Here <code>Double</code> reuses <code>Base</code>&rsquo;s constructor and overrides <code>v</code>. A subclass inherits its base&rsquo;s fields (set by the inherited constructor) and can declare extra fields of its own. The inherited constructor only writes the base fields, so a subclass&rsquo;s own fields hold garbage until you assign them &mdash; set them right after construction, as in <a href="#using">Using</a>.</p>
 </section>
 
 <section id="foreign">
