@@ -56,7 +56,7 @@
   <ul>
     <li><strong>Strings are a small feature set.</strong> You can join them with <code>+</code>, turn numbers and bools into text with <code>String(...)</code>, and convert them back with <a href="casts.html">casts</a>. What's missing: slicing, indexing (<code>"hi"[0]</code> fails with <code>'String' is not indexable</code>), searching, replacing, and <code>len</code> for strings (<code>len</code> only accepts <code>List</code> and <code>Dict</code>).</li>
     <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, and a list or dict holds exactly one row of types. There are no sets and no tuples.</li>
-    <li><strong>Dict lookups don't fail.</strong> Reading a key that isn't in a dict gives you the <em>zero value</em> of the value type (so <code>0</code> for numbers, <code>false</code> for bools), silently. There is no error and no way to tell the key was missing.</li>
+    <li><strong>Dict lookups silently give the zero value.</strong> Reading a key that isn't in a dict gives you the <em>zero value</em> of the value type (so <code>0</code> for numbers, <code>false</code> for bools), silently. There's no way to tell the key was missing. If you pass <code>--debug</code>, the lookup dies with a <code>KeyError</code> instead &mdash; see <a href="debug.html">Debug</a>.</li>
   </ul>
 </section>
 
@@ -74,6 +74,7 @@
   <ul>
     <li><strong>Runtime errors need debug mode.</strong> Division by zero and bad string-to-number casts only error when you pass <code>--debug</code>; otherwise the behavior is undefined. See <a href="debug.html">Debug</a>.</li>
     <li><strong>Missing struct fields are garbage.</strong> <code>Point(x=3)</code> compiles and <code>p.y</code> is whatever memory happens to hold. See <a href="structs.html#init">Structs</a>.</li>
+    <li><strong>Unary plus doesn't exist.</strong> <code>+n</code> is a compile error &mdash; just write <code>n</code>. See <a href="operators.html#unary">Operators</a>.</li>
   </ul>
 </section>
 

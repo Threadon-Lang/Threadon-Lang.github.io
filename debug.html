@@ -46,11 +46,12 @@
   <h2>What debug mode does</h2>
   <p>Debug mode adds runtime checks that normally aren't there, because the compiler trusts you. Turn it on with <code>--debug</code>:</p>
 <pre><code>python3 -m threadon --run --debug file.th</code></pre>
-  <p>Three kinds of checks get added:</p>
+  <p>Four kinds of checks get added:</p>
   <ul>
     <li><strong>Integer division and modulo by zero.</strong> Applies to <code>/</code>, <code>//</code>, and <code>%</code> on integers, whenever the divisor's value is only known at runtime. (If the divisor is a compile-time constant zero, the compiler rejects it even without <code>--debug</code>; see <a href="flow.html#divzero">Flow</a>.)</li>
     <li><strong>Bad string-to-number conversions.</strong> Converting a <code>String</code> to <code>Int32</code>, <code>Int8</code>, or <code>Float32</code> when the string doesn't start with a number.</li>
     <li><strong>List index out of bounds.</strong> Reading <code>xs[i]</code> with an index past the end of the list stops with <code>Error: List index out of bounds</code>.</li>
+    <li><strong>Dict key not found.</strong> Reading <code>d[k]</code> when <code>k</code> isn't in the dict stops with <code>Error: KeyError: dict key not found</code>.</li>
   </ul>
 </section>
 
@@ -78,7 +79,6 @@
 <section id="other">
   <h2>What debug mode does <em>not</em> catch</h2>
   <ul>
-    <li><strong>Reading a key that isn't in a <code>Dict</code>.</strong> You get the zero value of the value type (0, 0.0, false), silently. It's not an error, even with <code>--debug</code>.</li>
     <li><strong>Reading an uninitialized <a href="structs.html#init">struct field</a>.</strong> That garbage is yours to keep.</li>
   </ul>
   <p>The <code>09_zero_division</code> example in the repo demonstrates a caught division by zero. See <a href="examples.html">Examples</a>.</p>

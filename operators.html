@@ -134,11 +134,10 @@ False</div>
 
 <section id="unary">
   <h2>Unary operators</h2>
-  <p>Unary minus and plus work on numbers:</p>
+  <p>Unary minus works on numbers:</p>
 <pre><code>n: <span class="tok-type">Int32</span> = -<span class="tok-num">5</span>
-print(-n)   <span class="tok-cm"># 5</span>
-print(+n)   <span class="tok-cm"># -5, plus does nothing</span></code></pre>
-  <p>They only work on <code>Ints</code> and <code>Floats</code>. Applying <code>-</code> to a bool or a string is a compile error.</p>
+print(-n)   <span class="tok-cm"># 5</span></code></pre>
+  <p>It only works on <code>Ints</code> and <code>Floats</code>. Applying <code>-</code> to a bool or a string is a compile error. There is no unary plus &mdash; <code>+n</code> is a compile error, so just write <code>n</code>. That's on the <a href="limits.html">Limits</a> page.</p>
 </section>
 
 <section id="reference-op">
