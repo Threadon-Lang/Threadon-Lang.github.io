@@ -67,7 +67,7 @@
   <ul>
     <li>Python 3.10 or newer. The compiler itself is written in Python.</li>
     <li>LLVM, which gives you the <code>lli</code> program. Threadon uses it to run it's code.</li>
-    <li>Recommended <code>rustc and g++</code>To use c and rust libraries in Threadon</li>
+    <li>Recommended: <code>rustc</code> and <code>g++</code> (and optionally <code>gcc</code>). These let you use modules and classes written in Rust, C, and C++ from Threadon. Python modules need no extra tools &mdash; the bridge embeds the CPython already installed.</li>
     <li>Optionally <code>llc</code> (also part of LLVM) and <code>gcc</code>. You only need these to build a standalone executable.</li>
   </ul>
   <p>Install with pip and you're ready</p>

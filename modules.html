@@ -102,48 +102,59 @@ p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<
 </section>
 <section id="foreign">
   <h2>Using C, C++, Rust, and Python modules</h2>
-  <p>Threadon can call functions written in other languages. This is done through manifest files, which describe how the external code should be compiled and linked. Four backends are supported: <code>C</code>, <code>C++</code>, <code>Rust</code>, and <code>Python</code>.</p>
+  <p>Threadon can call functions and use classes written in other languages. This is done through manifest files, which describe how the external code should be compiled and linked. Four backends are supported: <code>C</code>, <code>C++</code>, <code>Rust</code>, and <code>Python</code>.</p>
 
   <p>The <code>lang</code> field in the manifest selects the backend:</p>
 <section id="manifest">
   <h2>Manifest files</h2>
-  <p>A module written in another language uses a <code>.manifest</code> file to describe how Threadon should load it. The manifest tells the compiler which language the module is written in, where its source file lives, and which functions it exports to Threadon.</p>
+  <p>A module written in another language uses a file named <code>manifest</code> to describe how Threadon should load it. The manifest tells the compiler which language the module is written in, where its source file lives, and which functions and classes it exports to Threadon.</p>
 
-  <p>A manifest file is a plain text file with simple key–value pairs. Here is an example:</p>
+  <p>A manifest file is a plain text file with one directive per line. Here is an example for a Python module:</p>
 
 <pre><code>module PyAdd
 lang python
 source padd.py
 
-export mean List Float64 Float64
-export scale Float64 Float64 Float64
-export normalize List Float64 List Float64
-export describe Dict String Float64 Dict String Float64
-export add Float64 Float64 Float64
+export add Int64 Int64 Int64
+export mean Float64 List[Float64]
+export scale List[Float64] List[Float64] Float64
+export describe Dict[String,Float64] Dict[String,Float64]
+
+class Vec3 init Float64 Float64 Float64
+class Vec3 method length -&gt; Float64
 </code></pre>
 
-  <p>The <code>module</code> name becomes the import name inside Threadon. The <code>lang</code> field selects the foreign-language backend. The <code>source</code> field points to the file that implements the module. Each <code>export</code> line declares a function name followed by its parameter types and return type.</p>
+  <p>The <code>module</code> name becomes the import name inside Threadon. The <code>lang</code> field picks the backend. The <code>source</code> field points to the file that implements the module.</p>
 
-  <p>The compiler uses the manifest to generate the glue code needed to call the foreign functions safely. If the manifest is missing a function, Threadon cannot import it. If the types do not match, the compiler rejects the manifest.</p>
+  <p>Each <code>export</code> line declares one function: the name, followed by the return type, then the parameter types. Types can be scalars (<code>Int8</code>&hellip;<code>Int64</code>, <code>UInt8</code>&hellip;<code>UInt64</code>, <code>Float16</code>&hellip;<code>Float64</code>, <code>Bool</code>, <code>String</code>), <code>List[T]</code>, or <code>Dict[K,V]</code> with a scalar key. The compiler validates every exported name and type when the module is imported, so an unknown type or a missing function is a compile-time error.</p>
+
+  <p>Add compiler flags with <code>flag</code> and extra system libraries with <code>link</code>.</p>
 </section>
 
 <pre><code>lang c
 lang cpp
+lang c++
 lang rust
 lang python
 </code></pre>
 
   <p>Each backend has its own toolchain:</p>
   <ul>
-    <li><strong>C</strong> modules compile to a shared library using the system C compiler.</li>
-    <li><strong>C++</strong> modules use the C++ compiler and support classes mapped to Threadon structs.</li>
-    <li><strong>Rust</strong> modules are built with <code>cargo</code> and expose <code>extern "C"</code> functions.</li>
-    <li><strong>Python</strong> modules are wrapped automatically using the Python bridge, allowing Python functions to behave like native Threadon functions.</li>
+    <li><strong>C</strong> modules compile to a shared library with <code>gcc</code>.</li>
+    <li><strong>C++</strong> (<code>lang cpp</code> or <code>lang c++</code>) modules use <code>g++</code> and can map external classes to Threadon structs.</li>
+    <li><strong>Rust</strong> modules are built with <code>rustc</code> (<code>--crate-type cdylib</code>) and expose functions and classes through C-compatible symbols.</li>
+    <li><strong>Python</strong> modules are wrapped automatically using the Python bridge, so Python functions and classes behave like native Threadon functions and classes.</li>
   </ul>
 
-  <p>Threadon ensures type safety by checking the manifest against the foreign function signatures. If the types do not match, the module will not load. Once imported, foreign functions behave exactly like normal Threadon functions.</p>
+  <p>This makes it possible to write performance-critical code in C or Rust, reuse existing C++ libraries, or call Python code directly from Threadon without rewriting it.</p>
 
-  <p>This makes it possible to write performance‑critical code in C or Rust, reuse existing C++ libraries, or call Python code directly from Threadon without rewriting it.</p>
+  <h3>Using classes from foreign modules</h3>
+  <p>In any of the backends, a <code>class</code> directive maps a foreign class to a Threadon struct. The struct has one hidden field holding an opaque handle to the foreign object. Calling the class runs the foreign constructor (with the <code>init</code> argument types), and methods declared with <code>class N method M [Args...] -&gt; Ret</code> become ordinary methods:</p>
+<pre><code><span class="tok-kw">from</span> PyVec3 <span class="tok-kw">import</span> Vec3
+
+v: <span class="tok-type">Vec3</span> = <span class="tok-type">Vec3</span>(<span class="tok-num">3.0</span>, <span class="tok-num">4.0</span>, <span class="tok-num">0.0</span>)
+print(v.length())</code></pre>
+  <p>For <strong>Python</strong>, the bridge writes the C++ glue for you, so an ordinary Python class works unchanged &mdash; see <code>examples/16_python_classes</code>. For <strong>C</strong>, <strong>C++</strong>, and <strong>Rust</strong>, the same <code>class</code> directive is used, but you provide the glue symbols yourself: the class has the layout <code>struct {Class} { char* __handle; }</code>, the constructor is <code>{Class}___init__</code> returning that struct, and each method is <code>{Class}___{method}</code> taking the struct as its first argument. These symbols must be <code>extern "C"</code> and use the exact types listed in the manifest.</p>
 </section>
 
 <section id="rules">
