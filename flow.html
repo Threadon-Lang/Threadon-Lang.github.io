@@ -91,7 +91,7 @@ try again</div>
 
 <section id="while">
   <h2>while</h2>
-  <p><code>while</code> repeats a block as long as its condition stays true. The condition must be a <code>Bool</code>, same as an <code>if</code>. There is no <code>break</code> or <code>continue</code>: the only way out is for the condition to become false.</p>
+  <p><code>while</code> repeats a block as long as its condition stays true. The condition must be a <code>Bool</code>, same as an <code>if</code>.</p>
 <pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
     n: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
     <span class="tok-kw">while</span> n &lt; <span class="tok-num">3</span>:
@@ -101,7 +101,20 @@ try again</div>
   <div class="out">0
 1
 2</div>
-  <p>A <code>while</code> whose condition is already false never runs its body. One whose condition can't become false runs forever.</p>
+  <p>Two keywords steer a loop from inside its body. <code>break</code> leaves the nearest loop immediately; <code>continue</code> skips the rest of the body and starts the next iteration. In a <code>while</code> loop, <code>continue</code> jumps back and re-tests the condition:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    n: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
+    <span class="tok-kw">while</span> <span class="tok-kw">True</span>:
+        n += <span class="tok-num">1</span>
+        <span class="tok-kw">if</span> n &gt; <span class="tok-num">5</span>:
+            <span class="tok-kw">break</span>
+        <span class="tok-kw">if</span> n % <span class="tok-num">2</span> == <span class="tok-num">1</span>:
+            <span class="tok-kw">continue</span>
+        print(n)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">2
+4</div>
+  <p>A <code>while</code> whose condition is already false never runs its body. One whose condition can't become false (and never <code>break</code>s) runs forever.</p>
   <p>Union narrowing is reset by a loop. Any type a union variable was narrowed to inside the body is thrown away afterwards; it reverts to its declared type. This is covered on the <a href="unions.html#controlflow">Unions</a> page.</p>
 </section>
 
@@ -172,7 +185,7 @@ bob 40</div>
 
   <h3>Your own iterables</h3>
   <p>Any type that provides three methods can be looped over: <code>done()</code> returning a <code>Bool</code> that says whether iteration is finished, <code>value()</code> returning the current item, and <code>advance()</code> returning a fresh value of the same type that moves to the next item. The standard library's <code>range</code> is built on exactly this &mdash; see <a href="stdlib.html#iterables">Std lib</a>.</p>
-  <p>The loop variable of a <code>for</code> behaves like a normal variable: it keeps its last value after the loop ends, and if you use the same name in a later loop the element type has to match. A <code>for</code> loop is a <code>while</code> loop in disguise, so &mdash; as with <code>while</code> &mdash; there is no <code>break</code> or <code>continue</code>.</p>
+  <p>The loop variable of a <code>for</code> behaves like a normal variable: it keeps its last value after the loop ends, and if you use the same name in a later loop the element type has to match. A <code>for</code> loop is a <code>while</code> loop in disguise, and like each <code>while</code> loop it accepts <code>break</code> and <code>continue</code>. In a <code>for</code> loop, <code>continue</code> still runs the loop's own bookkeeping before the next item, so the loop terminates normally even if the body jumps.</p>
 </section>
 
 <section id="recursion">
