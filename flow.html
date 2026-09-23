@@ -173,6 +173,19 @@ bob
 clyde</div>
   <p>A list literal works too, so <code>for n in [1, 2, 3]:</code> loops over the numbers 1, 2, and 3.</p>
 
+  <h3>Growing and shrinking lists</h3>
+  <p>Four methods change a list in place. <code>append(value)</code> adds to the end, <code>pop()</code> removes the last item, <code>insert(index, value)</code> puts a value at a position, and <code>remove(value)</code> deletes the first equal item. Each is a statement; the call updates the variable (or field, or list slot) it was made on.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    xs: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]
+    xs.append(<span class="tok-num">4</span>)       <span class="tok-cm"># [1, 2, 3, 4]</span>
+    xs.insert(<span class="tok-num">0</span>, <span class="tok-num">9</span>)    <span class="tok-cm"># [9, 1, 2, 3, 4]</span>
+    xs.pop()              <span class="tok-cm"># [9, 1, 2, 3]</span>
+    xs.remove(<span class="tok-num">2</span>)       <span class="tok-cm"># [9, 1, 3]</span>
+    print(xs)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <p><code>insert</code> clamps its index like Python: an index past the end appends, a negative index counts from the end (then clamps at 0), and <code>remove</code> takes the <em>first</em> match. Element types come from the list: <code>List[String]</code> needs a <code>String</code>, and a literal works if it fits, e.g. <code>ys.append(7)</code> on a <code>List[Int8]</code>. Under <code>--debug</code>, <code>pop</code> on an empty list and <code>remove</code> of a missing element are runtime errors; without <code>--debug</code> their behavior is unspecified.</p>
+  <p>The same calls work on a list inside a struct (<code>b.items.append(4)</code>) or inside another list (<code>grid[0].append(4)</code>).</p>
+
   <h3>for ... in Dict</h3>
   <p>Looping over a dictionary yields its <em>keys</em>, one at a time &mdash; not the values. Look the value up with the key inside the body:</p>
 <pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>

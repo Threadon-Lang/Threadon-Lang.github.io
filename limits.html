@@ -63,7 +63,8 @@
   <h2>Collections and strings</h2>
   <ul>
     <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, each holding one row of types. There are no sets, no tuples, and no fixed-size arrays.</li>
-    <li><strong>A list's size is fixed by its literal.</strong> There is no <code>append</code>, <code>pop</code>, <code>insert</code>, or <code>remove</code>. You can write <code>xs[i] = v</code> only into slots that already exist; you can't grow it.</li>
+    <li><strong>Lists can grow, but only with the four methods.</strong> <code>append</code>, <code>pop</code>, <code>insert</code>, and <code>remove</code> exist and mutate the list in place. There is no <code>extend</code>, <code>sort</code>, <code>reverse</code>, <code>clear</code>, slicing, or concatenation syntax, and no way to splice one list into another.</li>
+    <li><strong>Under <code>--debug</code>, the risky list operations fail loudly.</strong> There's no compile-time check: <code>pop</code> on an empty list and <code>remove</code> of a missing element are runtime errors only under <code>--debug</code>. Without <code>--debug</code>, their behavior is unspecified. See <a href="debug.html">Debugging</a>.</li>
     <li><strong>No index while iterating.</strong> <code>for x in xs</code> yields only the values. Pair them with an index by hand: <code>for i in range(len(xs))</code> then <code>xs[i]</code>.</li>
     <li><strong>Dicts iterate keys, not pairs.</strong> <code>for k in d</code> gives the key; look the value up yourself. There's no <code>items()</code>-style iteration and no destructuring.</li>
     <li><strong>No membership test.</strong> <code>x in xs</code> isn't an expression; the <code>in</code> keyword appears only in <code>for</code>. Loop to find an element, and watch a missing <code>Dict</code> key &mdash; it reads as the zero value, or a <code>KeyError</code> under <code>--debug</code>. See <a href="types.html#zerovalues">Types</a>.</li>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threads — Threadon</title>
+<meta name="description" content="Threadon threading: the thread statement, thread_exit, and module-level threads.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Threads</p>
+    <h1>Threads</h1>
+    <p class="tag">concurrency with OS threads</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="unions.html">Unions</a>
+    <a href="references.html">References</a>
+    <a href="classes.html">Classes</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+    <a href="threads.html" class="here">Threads</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="thread-statement">
+  <h2>The <code>thread</code> statement</h2>
+  <p>Threadon lets you spawn OS threads with the <code>thread</code> statement. A thread runs a block of code in parallel with the main program.</p>
+
+  <p>Syntax:</p>
+<pre><code><span class="tok-kw">thread</span> <span class="tok-fn">ThreadName</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    <span class="tok-comment"># thread body</span>
+    print(<span class="tok-str">"running on a thread"</span>)</code></pre>
+
+  <p>The parts:</p>
+  <ul>
+    <li><code>ThreadName</code> — an identifier you choose. It becomes the internal function name and appears in debug output.</li>
+    <li><code>()</code> — always empty parentheses. Threads take no arguments directly; they capture variables by value from the surrounding scope.</li>
+    <li><code>on <span class="tok-kw">True</span></code> — a boolean condition. The thread only spawns if this evaluates to <code>True</code> at the point of the statement.</li>
+    <li>The indented block — runs on the new thread if the condition is true.</li>
+  </ul>
+
+  <p>A complete example inside a function:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">worker</span>() -> <span class="tok-type">NoneType</span>
+    print(<span class="tok-str">"worker running"</span>)
+    <span class="tok-kw">return</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
+    <span class="tok-kw">thread</span> <span class="tok-fn">Worker1</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+        print(<span class="tok-str">"from thread"</span>)
+    print(<span class="tok-str">"main continues immediately"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">from thread
+main continues immediately</div>
+
+  <p>The <code>thread</code> statement is non-blocking. The main function continues right away. All spawned threads are automatically joined before the program exits.</p>
+</section>
+
+<section id="module-level">
+  <h2>Module-level threads</h2>
+  <p>You can also write <code>thread</code> statements at the top level of a file, outside any function. These run before <code>main()</code> starts.</p>
+
+<pre><code><span class="tok-kw">thread</span> <span class="tok-fn">Initializer</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"initializing from module thread"</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
+    print(<span class="tok-str">"main sees initialized state"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">initializing from module thread
+main sees initialized state</div>
+
+  <p>Module-level threads run in the order they appear in the source file, before <code>main()</code> begins. They also respect the <code>on</code> condition.</p>
+</section>
+
+<section id="capture">
+  <h2>Capturing variables by value</h2>
+  <p>Threads capture variables from their surrounding scope <strong>by value</strong>. The thread gets a snapshot of the variable's value at the moment the <code>thread</code> statement executes. Later changes to the variable in the parent scope do not affect the thread, and vice versa.</p>
+
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">42</span>
+    <span class="tok-kw">thread</span> <span class="tok-fn">Capture</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+        print(<span class="tok-str">"thread sees:"</span>, x)
+    x = <span class="tok-num">99</span>
+    print(<span class="tok-str">"main now has:"</span>, x)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">thread sees: 42
+main now has: 99</div>
+
+  <p>This applies to all types — integers, floats, strings, structs, lists, etc. For lists and structs, the thread gets its own copy of the data structure (the list's internal buffer is duplicated).</p>
+</section>
+
+<section id="thread-exit">
+  <h2>Ending a thread early with <code>thread_exit()</code></h2>
+  <p>Inside a thread body you can call <code>thread_exit()</code> to stop the thread immediately. It acts like an early <code>return</code> from the thread's function.</p>
+
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
+    <span class="tok-kw">thread</span> <span class="tok-fn">ExitDemo</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+        print(<span class="tok-str">"before exit"</span>)
+        thread_exit()
+        print(<span class="tok-str">"this never prints"</span>)
+    print(<span class="tok-str">"main continues"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">before exit
+main continues</div>
+</section>
+
+<section id="condition">
+  <h2>The <code>on</code> condition</h2>
+  <p>The expression after <code>on</code> must evaluate to a <code>Bool</code>. It is checked at the moment the <code>thread</code> statement is reached. If false, the thread body is skipped entirely and no thread is created.</p>
+
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
+    flag: <span class="tok-type">Bool</span> = <span class="tok-kw">False</span>
+    <span class="tok-kw">thread</span> <span class="tok-fn">Conditional</span>() <span class="tok-kw">on</span> flag:
+        print(<span class="tok-str">"won't run"</span>)
+    print(<span class="tok-str">"no thread was spawned"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">no thread was spawned</div>
+</section>
+
+<section id="joining">
+  <h2>Thread joining and program exit</h2>
+  <p>All threads spawned by <code>thread</code> statements (both inside functions and at module level) are automatically joined before the program exits. You don't need to call any join function yourself.</p>
+
+  <p>The join happens in two phases:</p>
+  <ol>
+    <li>Module-level threads are joined after they complete but before <code>main()</code> starts.</li>
+    <li>Threads spawned inside functions (including inside <code>main()</code>) are joined after <code>main()</code> returns but before the process exits.</li>
+  </ol>
+
+  <p>This means the program will wait for all threads to finish before exiting. A thread that runs forever will hang the program.</p>
+</section>
+
+<section id="multiple">
+  <h2>Multiple threads</h2>
+  <p>You can spawn as many threads as you like. They all run concurrently (subject to OS scheduling).</p>
+
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
+    <span class="tok-kw">thread</span> <span class="tok-fn">T1</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+        print(<span class="tok-str">"thread 1"</span>)
+    <span class="tok-kw">thread</span> <span class="tok-fn">T2</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+        print(<span class="tok-str">"thread 2"</span>)
+    <span class="tok-kw">thread</span> <span class="tok-fn">T3</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+        print(<span class="tok-str">"thread 3"</span>)
+    print(<span class="tok-str">"main done"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">thread 1
+thread 2
+thread 3
+main done</div>
+
+  <p>The order of output from different threads is non-deterministic.</p>
+</section>
+
+<section id="limitations">
+  <h2>Current limitations</h2>
+  <ul>
+    <li>No thread synchronization primitives yet (mutexes, channels, atomics). Shared mutable state between threads is not safe.</li>
+    <li>Threads cannot return values to the parent. Use module-level variables or other communication if needed (but beware of data races).</li>
+    <li>No way to wait for a specific thread from inside another thread.</li>
+    <li>Thread stacks are not configurable; they use the OS default.</li>
+  </ul>
+  <p>See the <a href="limits.html">Limits</a> page for more things that don't work yet.</p>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

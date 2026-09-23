@@ -62,11 +62,11 @@
     <tr><td><code>Bool</code></td><td>boolean value</td><td>true or false (prints contextually based on language)</td></tr>
     <tr><td><code>String</code></td><td>text</td><td>sequence of characters, join with <code>+</code></td></tr>
     <tr><td><code>NoneType</code></td><td>no value</td><td>only used for return types or representing absence of value</td></tr>
-    <tr><td><code>List[T]</code></td><td>an ordered collection of items all of one type</td><td>e.g. <code>[1, 2, 3]</code>; index with <code>xs[0]</code>; loop over it</td></tr>
+    <tr><td><code>List[T]</code></td><td>an ordered collection of items all of one type</td><td>e.g. <code>[1, 2, 3]</code>; index with <code>xs[0]</code>; loop over it; grow it with <code>append</code>/<code>pop</code>/<code>insert</code>/<code>remove</code></td></tr>
     <tr><td><code>Dict[K, V]</code></td><td>an unordered map from one type to another</td><td>e.g. <code>{"a": 1}</code>; look up with <code>d["a"]</code>; loop over the keys</td></tr>
   </table>
   <p>Besides these, you can define your own struct and class types. See <a href="structs.html">Structs</a> and the <a href="stdlib.html">standard library</a> (which defines an <code>Iterable</code> class for <code>range</code>).</p>
-  <p>The two collection types are covered in more detail on the <a href="flow.html#for">Flow</a> page, which shows looping over them, and the <a href="builtins.html#len">Builtins</a> page, which shows their length.</p>
+  <p>The two collection types are covered in more detail on the <a href="flow.html#for">Flow</a> page, which shows looping over them, growing and shrinking lists, and the <a href="builtins.html#len">Builtins</a> page, which shows their length.</p>
 </section>
 
 <section id="ints">
