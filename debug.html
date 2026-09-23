@@ -80,7 +80,7 @@
 <section id="other">
   <h2>What debug mode does <em>not</em> catch</h2>
   <ul>
-    <li><strong>Reading an uninitialized <a href="structs.html#init">struct field</a>.</strong> That garbage is yours to keep.</li>
+    <li><strong>Reading an uninitialized <a href="structs.html#init">struct field</a>.</strong> It gives you the field's zero value, and debug mode won't catch it.</li>
   </ul>
   <p>The <code>09_zero_division</code> example in the repo demonstrates a caught division by zero. See <a href="examples.html">Examples</a>.</p>
 </section>

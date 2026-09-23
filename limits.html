@@ -72,7 +72,6 @@
   <h2>Safety</h2>
   <ul>
     <li><strong>Runtime errors need debug mode.</strong> Division by zero and bad string-to-number casts only error when you pass <code>--debug</code>; otherwise the behavior is undefined. See <a href="debug.html">Debug</a>.</li>
-    <li><strong>Missing struct fields are garbage.</strong> <code>Point(x=3)</code> compiles and <code>p.y</code> is whatever memory happens to hold. See <a href="structs.html#init">Structs</a>.</li>
     <li><strong>Unary plus doesn't exist.</strong> <code>+n</code> is a compile error &mdash; just write <code>n</code>. See <a href="operators.html#unary">Operators</a>.</li>
   </ul>
 </section>

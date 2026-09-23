@@ -80,7 +80,7 @@
     print(p.length())
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">25</div>
-  <div class="warn"><strong>Set every field in <code>__init__</code>.</strong> Fields you leave untouched hold garbage, just like missing <a href="structs.html#init">struct</a> fields. There is no warning.</div>
+  <div class="warn"><strong>Set every field in <code>__init__</code>.</strong> A field you leave untouched holds the zero value of its type (<code>0</code>, <code>0.0</code>, <code>false</code>), just like a missing <a href="structs.html#init">struct</a> field. There is no warning.</div>
   <p>A class without a <code>__init__</code> is constructed by calling it with no arguments: <code>e: Empty = Empty()</code>.</p>
 </section>
 
@@ -142,7 +142,7 @@
     print(d.v())
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">50</div>
-  <p>Here <code>Double</code> reuses <code>Base</code>&rsquo;s constructor and overrides <code>v</code>. A subclass inherits its base&rsquo;s fields (set by the inherited constructor) and can declare extra fields of its own. The inherited constructor only writes the base fields, so a subclass&rsquo;s own fields hold garbage until you assign them &mdash; set them right after construction, as in <a href="#using">Using</a>.</p>
+  <p>Here <code>Double</code> reuses <code>Base</code>&rsquo;s constructor and overrides <code>v</code>. A subclass inherits its base&rsquo;s fields (set by the inherited constructor) and can declare extra fields of its own. The inherited constructor only writes the base fields, so a subclass&rsquo;s own fields hold zero until you assign them &mdash; set them right after construction, as in <a href="#using">Using</a>.</p>
 </section>
 
 <section id="foreign">

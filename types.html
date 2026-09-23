@@ -183,7 +183,7 @@ print(<span class="tok-type">String</span>(<span class="tok-num">42</span>))</co
 False</div>
   <p>It's still a good idea to set a value yourself. The zero behavior is a convenience, not a promise, and relying on it makes code harder to read.</p>
   <p>The same applies to reading a key that isn't in a <code>Dict</code>: <code>{"a": 1}["b"]</code> gives you the zero value of the value type, silently. With <code>--debug</code> the lookup fails with a <code>KeyError</code> instead. See <a href="limits.html">Limits</a> and <a href="debug.html">Debug</a>.</p>
-  <p>One exception: struct fields you leave out of an initializer are <em>not</em> zeroed. They hold garbage. See <a href="structs.html">Structs</a>.</p>
+  <p>Struct and class fields follow the same rule: a field you don't set &mdash; left out of an initializer or never assigned in <code>__init__</code> &mdash; holds the zero value of its type. See <a href="structs.html">Structs</a> and <a href="classes.html">Classes</a>.</p>
 </section>
 
 <section id="checking">

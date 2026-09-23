@@ -58,9 +58,9 @@
   <p>Create a struct by calling its name with named fields. Field order doesn't matter.</p>
 <pre><code>p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(y=<span class="tok-num">4</span>, x=<span class="tok-num">3</span>)</code></pre>
   <p>Each field value must have the field's exact type. Passing a <code>Float32</code> into an <code>Int32</code> field is a compile error.</p>
-  <div class="warn"><strong>Give every field a value.</strong> The compiler lets you leave fields out, but the missing fields are not zeroed. They hold garbage. There is no warning.</div>
-<pre><code>p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<span class="tok-num">3</span>)   <span class="tok-cm"># compiles, but p.y is garbage</span></code></pre>
-  <p>Always write every field in the initializer.</p>
+  <div class="warn"><strong>Give every field a value.</strong> You can leave fields out; a missing field holds the zero value of its type (<code>0</code>, <code>0.0</code>, <code>false</code>). There is no warning.</div>
+<pre><code>p: <span class="tok-type">Point</span> = <span class="tok-type">Point</span>(x=<span class="tok-num">3</span>)   <span class="tok-cm"># compiles; p.y is 0</span></code></pre>
+  <p>Write every field in the initializer anyway &mdash; it's easier to read, and the zero value is a convenience, not a promise.</p>
 </section>
 
 <section id="fields">
