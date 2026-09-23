@@ -279,6 +279,18 @@ name = bob
 name = clyde
 key = ann value = 30
 key = bob value = 40</div>
+
+  <h3 id="18_colorama">18_colorama &mdash; colors via the colorama module</h3>
+  <p>The bundled <code>colorama</code> module (written in pure Threadon) returns ANSI escape codes. <code>fore</code>, <code>back</code>, and <code>style</code> take a name (&quot;red&quot;, &quot;blue&quot;, &quot;bright&quot;, ...) and return the escape that switches to it; <code>reset</code> and <code>reset_all</code> turn it back off. Concatenate them with the text. The example prints each line in its color, so no output box is given &mdash; run it on a terminal to see the effect.</p>
+<pre><code><span class="tok-kw">import</span> colorama
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(colorama.fore(<span class="tok-str">"red"</span>) + <span class="tok-str">"red text"</span> + colorama.reset())
+    print(colorama.fore(<span class="tok-str">"green"</span>) + colorama.style(<span class="tok-str">"bright"</span>) + <span class="tok-str">"bright green"</span> + colorama.reset_all())
+    print(colorama.back(<span class="tok-str">"blue"</span>) + <span class="tok-str">"blue background"</span> + colorama.reset())
+    print(colorama.fore(<span class="tok-str">"lightmagenta"</span>) + colorama.style(<span class="tok-str">"dim"</span>) + <span class="tok-str">"dimmer magenta"</span> + colorama.reset_all())
+    print(colorama.fore(<span class="tok-str">"yellow"</span>) + <span class="tok-str">"yellow text"</span> + colorama.reset_all())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
 </section>
 <p class="pagenav">
   <a href="debug.html">&larr; Back: Debug</a>

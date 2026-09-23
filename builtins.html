@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Builtins — Threadon</title>
-<meta name="description" content="Threadon built-in functions: print, input, and len.">
+<meta name="description" content="Threadon built-in functions: print, input, len, and chr.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
   <div class="wrap">
     <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Builtins</p>
     <h1>Builtins</h1>
-    <p class="tag">print, input, and len</p>
+    <p class="tag">print, input, len, and chr</p>
   </div>
 </header>
 
@@ -89,6 +89,14 @@ print(len(names))</code></pre>
 <pre><code>ages: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>] = {<span class="tok-str">"ann"</span>: <span class="tok-num">30</span>, <span class="tok-str">"bob"</span>: <span class="tok-num">40</span>}
 print(dict_key(ages, <span class="tok-type">Int64</span>(<span class="tok-num">0</span>)))</code></pre>
   <div class="out">ann</div>
+</section>
+
+<section id="chr">
+  <h2>chr</h2>
+  <p><code>chr(code)</code> takes an <code>Int32</code> code point (0&ndash;255) and returns a one-character <code>String</code> holding that byte. It is how you build characters that have no literal escape, like the ANSI escape byte 27 that the <a href="examples.html#18_colorama"><code>colorama</code></a> module uses:</p>
+<pre><code>print(chr(<span class="tok-num">65</span>))</code></pre>
+  <div class="out">A</div>
+  <p>Codes outside the byte range are silently truncated to their low 8 bits.</p>
 </section>
 
 <section id="casting-builtins">
