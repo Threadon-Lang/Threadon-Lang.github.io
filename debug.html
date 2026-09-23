@@ -77,14 +77,6 @@
   <p>No checks, no safety net. Dividing by zero and invalid conversions are undefined behavior, straight from the generated LLVM. In practice you get whatever the runtime does, and it won't be a friendly message. Debug mode is for development; leave it off for performance.</p>
 </section>
 
-<section id="other">
-  <h2>What debug mode does <em>not</em> catch</h2>
-  <ul>
-    <li><strong>Reading an uninitialized <a href="structs.html#init">struct field</a>.</strong> It gives you the field's zero value, and debug mode won't catch it.</li>
-  </ul>
-  <p>The <code>09_zero_division</code> example in the repo demonstrates a caught division by zero. See <a href="examples.html">Examples</a>.</p>
-</section>
-
 <p class="pagenav">
   <a href="cli.html">&larr; Back: CLI</a>
   <a href="examples.html">Next: Examples &rarr;</a>
