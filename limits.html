@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Limits — Threadon</title>
-<meta name="description" content="What Threadon does not do yet, and what's planned.">
+<meta name="description" content="Everything Threadon does not have: missing features, operators, types, standard library gaps, and safety limits.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
   <div class="wrap">
     <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Limits</p>
     <h1>Limits</h1>
-    <p class="tag">what's not there yet</p>
+    <p class="tag">everything that isn't there</p>
   </div>
 </header>
 
@@ -43,36 +43,119 @@
 
 <main class="wrap">
 
-<section id="loops">
-  <h2>Loops</h2>
-  <p>There are <code>while</code> and <code>for</code> loops now &mdash; see <a href="flow.html#while">Flow</a> &mdash; but they're missing a few conveniences other languages have:</p>
+  <p>Threadon deliberately stays small. The other pages describe everything that <em>is</em> there; this page is the inverse &mdash; the things you will look for and not find. If something here disagrees with the compiler, the compiler wins.</p>
+
+<section id="flow">
+  <h2>Control flow</h2>
   <ul>
-    <li><strong>No <code>for</code>&hellip;<code>else</code>, no <code>enumerate</code>.</strong> If you want an index along with the element, loop over <code>range(len(xs))</code> and index with that.</li>
+    <li><strong>No <code>switch</code>, no <code>match</code>, no pattern matching.</strong> It's <code>if</code>, <code>elif</code>, <code>else</code> all the way down.</li>
+    <li><strong>No ternary.</strong> <code>a &lt; b ? x : y</code> doesn't exist, and neither does an <code>if</code> used as an expression. Every <code>if</code> is a statement.</li>
+    <li><strong>No <code>for</code>&hellip;<code>else</code>, no <code>enumerate</code>, no <code>zip</code>.</strong> Want an index along with the element? Loop over <code>range(len(xs))</code> and index with it.</li>
+    <li><strong>No <code>do</code>&hellip;<code>while</code>, no <code>goto</code>, no labeled <code>break</code>/<code>continue</code>.</strong> <code>break</code> and <code>continue</code> only affect the nearest loop.</li>
+    <li><strong>Loops reset union narrowing.</strong> After a <code>while</code> or <code>for</code>, a union variable reverts to its declared type. See <a href="unions.html#controlflow">Unions</a>.</li>
+    <li><strong><code>range</code> works on <code>Int64</code> only.</strong> There's no float stepping, no descending convenience beyond a negative step.</li>
+    <li><strong>Powers are limited.</strong> Chained powers like <code>2 ** 3 ** 2</code> are rejected, and a negative exponent doesn't work. See <a href="operators.html#precedence">Operators</a>.</li>
+    <li><strong>Recursion eats the stack.</strong> There's no tail-call optimization; deep recursion fails at runtime. Use <code>while</code>/<code>for</code> for long repetition.</li>
   </ul>
 </section>
 
 <section id="data">
-  <h2>Data structures</h2>
+  <h2>Collections and strings</h2>
   <ul>
-    <li><strong>Strings are a small feature set.</strong> You can join them with <code>+</code>, turn numbers and bools into text with <code>String(...)</code>, and convert them back with <a href="casts.html">casts</a>. What's missing: slicing, indexing (<code>"hi"[0]</code> fails with <code>'String' is not indexable</code>), searching, replacing, and <code>len</code> for strings (<code>len</code> only accepts <code>List</code> and <code>Dict</code>).</li>
-    <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, and a list or dict holds exactly one row of types. There are no sets and no tuples.</li>
+    <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, each holding one row of types. There are no sets, no tuples, and no fixed-size arrays.</li>
+    <li><strong>A list's size is fixed by its literal.</strong> There is no <code>append</code>, <code>pop</code>, <code>insert</code>, or <code>remove</code>. You can write <code>xs[i] = v</code> only into slots that already exist; you can't grow it.</li>
+    <li><strong>No index while iterating.</strong> <code>for x in xs</code> yields only the values. Pair them with an index by hand: <code>for i in range(len(xs))</code> then <code>xs[i]</code>.</li>
+    <li><strong>Dicts iterate keys, not pairs.</strong> <code>for k in d</code> gives the key; look the value up yourself. There's no <code>items()</code>-style iteration and no destructuring.</li>
+    <li><strong>No membership test.</strong> <code>x in xs</code> isn't an expression; the <code>in</code> keyword appears only in <code>for</code>. Loop to find an element, and watch a missing <code>Dict</code> key &mdash; it reads as the zero value, or a <code>KeyError</code> under <code>--debug</code>. See <a href="types.html#zerovalues">Types</a>.</li>
+    <li><strong>Strings are a small feature set.</strong> You can join with <code>+</code>, compare with <code>==</code>/<code>!=</code>, turn numbers and bools into text with <code>String(...)</code>, convert back with <a href="casts.html">casts</a>, and build characters with <a href="builtins.html#chr"><code>chr</code></a>. Missing: indexing, slicing, searching, replacing, case conversion, trimming, splitting, <code>len</code>, and any formatting.</li>
+    <li><strong>String escapes are minimal.</strong> Only <code>\n</code>, <code>\t</code>, <code>\"</code>, and <code>\\</code> (plus <code>{</code> and <code>}</code> inside interpolated <code>f"..."</code>/<code>t"..."</code> strings). No <code>\xNN</code>, <code>\u</code>, or <code>\0</code> escapes.</li>
+    <li><strong>No <code>char</code> type.</strong> <code>chr(27)</code> returns a one-character <code>String</code>, not a distinct character type with its own conversions.</li>
+    <li><strong>Floats print with a fixed six decimals.</strong> There is no formatting control: no rounding knob, no width, no scientific toggle. See <a href="types.html#floats">Types</a>.</li>
+  </ul>
+</section>
+
+<section id="numbers">
+  <h2>Numbers and operators</h2>
+  <ul>
+    <li><strong>No bitwise operators.</strong> No <code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code>, or <code>&gt;&gt;</code>; there's no way to manipulate individual bits.</li>
+    <li><strong>No unary plus.</strong> <code>+n</code> is a compile error &mdash; just write <code>n</code>.</li>
+    <li><strong>No non-decimal literals.</strong> No <code>0x</code>, <code>0b</code>, or <code>0o</code>, and no exponent with a sign (<code>1e-3</code> is invalid). Digits, underscores, a dot, and a plain <code>e</code> are all you get.</li>
+    <li><strong>No implicit conversions between different types.</strong> <code>1 + 2.5</code> and <code>1 == 1.0</code> are compile errors. The only leniency in the whole language: an integer literal adapts to the type it's assigned to. See <a href="types.html#checking">Types</a>.</li>
+    <li><strong>Integer arithmetic wraps.</strong> No range checks on <code>+</code>, <code>-</code>, <code>*</code>, or shifts (there are no shifts). The only overflow you can catch is a string-to-number cast under <code>--debug</code>. See <a href="types.html#ints">Types</a>.</li>
+    <li><strong>No math library.</strong> No <code>sqrt</code>, <code>sin</code>, <code>cos</code>, <code>log</code>, <code>floor</code>, or <code>random</code>. Operators <code>+ - * / // % **</code> plus the standard library's <code>abs</code>, <code>max</code>, <code>min</code>, <code>clamp</code>, <code>is_even</code>, and <code>is_odd</code> are the whole arithmetic toolbox. See <a href="stdlib.html">Std lib</a>.</li>
+    <li><strong>No complex numbers</strong>; the widest type is <code>Int256</code>/<code>UInt256</code>.</li>
+  </ul>
+</section>
+
+<section id="types">
+  <h2>Types, generics, and declarations</h2>
+  <ul>
+    <li><strong>No user-defined generics.</strong> <code>List[T]</code>, <code>Dict[K, V]</code>, and <code>Union</code> are built in, but you can't write a generic function or class of your own.</li>
+    <li><strong>No type inference.</strong> There is no <code>var</code>; every variable and parameter needs its type written out. See <a href="variables.html#declare">Variables</a>.</li>
+    <li><strong>No enums.</strong> A fixed set of named values has to be spelled with constants written by hand &mdash; and there are no module-level constants either.</li>
+    <li><strong>No <code>const</code>, <code>immutable</code>, or <code>final</code>.</strong> Every variable is mutable once declared.</li>
+    <li><strong>No global variables.</strong> Variables live in functions only; there's no <code>global</code> keyword and no module-level state. To share state, pass it around or keep it in a struct/class field.</li>
+    <li><strong>No <code>struct</code> or <code>class</code> inside a function.</strong> Both are top-level-only declarations. See <a href="structs.html">Structs</a>.</li>
+    <li><strong>Unions are restrictive by design.</strong> You can't assign a union to a concrete variable without narrowing, you can't cast a union, and narrowing resets across branches and loops. The full list is on the <a href="unions.html#limits">Unions</a> page.</li>
+    <li><strong><code>NoneType</code> is a value, not a void.</strong> It can be stored in a variable, passed around, and printed (as <code>None</code>), but it has no methods and can't take part in arithmetic or comparison &mdash; <code>print</code> is the only builtin that accepts it.</li>
   </ul>
 </section>
 
 <section id="functions">
   <h2>Functions</h2>
   <ul>
-    <li><strong>No overloading.</strong> Two functions can't share a name, and imported names can collide.</li>
-    <li><strong>No function values.</strong> You can't store a function in a variable or pass one to another function.</li>
-    <li><strong>Functions must be defined before use</strong> in the file. There is no forward declaration.</li>
+    <li><strong>No overloading.</strong> Two functions can't share a name, and imported names can collide. A union parameter is the intended substitute. See <a href="unions.html">Unions</a>.</li>
+    <li><strong>No function values.</strong> You can't store a function in a variable, pass one to another function, or return one. No closures, no lambdas, nothing higher-order.</li>
+    <li><strong>No forward declaration.</strong> A function must be defined before it's called, top to bottom in the file. See <a href="functions.html#order">Functions</a>.</li>
+    <li><strong>Same rule inside a class.</strong> A method can only call methods declared <em>above</em> it in the class body. The order of method definitions matters.</li>
+    <li><strong>No named arguments.</strong> Calls are positional. (Default parameter values do exist, so you can omit trailing arguments.)</li>
+    <li><strong>One return value.</strong> No tuples, no multiple returns, no out-parameters &mdash; combine several results in a struct instead.</li>
+    <li><strong>Only <code>print</code> is variadic.</strong> Every other function has a fixed arity.</li>
+    <li><strong>No trailing comma in a parameter list</strong> (and none in an import list). Calls and list/dict literals don't mind one.</li>
   </ul>
 </section>
 
-<section id="safety">
-  <h2>Safety</h2>
+<section id="classes">
+  <h2>Classes and structs</h2>
   <ul>
-    <li><strong>Runtime errors need debug mode.</strong> Division by zero and bad string-to-number casts only error when you pass <code>--debug</code>; otherwise the behavior is undefined. See <a href="debug.html">Debug</a>.</li>
-    <li><strong>Unary plus doesn't exist.</strong> <code>+n</code> is a compile error &mdash; just write <code>n</code>. See <a href="operators.html#unary">Operators</a>.</li>
+    <li><strong>Value semantics.</strong> Both classes and structs copy on assignment and on function/method call. A mutation only sticks through a <code>^</code> reference or a direct field write. See <a href="classes.html#value-semantics">Classes</a>.</li>
+    <li><strong>No multiple inheritance</strong>, no interfaces, no abstract classes, no traits or mixins. <code>class Dog(Base)</code> names exactly one base.</li>
+    <li><strong>No static or class methods.</strong> Every method starts with <code>self</code>.</li>
+    <li><strong>No operator overloading.</strong> The only special methods are the constructor <code>__init__</code> and the printer <code>__str__</code>. Equality and arithmetic on your types can't be hooked (custom iteration works differently &mdash; it's a plain <code>done</code>/<code>value</code>/<code>advance</code> trio, see <a href="flow.html#for">Flow</a>).</li>
+    <li><strong>One constructor.</strong> A class has exactly <code>__init__</code> (or none), no overloads and no destructors.</li>
+    <li><strong>Foreign classes have a hole.</strong> Instances of a foreign-module class (C, C++, Rust, Python) can't be passed to or returned from methods yet. See <a href="classes.html#foreign">Classes</a>.</li>
+  </ul>
+</section>
+
+<section id="io">
+  <h2>The outside world</h2>
+  <ul>
+    <li><strong>I/O means <code>print</code> and <code>input</code>.</strong> Stdout and stdin only: no files, no network, no sockets, no pipes. See <a href="builtins.html">Builtins</a>.</li>
+    <li><strong>No command-line arguments.</strong> <code>main</code> takes none; there's no <code>argv</code>. The only exit signal is <code>main</code>'s return value. See <a href="functions.html#main">Functions</a>.</li>
+    <li><strong>No environment variables</strong>, and no way to read or set them.</li>
+    <li><strong>No strings for dates, times, or regex.</strong> Nothing in the standard library touches them.</li>
+    <li><strong>No random numbers.</strong> There's no clock and no entropy source; generate any randomness yourself from arithmetic.</li>
+    <li><strong>Single-threaded.</strong> No threads, no async, no locks, no atomicity guarantees. One call stack, one program.</li>
+  </ul>
+</section>
+
+<section id="memory">
+  <h2>Memory and safety</h2>
+  <ul>
+    <li><strong>No garbage collector and no <code>free</code>.</strong> Strings, lists, and dicts allocate heap memory that is never reclaimed while the process runs. A long-running program can only grow.</li>
+    <li><strong>No raw pointers or pointer arithmetic.</strong> The <code>^</code> reference is the whole pointer story, and it can only be created in a variable declaration (<code>r: T = x^</code>) pointing at a variable. <code>x = y^</code> in an expression doesn't work, and neither does <code>(a + b)^</code>. See <a href="references.html">References</a>.</li>
+    <li><strong>Runtime checks require <code>--debug</code>.</strong> Division by zero, bad string-to-number casts, out-of-bounds list reads, and missing dict keys are undefined behavior without it. See <a href="debug.html">Debug</a>.</li>
+    <li><strong>Deep recursion exhausts the stack</strong>; there's no way to grow it from Threadon.</li>
+  </ul>
+</section>
+
+<section id="modules">
+  <h2>Modules and imports</h2>
+  <ul>
+    <li><strong>Only functions, structs, and classes can cross module boundaries.</strong> Importing a variable or constant is an error. See <a href="modules.html">Imports</a>.</li>
+    <li><strong>No wildcard imports.</strong> <code>from m import *</code> is rejected.</li>
+    <li><strong>No circular imports.</strong> <code>a</code> importing <code>b</code> while <code>b</code> imports <code>a</code> is a compile error.</li>
+    <li><strong>Imported names are not namespaced.</strong> Collisions between two imported names are same-name conflicts, since overloading doesn't exist.</li>
   </ul>
 </section>
 

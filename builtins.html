@@ -61,9 +61,14 @@
   <p>Strings are printed as-is, so spaces inside them are preserved:</p>
 <pre><code>print(<span class="tok-str">"a b c"</span>)</code></pre>
   <div class="out">a b c</div>
-  <p><code>print()</code> with no arguments prints just a newline.</p>
-  <p>One thing <code>print</code> refuses: printing a <code>NoneType</code> value is a compile error. The message spells it out:</p>
-  <div class="out">Error: Function 'print' cannot print a value of type NoneType at line 5</div>
+  <p><code>print()</code> with no arguments prints just a newline. A <code>NoneType</code> value prints as <code>None</code>:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">nothing</span>() -&gt; <span class="tok-type">NoneType</span>
+    <span class="tok-kw">return</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(nothing())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">None</div>
 </section>
 
 <section id="input">
