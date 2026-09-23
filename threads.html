@@ -46,7 +46,7 @@
 
 <section id="thread-statement">
   <h2>The <code>thread</code> statement</h2>
-  <p>Threadon lets you spawn OS threads with the <code>thread</code> statement. A thread runs a block of code in parallel with the main program.</p>
+  <p>Threadon lets you spawn OS threads with the <code>thread</code> statement at module level (outside any function). A thread runs a block of code in parallel with the main program.</p>
 
   <p>Syntax:</p>
 <pre><code><span class="tok-kw">thread</span> <span class="tok-fn">ThreadName</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
@@ -61,26 +61,7 @@
     <li>The indented block — runs on the new thread if the condition is true.</li>
   </ul>
 
-  <p>A complete example inside a function:</p>
-<pre><code><span class="tok-kw">def</span> <span class="tok-fn">worker</span>() -> <span class="tok-type">NoneType</span>
-    print(<span class="tok-str">"worker running"</span>)
-    <span class="tok-kw">return</span>
-
-<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    <span class="tok-kw">thread</span> <span class="tok-fn">Worker1</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-        print(<span class="tok-str">"from thread"</span>)
-    print(<span class="tok-str">"main continues immediately"</span>)
-    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
-  <div class="out">from thread
-main continues immediately</div>
-
-  <p>The <code>thread</code> statement is non-blocking. The main function continues right away. All spawned threads are automatically joined before the program exits.</p>
-</section>
-
-<section id="module-level">
-  <h2>Module-level threads</h2>
-  <p>You can also write <code>thread</code> statements at the top level of a file, outside any function. These run before <code>main()</code> starts.</p>
-
+  <p>Module-level threads run before <code>main()</code> starts, in the order they appear in the source file:</p>
 <pre><code><span class="tok-kw">thread</span> <span class="tok-fn">Initializer</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
     print(<span class="tok-str">"initializing from module thread"</span>)
 
@@ -90,35 +71,37 @@ main continues immediately</div>
   <div class="out">initializing from module thread
 main sees initialized state</div>
 
-  <p>Module-level threads run in the order they appear in the source file, before <code>main()</code> begins. They also respect the <code>on</code> condition.</p>
+  <p>The <code>thread</code> statement is non-blocking. All spawned threads are automatically joined before the program exits.</p>
 </section>
 
 <section id="capture">
   <h2>Capturing variables by value</h2>
-  <p>Threads capture variables from their surrounding scope <strong>by value</strong>. The thread gets a snapshot of the variable's value at the moment the <code>thread</code> statement executes. Later changes to the variable in the parent scope do not affect the thread, and vice versa.</p>
+  <p>Threads capture variables from the module scope <strong>by value</strong>. The thread gets a snapshot of the variable's value at the moment the <code>thread</code> statement executes. Later changes to the variable do not affect the thread, and vice versa.</p>
 
-<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    x: <span class="tok-type">Int32</span> = <span class="tok-num">42</span>
-    <span class="tok-kw">thread</span> <span class="tok-fn">Capture</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-        print(<span class="tok-str">"thread sees:"</span>, x)
-    x = <span class="tok-num">99</span>
+<pre><code><span class="tok-kw">x</span>: <span class="tok-type">Int32</span> = <span class="tok-num">42</span>
+<span class="tok-kw">thread</span> <span class="tok-fn">Capture</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"thread sees:"</span>, x)
+x = <span class="tok-num">99</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
     print(<span class="tok-str">"main now has:"</span>, x)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">thread sees: 42
 main now has: 99</div>
 
-  <p>This applies to all types — integers, floats, strings, structs, lists, etc. For lists and structs, the thread gets its own copy of the data structure (the list's internal buffer is duplicated).</p>
+  <p>This applies to all types — integers, floats, strings, structs, lists, etc. For lists and structs, the thread gets its own copy of the data structure.</p>
 </section>
 
 <section id="thread-exit">
   <h2>Ending a thread early with <code>thread_exit()</code></h2>
   <p>Inside a thread body you can call <code>thread_exit()</code> to stop the thread immediately. It acts like an early <code>return</code> from the thread's function.</p>
 
-<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    <span class="tok-kw">thread</span> <span class="tok-fn">ExitDemo</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-        print(<span class="tok-str">"before exit"</span>)
-        thread_exit()
-        print(<span class="tok-str">"this never prints"</span>)
+<pre><code><span class="tok-kw">thread</span> <span class="tok-fn">ExitDemo</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"before exit"</span>)
+    thread_exit()
+    print(<span class="tok-str">"this never prints"</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
     print(<span class="tok-str">"main continues"</span>)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">before exit
@@ -129,10 +112,11 @@ main continues</div>
   <h2>The <code>on</code> condition</h2>
   <p>The expression after <code>on</code> must evaluate to a <code>Bool</code>. It is checked at the moment the <code>thread</code> statement is reached. If false, the thread body is skipped entirely and no thread is created.</p>
 
-<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    flag: <span class="tok-type">Bool</span> = <span class="tok-kw">False</span>
-    <span class="tok-kw">thread</span> <span class="tok-fn">Conditional</span>() <span class="tok-kw">on</span> flag:
-        print(<span class="tok-str">"won't run"</span>)
+<pre><code><span class="tok-kw">flag</span>: <span class="tok-type">Bool</span> = <span class="tok-kw">False</span>
+<span class="tok-kw">thread</span> <span class="tok-fn">Conditional</span>() <span class="tok-kw">on</span> flag:
+    print(<span class="tok-str">"won't run"</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
     print(<span class="tok-str">"no thread was spawned"</span>)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">no thread was spawned</div>
@@ -140,12 +124,12 @@ main continues</div>
 
 <section id="joining">
   <h2>Thread joining and program exit</h2>
-  <p>All threads spawned by <code>thread</code> statements (both inside functions and at module level) are automatically joined before the program exits. You don't need to call any join function yourself.</p>
+  <p>All threads spawned by <code>thread</code> statements are automatically joined before the program exits. You don't need to call any join function yourself.</p>
 
   <p>The join happens in two phases:</p>
   <ol>
     <li>Module-level threads are joined after they complete but before <code>main()</code> starts.</li>
-    <li>Threads spawned inside functions (including inside <code>main()</code>) are joined after <code>main()</code> returns but before the process exits.</li>
+    <li>Any threads spawned inside functions (if supported in the future) would be joined after <code>main()</code> returns but before the process exits.</li>
   </ol>
 
   <p>This means the program will wait for all threads to finish before exiting. A thread that runs forever will hang the program.</p>
@@ -153,15 +137,16 @@ main continues</div>
 
 <section id="multiple">
   <h2>Multiple threads</h2>
-  <p>You can spawn as many threads as you like. They all run concurrently (subject to OS scheduling).</p>
+  <p>You can spawn as many module-level threads as you like. They all run concurrently (subject to OS scheduling).</p>
 
-<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    <span class="tok-kw">thread</span> <span class="tok-fn">T1</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-        print(<span class="tok-str">"thread 1"</span>)
-    <span class="tok-kw">thread</span> <span class="tok-fn">T2</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-        print(<span class="tok-str">"thread 2"</span>)
-    <span class="tok-kw">thread</span> <span class="tok-fn">T3</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-        print(<span class="tok-str">"thread 3"</span>)
+<pre><code><span class="tok-kw">thread</span> <span class="tok-fn">T1</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"thread 1"</span>)
+<span class="tok-kw">thread</span> <span class="tok-fn">T2</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"thread 2"</span>)
+<span class="tok-kw">thread</span> <span class="tok-fn">T3</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"thread 3"</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
     print(<span class="tok-str">"main done"</span>)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
   <div class="out">thread 1
@@ -175,8 +160,9 @@ main done</div>
 <section id="limitations">
   <h2>Current limitations</h2>
   <ul>
+    <li>Threads are only supported at module level (outside functions).</li>
     <li>No thread synchronization primitives yet (mutexes, channels, atomics). Shared mutable state between threads is not safe.</li>
-    <li>Threads cannot return values to the parent. Use module-level variables or other communication if needed (but beware of data races).</li>
+    <li>Threads cannot return values to the parent.</li>
     <li>No way to wait for a specific thread from inside another thread.</li>
     <li>Thread stacks are not configurable; they use the OS default.</li>
   </ul>
