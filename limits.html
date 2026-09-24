@@ -21,6 +21,7 @@
   <div class="wrap links">
     <a href="index.html">Home</a>
     <a href="basics.html">Basics</a>
+    <a href="strings.html">Strings</a>
     <a href="types.html">Types</a>
     <a href="variables.html">Variables</a>
     <a href="operators.html">Operators</a>
@@ -38,6 +39,7 @@
     <a href="debug.html">Debug</a>
     <a href="examples.html">Examples</a>
     <a href="limits.html" class="here">Limits</a>
+    <a href="threads.html">Threads</a>
   </div>
 </nav>
 
@@ -63,12 +65,12 @@
   <h2>Collections and strings</h2>
   <ul>
     <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, each holding one row of types. There are no sets, no tuples, and no fixed-size arrays.</li>
-    <li><strong>Lists can grow, but only with the four methods.</strong> <code>append</code>, <code>pop</code>, <code>insert</code>, and <code>remove</code> exist and mutate the list in place. There is no <code>extend</code>, <code>sort</code>, <code>reverse</code>, <code>clear</code>, slicing, or concatenation syntax, and no way to splice one list into another.</li>
+    <li><strong>Lists can grow, but only with the four methods.</strong> <code>append</code>, <code>pop</code>, <code>insert</code>, and <code>remove</code> exist and mutate the list in place. There is no <code>extend</code>, <code>sort</code>, <code>reverse</code>, <code>clear</code>, or concatenation syntax, and no way to splice one list into another. (Indexing and slicing to <em>read</em> a list do work &mdash; see <a href="strings.html#slicing">slices</a>.)</li>
     <li><strong>Under <code>--debug</code>, the risky list operations fail loudly.</strong> There's no compile-time check: <code>pop</code> on an empty list and <code>remove</code> of a missing element are runtime errors only under <code>--debug</code>. Without <code>--debug</code>, their behavior is unspecified. See <a href="debug.html">Debugging</a>.</li>
     <li><strong>No index while iterating.</strong> <code>for x in xs</code> yields only the values. Pair them with an index by hand: <code>for i in range(len(xs))</code> then <code>xs[i]</code>.</li>
     <li><strong>Dicts iterate keys, not pairs.</strong> <code>for k in d</code> gives the key; look the value up yourself. There's no <code>items()</code>-style iteration and no destructuring.</li>
     <li><strong>No membership test.</strong> <code>x in xs</code> isn't an expression; the <code>in</code> keyword appears only in <code>for</code>. Loop to find an element, and watch a missing <code>Dict</code> key &mdash; it reads as the zero value, or a <code>KeyError</code> under <code>--debug</code>. See <a href="types.html#zerovalues">Types</a>.</li>
-    <li><strong>Strings are a small feature set.</strong> You can join with <code>+</code>, compare with <code>==</code>/<code>!=</code>, turn numbers and bools into text with <code>String(...)</code>, convert back with <a href="casts.html">casts</a>, and build characters with <a href="builtins.html#chr"><code>chr</code></a>. Missing: indexing, slicing, searching, replacing, case conversion, trimming, splitting, <code>len</code>, and any formatting.</li>
+    <li><strong>Strings are a small feature set.</strong> You can join with <code>+</code>, index and slice, compare by content, turn numbers and bools into text with <code>String(...)</code>, convert back with <a href="casts.html">casts</a>, build characters with <a href="builtins.html#chr"><code>chr</code></a>, and interpolate with <code>f"..."</code>/<code>t"..."</code> (see <a href="strings.html">Strings</a>). Missing: <code>len</code>, iteration, searching, replacing, case conversion, trimming, splitting, and any formatting. Characters are read-only &mdash; <code>s[0] = "x"</code> is a compile error.</li>
     <li><strong>String escapes are minimal.</strong> Only <code>\n</code>, <code>\t</code>, <code>\"</code>, and <code>\\</code> (plus <code>{</code> and <code>}</code> inside interpolated <code>f"..."</code>/<code>t"..."</code> strings). No <code>\xNN</code>, <code>\u</code>, or <code>\0</code> escapes.</li>
     <li><strong>No <code>char</code> type.</strong> <code>chr(27)</code> returns a one-character <code>String</code>, not a distinct character type with its own conversions.</li>
     <li><strong>Floats print with a fixed six decimals.</strong> There is no formatting control: no rounding knob, no width, no scientific toggle. See <a href="types.html#floats">Types</a>.</li>
@@ -95,7 +97,7 @@
     <li><strong>No type inference.</strong> There is no <code>var</code>; every variable and parameter needs its type written out. See <a href="variables.html#declare">Variables</a>.</li>
     <li><strong>No enums.</strong> A fixed set of named values has to be spelled with constants written by hand &mdash; and there are no module-level constants either.</li>
     <li><strong>No <code>const</code>, <code>immutable</code>, or <code>final</code>.</strong> Every variable is mutable once declared.</li>
-    <li><strong>No global variables.</strong> Variables live in functions only; there's no <code>global</code> keyword and no module-level state. To share state, pass it around or keep it in a struct/class field.</li>
+    <li><strong>Limited global variables.</strong> Module-level variables exist, but the module body is declarative: only variable declarations (with a literal initializer), functions, structs, classes, and <code>thread</code> statements are allowed there. A bare statement like <code>x = 99</code> at module level is a compile error &mdash; write to globals from inside a function. See <a href="threads.html#capture">Threads</a>.</li>
     <li><strong>No <code>struct</code> or <code>class</code> inside a function.</strong> Both are top-level-only declarations. See <a href="structs.html">Structs</a>.</li>
     <li><strong>Unions are restrictive by design.</strong> You can't assign a union to a concrete variable without narrowing, you can't cast a union, and narrowing resets across branches and loops. The full list is on the <a href="unions.html#limits">Unions</a> page.</li>
     <li><strong><code>NoneType</code> is a value, not a void.</strong> It can be stored in a variable, passed around, and printed (as <code>None</code>), but it has no methods and can't take part in arithmetic or comparison &mdash; <code>print</code> is the only builtin that accepts it.</li>
@@ -136,7 +138,7 @@
     <li><strong>No environment variables</strong>, and no way to read or set them.</li>
     <li><strong>No strings for dates, times, or regex.</strong> Nothing in the standard library touches them.</li>
     <li><strong>No random numbers.</strong> There's no clock and no entropy source; generate any randomness yourself from arithmetic.</li>
-    <li><strong>Single-threaded.</strong> No threads, no async, no locks, no atomicity guarantees. One call stack, one program.</li>
+    <li><strong>Threads are limited.</strong> Spawned only at module level, read and write module globals directly with no user-level locks &mdash; a read-modify-write race is your problem. There is no async, no mutex, no channel, and no way to wait for a specific thread from inside another. See the <a href="threads.html">Threads</a> page.</li>
   </ul>
 </section>
 
@@ -145,7 +147,7 @@
   <ul>
     <li><strong>No garbage collector and no <code>free</code>.</strong> Strings, lists, and dicts allocate heap memory that is never reclaimed while the process runs. A long-running program can only grow.</li>
     <li><strong>No raw pointers or pointer arithmetic.</strong> The <code>^</code> reference is the whole pointer story, and it can only be created in a variable declaration (<code>r: T = x^</code>) pointing at a variable. <code>x = y^</code> in an expression doesn't work, and neither does <code>(a + b)^</code>. See <a href="references.html">References</a>.</li>
-    <li><strong>Runtime checks require <code>--debug</code>.</strong> Division by zero, bad string-to-number casts, out-of-bounds list reads, and missing dict keys are undefined behavior without it. See <a href="debug.html">Debug</a>.</li>
+    <li><strong>Runtime checks require <code>--debug</code>.</strong> Division by zero, bad string-to-number casts, out-of-bounds list reads <em>and string index reads</em>, and missing dict keys are undefined behavior without it. See <a href="debug.html">Debug</a>.</li>
     <li><strong>Deep recursion exhausts the stack</strong>; there's no way to grow it from Threadon.</li>
   </ul>
 </section>

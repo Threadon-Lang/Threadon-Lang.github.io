@@ -21,6 +21,7 @@
   <div class="wrap links">
     <a href="index.html">Home</a>
     <a href="basics.html">Basics</a>
+    <a href="strings.html">Strings</a>
     <a href="types.html">Types</a>
     <a href="variables.html">Variables</a>
     <a href="operators.html">Operators</a>
@@ -56,40 +57,44 @@
   <p>The parts:</p>
   <ul>
     <li><code>ThreadName</code> — an identifier you choose. It becomes the internal function name and appears in debug output.</li>
-    <li><code>()</code> — always empty parentheses. Threads take no arguments directly; they capture variables by value from the surrounding scope.</li>
+    <li><code>()</code> — always empty parentheses. Threads take no arguments directly; they read and write module-level variables instead.</li>
     <li><code>on <span class="tok-kw">True</span></code> — a boolean condition. The thread only spawns if this evaluates to <code>True</code> at the point of the statement.</li>
     <li>The indented block — runs on the new thread if the condition is true.</li>
   </ul>
 
-  <p>Module-level threads run before <code>main()</code> starts, in the order they appear in the source file:</p>
-<pre><code><span class="tok-kw">thread</span> <span class="tok-fn">Initializer</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-    print(<span class="tok-str">"initializing from module thread"</span>)
+  <p>Module-level threads are the whole story &mdash; a <code>thread</code> statement only exists at module scope. Each one spawns real OS threads using <code>pthread_create</code>, so they run <strong>in the background, in parallel with <code>main()</code></strong>. <code>main</code> does not wait for them; the thread and the main function interleave according to the OS scheduler.</p>
+<pre><code><span class="tok-kw">thread</span> <span class="tok-fn">Worker</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    print(<span class="tok-str">"from the thread"</span>)
 
 <span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    print(<span class="tok-str">"main sees initialized state"</span>)
+    print(<span class="tok-str">"from main"</span>)
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
-  <div class="out">initializing from module thread
-main sees initialized state</div>
+  <div class="out">from main
+from the thread</div>
 
-  <p>The <code>thread</code> statement is non-blocking. All spawned threads are automatically joined before the program exits.</p>
+  <p>That output is one possible ordering. The thread may print before main, after it, or between a pair of main's prints &mdash; whatever the scheduler decides. Don't rely on the order of output from different threads.</p>
+
+  <p>The <code>thread</code> statement is non-blocking. All spawned threads are automatically joined before the program exits (see below).</p>
 </section>
 
 <section id="capture">
-  <h2>Capturing variables by value</h2>
-  <p>Threads capture variables from the module scope <strong>by value</strong>. The thread gets a snapshot of the variable's value at the moment the <code>thread</code> statement executes. Later changes to the variable do not affect the thread, and vice versa.</p>
+  <h2>Sharing variables with threads</h2>
+  <p>A thread body is compiled as a normal function and can read and write module-level variables <strong>directly</strong> &mdash; there is no copying. Module-level variables live in a global section, and both <code>main</code> and the threads see the same storage. A write in the thread is visible in <code>main</code>, and the other way round.</p>
 
-<pre><code><span class="tok-kw">x</span>: <span class="tok-type">Int32</span> = <span class="tok-num">42</span>
-<span class="tok-kw">thread</span> <span class="tok-fn">Capture</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
-    print(<span class="tok-str">"thread sees:"</span>, x)
-x = <span class="tok-num">99</span>
+<pre><code><span class="tok-kw">counter</span>: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
+
+<span class="tok-kw">thread</span> <span class="tok-fn">Inc</span>() <span class="tok-kw">on</span> <span class="tok-kw">True</span>:
+    counter = counter + <span class="tok-num">1</span>
 
 <span class="tok-kw">def</span> <span class="tok-fn">main</span>() -> <span class="tok-type">Int32</span>
-    print(<span class="tok-str">"main now has:"</span>, x)
+    print(<span class="tok-str">"counter after thread: "</span> + <span class="tok-type">String</span>(counter))
     <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
-  <div class="out">thread sees: 42
-main now has: 99</div>
 
-  <p>This applies to all types — integers, floats, strings, structs, lists, etc. For lists and structs, the thread gets its own copy of the data structure.</p>
+  <p>The printed value is <code>0</code> or <code>1</code> depending on whether the thread has run yet &mdash; nothing guarantees one or the other.</p>
+
+  <p>Because <code>counter = counter + 1</code> is a read-modify-write, two threads doing it at once can lose updates. Threadon has no locks, so sharing mutable state this way is only safe if at most one thread writes a given variable (or you accept lossy counters).</p>
+
+  <p class="warn"><strong>Module-level code is declarative.</strong> Only variable declarations, functions, structs, classes, and <code>thread</code> statements can live at the top of a file. Assignments such as <code>counter = 1</code> outside a function are compile errors &mdash; writes must happen inside a function or a thread body.</p>
 </section>
 
 <section id="thread-exit">
@@ -124,15 +129,18 @@ main continues</div>
 
 <section id="joining">
   <h2>Thread joining and program exit</h2>
-  <p>All threads spawned by <code>thread</code> statements are automatically joined before the program exits. You don't need to call any join function yourself.</p>
+  <p>All threads spawned by <code>thread</code> statements are automatically joined when <code>main()</code> returns, before the process exits. You don't need to call any join function yourself.</p>
 
-  <p>The join happens in two phases:</p>
+  <p>The flow is:</p>
   <ol>
-    <li>Module-level threads are joined after they complete but before <code>main()</code> starts.</li>
-    <li>Any threads spawned inside functions (if supported in the future) would be joined after <code>main()</code> returns but before the process exits.</li>
+    <li>At the start of <code>main</code>, module-level threads are spawned (non-blocking).</li>
+    <li><code>main()</code> runs, in parallel with those threads.</li>
+    <li>When <code>main()</code> returns, the program waits for every spawned thread to finish, then exits.</li>
   </ol>
 
-  <p>This means the program will wait for all threads to finish before exiting. A thread that runs forever will hang the program.</p>
+  <p>So the program waits for all threads to complete before exiting. A thread that runs forever will hang the program &mdash; <code>main</code> returning does not stop the background threads; the ending join does, by never returning.</p>
+
+  <p class="warn"><strong>The join only happens at the very end.</strong> While <code>main</code> is running, the threads are genuinely in the background. A long-running thread (say, a loop that prints or reads input) runs alongside <code>main</code>, not after it.</p>
 </section>
 
 <section id="multiple">
@@ -154,15 +162,15 @@ thread 2
 thread 3
 main done</div>
 
-  <p>The order of output from different threads is non-deterministic.</p>
+  <p>The order of output from different threads is non-deterministic, and <code>main</code>'s own prints interleave with them.</p>
 </section>
 
 <section id="limitations">
   <h2>Current limitations</h2>
   <ul>
     <li>Threads are only supported at module level (outside functions).</li>
-    <li>No thread synchronization primitives yet (mutexes, channels, atomics). Shared mutable state between threads is not safe.</li>
-    <li>Threads cannot return values to the parent.</li>
+    <li>No user-level synchronization primitives yet (mutexes, channels, locks). A single variable assignment compiles to an atomic load or store, but a read-modify-write like <code>counter += 1</code> is <em>not</em> atomic &mdash; racing threads can lose updates.</li>
+    <li>Threads cannot return values to the parent; communicate through module-level variables.</li>
     <li>No way to wait for a specific thread from inside another thread.</li>
     <li>Thread stacks are not configurable; they use the OS default.</li>
   </ul>

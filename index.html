@@ -21,6 +21,7 @@
   <div class="wrap links">
     <a href="index.html" class="here">Home</a>
     <a href="basics.html">Basics</a>
+    <a href="strings.html">Strings</a>
     <a href="types.html">Types</a>
     <a href="variables.html">Variables</a>
     <a href="operators.html">Operators</a>
@@ -47,7 +48,7 @@
 <section id="intro">
   <h2>What it is</h2>
   <p>Threadon is a compiled programming language. It compiles down to LLVM IR, the intermediate language written by the LLVM project. That means no interpreter, no virtual machine, no garbage collector. The code you write is turned straight into native machine code.</p>
-  <p>Threadon is still young. It has functions, structs, collections, loops, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The last page, <a href="limits.html">Limits</a>, lists what's missing.</p>
+  <p>Threadon is still young. It has functions, structs, collections, loops, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The <a href="limits.html">Limits</a> page lists what's missing.</p>
   <p>Here's an example:</p>
 <pre><code><span class="tok-kw">struct</span> <span class="tok-type">Point</span>:
     x: <span class="tok-type">Int32</span>
@@ -99,6 +100,10 @@ pip3 install threadon
     <div class="card">
       <h3><a href="basics.html">Basics</a></h3>
       <p>What a program looks like. Comments, indentation, literals, the shape of a file.</p>
+    </div>
+    <div class="card">
+      <h3><a href="strings.html">Strings</a></h3>
+      <p>Indexing, slicing, content comparison, and <code>f"..."</code>/<code>t"..."</code> interpolated strings.</p>
     </div>
     <div class="card">
       <h3><a href="types.html">Types</a></h3>

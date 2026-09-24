@@ -21,6 +21,7 @@
   <div class="wrap links">
     <a href="index.html">Home</a>
     <a href="basics.html">Basics</a>
+    <a href="strings.html">Strings</a>
     <a href="types.html">Types</a>
     <a href="variables.html">Variables</a>
     <a href="operators.html">Operators</a>
@@ -38,6 +39,7 @@
     <a href="debug.html">Debug</a>
     <a href="examples.html">Examples</a>
     <a href="limits.html">Limits</a>
+    <a href="threads.html">Threads</a>
   </div>
 </nav>
 
@@ -85,7 +87,7 @@ print(n + <span class="tok-num">1</span>)</code></pre>
 
 <section id="len">
   <h2>len</h2>
-  <p><code>len</code> returns the number of items in a collection, as an <code>Int64</code>. It only takes a <code>List</code> or a <code>Dict</code> &mdash; passing a <code>String</code> fails to compile with <code>Function 'len' expects a List or Dict, got String</code>.</p>
+  <p><code>len</code> returns the number of items in a collection, as an <code>Int64</code>. It only takes a <code>List</code> or a <code>Dict</code> &mdash; passing a <code>String</code> fails to compile with <code>Function 'len' expects a List or Dict, got String</code> (strings have no length function yet; the workaround is a manual loop, described on the <a href="strings.html#whats-missing">Strings</a> page).</p>
 <pre><code>names: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = [<span class="tok-str">"ann"</span>, <span class="tok-str">"bob"</span>, <span class="tok-str">"clyde"</span>]
 print(len(names))</code></pre>
   <div class="out">3</div>

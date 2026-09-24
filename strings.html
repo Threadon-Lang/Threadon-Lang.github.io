@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strings — Threadon</title>
+<meta name="description" content="Threadon strings: literals, concatenation, indexing, slicing, content comparison, and f\"...\"/t\"...\" interpolated strings.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Strings</p>
+    <h1>Strings</h1>
+    <p class="tag">text: indexing, slicing, and interpolation</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap links">
+    <a href="index.html">Home</a>
+    <a href="basics.html">Basics</a>
+    <a href="strings.html" class="here">Strings</a>
+    <a href="types.html">Types</a>
+    <a href="variables.html">Variables</a>
+    <a href="operators.html">Operators</a>
+    <a href="casts.html">Casts</a>
+    <a href="flow.html">Flow</a>
+    <a href="functions.html">Functions</a>
+    <a href="structs.html">Structs</a>
+    <a href="unions.html">Unions</a>
+    <a href="references.html">References</a>
+    <a href="classes.html">Classes</a>
+    <a href="builtins.html">Builtins</a>
+    <a href="stdlib.html">Std lib</a>
+    <a href="modules.html">Imports</a>
+    <a href="cli.html">CLI</a>
+    <a href="debug.html">Debug</a>
+    <a href="examples.html">Examples</a>
+    <a href="limits.html">Limits</a>
+    <a href="threads.html">Threads</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="literals">
+  <h2>Literals and escapes</h2>
+  <p>A <code>String</code> is a piece of text, written with double quotes. Single quotes are not strings in Threadon. The basic rules live on the <a href="basics.html#literals">Basics</a> page; this page covers what you can <em>do</em> with a string.</p>
+
+  <p>Five escapes work inside a string:</p>
+  <table>
+    <tr><th>Escape</th><th>Meaning</th></tr>
+    <tr><td><code>\n</code></td><td>newline</td></tr>
+    <tr><td><code>\t</code></td><td>tab</td></tr>
+    <tr><td><code>\"</code></td><td>a literal double quote</td></tr>
+    <tr><td><code>\\</code></td><td>a literal backslash</td></tr>
+    <tr><td><code>\{</code></td><td>a literal <code>{</code>; only needed inside <code>f"..."</code>/<code>t"..."</code> (and <code>\}</code> for a literal <code>}</code>)</td></tr>
+  </table>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-str">"say \"hi\""</span>)
+    print(<span class="tok-str">"back\\slash"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">say "hi"
+back\slash</div>
+</section>
+
+<section id="concat">
+  <h2>Joining and converting</h2>
+  <p>Join strings with <code>+</code>. Both sides must be <code>String</code> &mdash; <code>"answer: " + 42</code> is a compile error. Convert with the <a href="casts.html">cast</a> form <code>String(...)</code> first, or use an interpolated string (below):</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    name: <span class="tok-type">String</span> = <span class="tok-str">"John"</span>
+    print(<span class="tok-str">"Hello "</span> + name)
+    print(<span class="tok-str">"the number is "</span> + <span class="tok-type">String</span>(<span class="tok-num">42</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">Hello John
+the number is 42</div>
+</section>
+
+<section id="indexing">
+  <h2>Indexing</h2>
+  <p><code>s[i]</code> reads the character at position <code>i</code>, counting from 0, and returns it as a one-character <code>String</code>. The index must be an integer.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">String</span> = <span class="tok-str">"hello"</span>
+    print(s[<span class="tok-num">0</span>])
+    print(s[<span class="tok-num">1</span>])
+    i: <span class="tok-type">Int32</span> = <span class="tok-num">4</span>
+    print(s[i])
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">h
+e
+o</div>
+
+  <p>Indexing the character you get back as a normal one-character string: it compares equal to the matching literal, can be printed, and can be concatenated.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">String</span> = <span class="tok-str">"hi"</span>
+    print(s[<span class="tok-num">0</span>] == <span class="tok-str">"h"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True</div>
+
+  <p class="warn"><strong>Bounds are checked only under <code>--debug</code>.</strong> An index past the end &mdash; or a negative index &mdash; is a runtime error in debug mode (<code>String index out of bounds</code>). Without <code>--debug</code> it's undefined behavior, just like the equivalent list read. See <a href="debug.html">Debug</a>.</p>
+
+  <p class="warn"><strong>Characters are read-only.</strong> <code>s[0] = "J"</code> is a compile error (<code>Cannot assign to a character of a String</code>). There is no way to edit a string in place; build a new one instead.</p>
+</section>
+
+<section id="slicing">
+  <h2>Slicing</h2>
+  <p><code>s[start:end]</code> copies the characters from <code>start</code> up to (but not including) <code>end</code>. Both bounds are optional and must be integers.</p>
+  <table>
+    <tr><th>Slice</th><th>Result on <code>"hello"</code></th><th>Meaning</th></tr>
+    <tr><td><code>s[:]</code></td><td><code>hello</code></td><td>whole string</td></tr>
+    <tr><td><code>s[:2]</code></td><td><code>he</code></td><td>first two characters</td></tr>
+    <tr><td><code>s[2:]</code></td><td><code>llo</code></td><td>everything from index 2 on</td></tr>
+    <tr><td><code>s[1:4]</code></td><td><code>ell</code></td><td>three characters from position 1</td></tr>
+    <tr><td><code>s[0:0]</code></td><td><code></code></td><td>empty slice</td></tr>
+  </table>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">String</span> = <span class="tok-str">"hello"</span>
+    print(s[<span class="tok-num">1</span>:<span class="tok-num">4</span>])
+    print(s[:<span class="tok-num">2</span>])
+    print(s[<span class="tok-num">2</span>:])
+    print(s[:])
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">ell
+he
+llo
+hello</div>
+
+  <p>Bounds are clamped to the string. A negative bound counts from the end, then the result is clamped to <code>[0, len]</code>. A slice where the start is past the end &mdash; or the range is empty &mdash; gives an empty string. No bounds error here, ever; slicing is always safe.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">String</span> = <span class="tok-str">"hello"</span>
+    print(s[-<span class="tok-num">3</span>:-<span class="tok-num">1</span>])    <span class="tok-cm"># last three up to last one</span>
+    print(s[-<span class="tok-num">100</span>:<span class="tok-num">100</span>])  <span class="tok-cm"># clamped to the whole string</span>
+    print(s[<span class="tok-num">3</span>:<span class="tok-num">1</span>])       <span class="tok-cm"># start past end: empty</span>
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">ll
+hello
+
+</div>
+
+  <p>There is no step argument. <code>s[::2]</code> is rejected (<code>Slice step is not supported</code>).</p>
+</section>
+
+<section id="compare">
+  <h2>Comparing strings by content</h2>
+  <p>All six comparison operators work on strings and compare <strong>contents</strong>, not pointers: <code>==</code>, <code>!=</code>, and the ordering operators <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code> compare lexicographically (byte by byte).</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">String</span> = <span class="tok-str">"hello"</span>
+    print(s[<span class="tok-num">1</span>:<span class="tok-num">4</span>] == <span class="tok-str">"ell"</span>)
+    print(s &lt; <span class="tok-str">"jello"</span>)
+    print(<span class="tok-str">"abc"</span> &lt; <span class="tok-str">"abd"</span>)
+    print(<span class="tok-str">"hi"</span> != <span class="tok-str">"hi"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True
+True
+True
+False</div>
+  <p>Both sides must still be <code>String</code>: <code>"1" &lt; "2"</code> is a <code>True</code> textual comparison, while <code>"1" &lt; 2</code> is a compile error.</p>
+</section>
+
+<section id="interpolation">
+  <h2>Interpolated strings: <code>f"..."</code> and <code>t"..."</code></h2>
+  <p>An interpolated string embeds expressions between braces. The expression is normal Threadon &mdash; variables, arithmetic, even other calls &mdash; and the result is converted to text. There are two kinds, and the difference matters.</p>
+
+  <h3><code>f"..."</code> &mdash; eager</h3>
+  <p>The expression is evaluated once, <em>at the point the string is built</em>. Later changes to the variables do not show up.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">3</span>
+    a: <span class="tok-type">String</span> = <span class="tok-str">f"x is {x} and half is {x / 2}"</span>
+    x = <span class="tok-num">99</span>
+    print(a)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">x is 3 and half is 1</div>
+
+  <h3><code>t"..."</code> &mdash; lazy template</h3>
+  <p>Captures the variables and renders them only when the string is <em>read</em> (printed, concatenated, compared, indexed&hellip;). The captured variable's value at read time is what appears.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    x: <span class="tok-type">Int32</span> = <span class="tok-num">3</span>
+    a: <span class="tok-type">String</span> = <span class="tok-str">t"x is {x}"</span>
+    x = <span class="tok-num">99</span>
+    print(a)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">x is 99</div>
+
+  <p>Two escapes exist to keep braces literal inside an interpolated string: <code>\{</code> and <code>\}</code>.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(<span class="tok-str">f"a set: \{1, 2\}"</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">a set: {1, 2}</div>
+
+  <p>Use <code>f"..."</code> when you want a plain string at a point in time; use <code>t"..."</code> when you want a live view of variables (for example, a template read out repeatedly). The example <a href="examples.html#15_string_ops"><code>15_string_ops</code></a> shows plain string features.</p>
+</section>
+
+<section id="whats-missing">
+  <h2>What's missing</h2>
+  <ul>
+    <li><strong>No <code>len</code>.</strong> <code>len(s)</code> is a compile error &mdash; <code>len</code> accepts <code>List</code> and <code>Dict</code> only. See <a href="builtins.html#len">Builtins</a>.</li>
+    <li><strong>No iteration.</strong> <code>for c in s</code> doesn't compile. Walk a string with an index and a <code>while</code> loop (or a fixed <code>range</code>) instead.</li>
+    <li><strong>No searching, replacing, splitting, trimming, or case conversion.</strong> The standard library has no string methods.</li>
+    <li><strong>No <code>char</code> type.</strong> Indexing returns a one-character <code>String</code>; <a href="builtins.html#chr"><code>chr(...)</code></a> builds one.</li>
+    <li><strong>No formatting control.</strong> There's no way to pad, round, or align; floats always print with six decimals.</li>
+    <li><strong>String slices and indexes can't be assigned to.</strong> There is no in-place editing.</li>
+  </ul>
+  <p>The full list of missing things is on the <a href="limits.html">Limits</a> page.</p>
+</section>
+
+<p class="pagenav">
+  <a href="basics.html">&larr; Back: Basics</a>
+  <a href="types.html">Next: Types &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

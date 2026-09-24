@@ -21,6 +21,7 @@
   <div class="wrap links">
     <a href="index.html">Home</a>
     <a href="basics.html">Basics</a>
+    <a href="strings.html">Strings</a>
     <a href="types.html">Types</a>
     <a href="variables.html">Variables</a>
     <a href="operators.html" class="here">Operators</a>
@@ -38,6 +39,7 @@
     <a href="debug.html">Debug</a>
     <a href="examples.html">Examples</a>
     <a href="limits.html">Limits</a>
+    <a href="threads.html">Threads</a>
   </div>
 </nav>
 
@@ -100,7 +102,7 @@ b: 3
     <tr><td><code>&lt;=</code></td><td>less than or equal</td></tr>
     <tr><td><code>&gt;=</code></td><td>greater than or equal</td></tr>
   </table>
-  <p>Comparisons return a <code>Bool</code>. Both sides must be the same type. Comparing an <code>Int32</code> to a <code>Float32</code> is a compile error, even if the values look equal.</p>
+  <p>Comparisons return a <code>Bool</code>. Both sides must be the same type. Comparing an <code>Int32</code> to a <code>Float32</code> is a compile error, even if the values look equal. Strings compare by content, including the ordering operators &mdash; see <a href="strings.html#compare">Strings</a>.</p>
 <pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
     print(<span class="tok-num">3</span> &lt; <span class="tok-num">5</span>)
     print(<span class="tok-num">3</span> == <span class="tok-num">5</span>)
