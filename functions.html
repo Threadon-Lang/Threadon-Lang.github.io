@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Functions — Threadon</title>
-<meta name="description" content="Threadon functions: defining them, return rules, recursion, and the entry point.">
+<meta name="description" content="Threadon functions: defining them, return rules, puredef purity checks, recursion, and the entry point.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html" class="here">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="functions.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -100,6 +77,35 @@ Joep</div>
   <div class="out">120</div>
   <p>Keep recursion depth reasonable. Each call uses stack, and very deep recursion will fail at runtime.</p>
 </section>
+<section id="pure">
+  <h2>Pure functions</h2>
+  <p>Use <code>puredef</code> instead of <code>def</code> to say that a function has no side effects. The compiler checks the promise; a pure function that breaks a rule does not compile.</p>
+<pre><code><span class="tok-kw">import</span> math
+
+<span class="tok-kw">puredef</span> <span class="tok-fn">distance</span>(a: <span class="tok-type">Int32</span>, b: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> math.abs(a - b)
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(distance(<span class="tok-num">3</span>, <span class="tok-num">8</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">5</div>
+  <p><code>math.abs</code> is declared with <code>puredef</code>, so a pure function may call it. A pure function may:</p>
+  <ul>
+    <li>call other <code>puredef</code> functions and methods;</li>
+    <li>call the pure builtins <code>len</code>, <code>chr</code> and <code>dict_key</code>;</li>
+    <li>read global variables;</li>
+    <li>change local variables, local containers and local <code>self</code> fields.</li>
+  </ul>
+  <p>A pure function may not:</p>
+  <ul>
+    <li>call a plain <code>def</code> function or method;</li>
+    <li>write a global variable or mutate a global container;</li>
+    <li>call a function or method from a native Python/C/C++/Rust module;</li>
+    <li>print, read input, call <code>collect()</code>, start a thread or use <code>thread_exit</code>.</li>
+  </ul>
+  <p><code>puredef</code> also works for methods, including <code>__init__</code>, when the body stays side-effect free. For example, <a href="math.html">math</a> and the automatic <a href="stdlib.html">std lib</a> use it for their arithmetic helpers.</p>
+</section>
+
 <section id="union">
 <h2>Union types in functions</h2>
 <p>Functions can accept union types as parameters and return them. A union lets one function handle several concrete types without writing separate overloads.</p>
@@ -118,9 +124,7 @@ Joep</div>
 <section id="main">
   <h2>The entry point</h2>
   <p>A program starts at a function named <code>main</code>. Its return value becomes the process exit code. Return <code>0</code> for success, anything else for failure. That's why every <code>main</code> in these docs ends with <code>return 0</code>.</p>
-  <p>You don't have to use <code>main</code>. The <code>-e</code> flag picks a different function as the entry point:</p>
-<pre><code>python3 -m threadon --run -e go file.th</code></pre>
-  <p>The chosen function's return value becomes the exit code. If it returns <code>NoneType</code>, the exit code is 0. There are two conditions: the function must exist, and the file must not also define <code>main</code>.</p>
+  <p><code>main</code> is the only entry point; there is no flag to choose another function. A program without <code>main</code> cannot be run or built as an executable.</p>
   <p>See <a href="cli.html">Command line</a> for the details.</p>
 </section>
 

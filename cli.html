@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html" class="here">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="cli.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -59,7 +36,6 @@
     <tr><td><code>-o FILE</code></td><td>Write the LLVM IR to FILE instead of stdout.</td></tr>
     <tr><td><code>--run</code></td><td>Execute the program with <code>lli</code> after compiling.</td></tr>
     <tr><td><code>--exe FILE</code></td><td>Build a native executable via <code>llc</code> and <code>gcc</code>.</td></tr>
-    <tr><td><code>-e NAME</code></td><td>Use NAME as the entry point instead of <code>main</code>.</td></tr>
     <tr><td><code>-I DIR</code></td><td>Add an import search path. Repeatable.</td></tr>
     <tr><td><code>-O N</code></td><td>Optimizer inline threshold. Default <code>0</code> = no inlining.</td></tr>
     <tr><td><code>--debug</code></td><td>Enable runtime checks. See the <a href="debug.html">Debug</a> page.</td></tr>
@@ -68,15 +44,10 @@
 </section>
 
 <section id="entry">
-  <h2>Choosing the entry point</h2>
-  <p>By default the program starts at <code>main</code>, and its return value becomes the exit code. Use <code>-e</code> to start somewhere else:</p>
-<pre><code>python3 -m threadon --run -e greet file.th</code></pre>
-  <p>Two conditions hold:</p>
-  <ul>
-    <li>The named function must exist. Otherwise: <em>"no function 'greet' found in the compiled module"</em>.</li>
-    <li>The file must not also define <code>main</code>. Otherwise: <em>"the module already defines a 'main' function"</em>.</li>
-  </ul>
-  <p>The entry function's return value becomes the exit code, like <code>main</code>. If it returns <code>NoneType</code>, the exit code is 0.</p>
+  <h2>Entry point</h2>
+  <p>Programs always start at <code>main</code>, and its return value becomes the exit code:</p>
+<pre><code>python3 -m threadon --run file.th</code></pre>
+  <p>There is no flag to choose another function. If the compiled module has no <code>main</code>, running it or building an executable fails with <em>"no function 'main' found in the compiled module"</em>.</p>
 </section>
 
 <section id="build">

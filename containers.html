@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Containers — Threadon</title>
+<meta name="description" content="Functional stacks, queues and Dict-backed maps with String keys and values, built for Threadon's value semantics.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Containers</p>
+    <h1>Containers</h1>
+    <p class="tag">functional stacks, queues and maps</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>Stacks and queues hold <code>Int32</code> in a list; the maps add <code>Dict</code>-backed key/value storage with <code>String</code> keys, <code>Int32</code> values, and the reverse. Threadon passes classes by value and a method call gets a copy of <code>self</code>, so methods either only <strong>read</strong> the container or return a <strong>new</strong> one. Reassign the result. The old module-style functions are still available as aliases.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">containers</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">ages</span>: <span class="tok-fn">containers</span>.<span class="tok-type">StringIntMap</span> = <span class="tok-fn">containers</span>.<span class="tok-fn">empty_string_int_map</span>()
+    <span class="tok-fn">ages</span> = <span class="tok-fn">ages</span>.<span class="tok-fn">put</span>(<span class="tok-str">&quot;ann&quot;</span>, <span class="tok-num">30</span>)
+    <span class="tok-fn">ages</span> = <span class="tok-fn">ages</span>.<span class="tok-fn">put</span>(<span class="tok-str">&quot;bob&quot;</span>, <span class="tok-num">40</span>)
+    <span class="tok-fn">found</span>: <span class="tok-fn">containers</span>.<span class="tok-type">IntLookup</span> = <span class="tok-fn">ages</span>.<span class="tok-fn">get</span>(<span class="tok-str">&quot;bob&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">found</span>.<span class="tok-fn">found</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">found</span>.<span class="tok-fn">value</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">ages</span>.<span class="tok-fn">size</span>())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">True
+40
+2</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>empty_stack()</code>, <code>empty_queue()</code></td><td>new empty containers</td></tr>
+<tr><td><code>s.size()</code>, <code>q.size()</code></td><td>number of items</td></tr>
+<tr><td><code>s.is_empty()</code>, <code>q.is_empty()</code></td><td>emptiness test</td></tr>
+<tr><td><code>s.peek()</code>, <code>q.front()</code></td><td>next value, or <code>0</code> when empty</td></tr>
+<tr><td><code>s.pushed(v)</code>, <code>q.enqueued(v)</code></td><td>new container with the value added</td></tr>
+<tr><td><code>pop(s)</code>, <code>dequeue(q)</code></td><td>a <code>StackPop</code> / <code>QueuePop</code> with <code>value</code> and the updated container</td></tr>
+<tr><td><code>s.contains(v)</code>, <code>q.contains(v)</code></td><td>membership test</td></tr>
+<tr><td><code>s.to_list()</code>, <code>q.to_list()</code></td><td>copy in bottom-to-top / oldest-to-newest order</td></tr>
+<tr><td><code>empty_string_int_map()</code>, <code>empty_int_string_map()</code></td><td>new empty maps</td></tr>
+<tr><td><code>m.put(k, v)</code></td><td>new map with a key set to a value</td></tr>
+<tr><td><code>m.get(k)</code></td><td><code>IntLookup</code> / <code>StringLookup</code> with <code>found</code> and <code>value</code></td></tr>
+<tr><td><code>m.has(k)</code></td><td>membership test</td></tr>
+<tr><td><code>m.remove(k)</code></td><td>new map without a key</td></tr>
+<tr><td><code>m.size()</code></td><td>number of entries</td></tr>
+<tr><td><code>m.keys()</code></td><td>list of keys</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Stacks are LIFO; queues are FIFO. Popping an empty one returns <code>0</code> and the same container.</li>
+<li>A missing key gives <code>found=False</code> and the zero value (<code>0</code> or <code>""</code>), never a <code>KeyError</code>.</li>
+<li>Put replaces an existing value; removing a missing key returns the same map.</li>
+<li>Every operation copies the underlying list or dict, so these are meant for small collections.</li>
+<li>The free functions <code>queue_size(q)</code>, <code>push(s, v)</code>, <code>string_int_put(m, k, v)</code> and friends still work; they simply call these methods.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="intset.html">IntSet &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

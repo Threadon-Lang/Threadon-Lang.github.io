@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Path — Threadon</title>
+<meta name="description" content="Basename, dirname, extension, join and normalize for path strings — no filesystem access.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Path</p>
+    <h1>Path</h1>
+    <p class="tag">POSIX path string helpers</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>String utilities for POSIX-style paths, built on the <code>strings</code> module. They never touch the disk and never check whether a path exists.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">path</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">p</span>: <span class="tok-type">String</span> = <span class="tok-str">&quot;/home/user/notes.txt&quot;</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">path</span>.<span class="tok-fn">basename</span>(<span class="tok-fn">p</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">path</span>.<span class="tok-fn">extension</span>(<span class="tok-fn">p</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">path</span>.<span class="tok-fn">join</span>(<span class="tok-str">&quot;a&quot;</span>, <span class="tok-str">&quot;b&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">notes.txt
+.txt
+a/b</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>basename(p)</code></td><td>last component</td></tr>
+<tr><td><code>dirname(p)</code></td><td>everything before the last slash; <code>.</code> when there is none</td></tr>
+<tr><td><code>extension(p)</code></td><td>suffix including the dot, or <code>""</code></td></tr>
+<tr><td><code>stem(p)</code></td><td>file name without extension</td></tr>
+<tr><td><code>with_extension(p, ext)</code></td><td>replace the extension</td></tr>
+<tr><td><code>join(a, b)</code></td><td>join with one slash; an absolute <code>b</code> replaces <code>a</code></td></tr>
+<tr><td><code>is_absolute(p)</code></td><td>does <code>p</code> start with <code>/</code>?</td></tr>
+<tr><td><code>normalize(p)</code></td><td>collapse repeated slashes and drop a trailing slash</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Use forward slashes; Windows drive letters and backslashes are not handled.</li>
+<li><code>normalize</code> does not resolve <code>..</code> segments.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="hash.html">Hash &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

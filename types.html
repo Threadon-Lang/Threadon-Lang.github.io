@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html" class="here">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="types.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -144,7 +121,7 @@ print(<span class="tok-type">String</span>(<span class="tok-num">42</span>))</co
   <div class="out">Hello John
 42</div>
   <p>Strings support indexing (<code>s[0]</code>), slicing (<code>s[1:4]</code>), and comparison by content (<code>s[1:4] == "ell"</code> is <code>True</code>), plus eager <code>f"..."</code> and lazy <code>t"..."</code> interpolated strings. Those all live on the dedicated <a href="strings.html">Strings</a> page.</p>
-  <p>What you can't do with a string: there's no <code>len</code>, no iterating with <code>for</code>, no editing of individual characters, and no searching or splitting. Rough edges are collected on the <a href="limits.html">Limits</a> page.</p>
+  <p>What you can't do with a string in the language itself: no iterating with <code>for</code>, no editing of individual characters, and no built-in searching or splitting. <code>len(s)</code> works, and the <a href="lib-strings.html">strings</a> module adds the missing helpers. Rough edges are collected on the <a href="limits.html">Limits</a> page.</p>
 </section>
 
 <section id="nonetype">

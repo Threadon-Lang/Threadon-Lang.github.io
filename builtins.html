@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html" class="here">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="builtins.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -87,7 +64,7 @@ print(n + <span class="tok-num">1</span>)</code></pre>
 
 <section id="len">
   <h2>len</h2>
-  <p><code>len</code> returns the number of items in a collection, as an <code>Int64</code>. It only takes a <code>List</code> or a <code>Dict</code> &mdash; passing a <code>String</code> fails to compile with <code>Function 'len' expects a List or Dict, got String</code> (strings have no length function yet; the workaround is a manual loop, described on the <a href="strings.html#whats-missing">Strings</a> page).</p>
+  <p><code>len</code> returns the number of items in a collection, as an <code>Int64</code>. It takes a <code>String</code>, <code>List</code> or <code>Dict</code>. For a string it returns the number of bytes.</p>
 <pre><code>names: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = [<span class="tok-str">"ann"</span>, <span class="tok-str">"bob"</span>, <span class="tok-str">"clyde"</span>]
 print(len(names))</code></pre>
   <div class="out">3</div>
@@ -104,6 +81,22 @@ print(dict_key(ages, <span class="tok-type">Int64</span>(<span class="tok-num">0
 <pre><code>print(chr(<span class="tok-num">65</span>))</code></pre>
   <div class="out">A</div>
   <p>Codes outside the byte range are silently truncated to their low 8 bits.</p>
+</section>
+
+<section id="collect">
+  <h2>collect</h2>
+  <p><code>collect()</code> takes no arguments and returns <code>NoneType</code>. It runs a full <a href="gc.html">garbage collection</a> synchronously: when it returns, all unreachable compiler-allocated heap memory has been reclaimed. Nothing is collected automatically.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">String</span> = <span class="tok-str">""</span>
+    i: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
+    <span class="tok-kw">while</span> i &lt; <span class="tok-num">8000</span>:
+        s = s + <span class="tok-str">"x"</span>
+        <span class="tok-kw">if</span> i % <span class="tok-num">100</span> == <span class="tok-num">0</span>:
+            collect()
+        i += <span class="tok-num">1</span>
+    collect()
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <p>Call it where you know a batch of temporary values is no longer needed: between loop iterations, after dropping a large list, or before a memory-sensitive phase. The runtime is added to the program only if it allocates or calls <code>collect()</code>. <code>THREADON_GC_STATS=1</code> prints collection statistics at exit.</p>
 </section>
 
 <section id="casting-builtins">

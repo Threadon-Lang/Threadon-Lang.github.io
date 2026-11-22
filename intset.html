@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IntSet — Threadon</title>
+<meta name="description" content="A functional set with add, remove, union, intersection and difference.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / IntSet</p>
+    <h1>IntSet</h1>
+    <p class="tag">a set of Int32 values</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>A set of <code>Int32</code> values backed by a list and wrapped in an <code>IntSet</code> class. Like <a href="containers.html">Containers</a>, it uses a functional API: every operation returns a new set and leaves the input untouched.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">intset</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">a</span>: <span class="tok-fn">intset</span>.<span class="tok-type">IntSet</span> = <span class="tok-fn">intset</span>.<span class="tok-fn">from_list</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>])
+    <span class="tok-fn">b</span>: <span class="tok-fn">intset</span>.<span class="tok-type">IntSet</span> = <span class="tok-fn">intset</span>.<span class="tok-fn">from_list</span>([<span class="tok-num">3</span>, <span class="tok-num">4</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">intset</span>.<span class="tok-fn">size</span>(<span class="tok-fn">intset</span>.<span class="tok-fn">union</span>(<span class="tok-fn">a</span>, <span class="tok-fn">b</span>)))
+    <span class="tok-fn">print</span>(<span class="tok-fn">intset</span>.<span class="tok-fn">contains</span>(<span class="tok-fn">a</span>, <span class="tok-num">2</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">4
+True</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>empty_set()</code></td><td>a new empty set</td></tr>
+<tr><td><code>from_list(xs)</code></td><td>set of the distinct values in an integer list</td></tr>
+<tr><td><code>to_list(s)</code></td><td>values as a <code>List[Int32]</code>, in insertion order</td></tr>
+<tr><td><code>contains(s, v)</code>, <code>size(s)</code></td><td>membership and size</td></tr>
+<tr><td><code>add(s, v)</code>, <code>remove(s, v)</code></td><td>new sets with the value added or removed</td></tr>
+<tr><td><code>union(a, b)</code>, <code>intersection(a, b)</code>, <code>difference(a, b)</code></td><td>new sets from two sets</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>There is only an <code>Int32</code> set; Threadon has no overloading or user-defined generics.</li>
+<li>Membership is a linear scan, so large sets are slow.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="format.html">Format &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

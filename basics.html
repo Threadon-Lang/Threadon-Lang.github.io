@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html" class="here">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="basics.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -68,11 +45,11 @@
   <h2>How a file is laid out</h2>
   <p>A <code>.th</code> file is a list of top-level things. In any order:</p>
   <ul>
-    <li><code>def</code> functions</li>
+    <li><code>def</code> and <code>puredef</code> functions</li>
     <li><code>struct</code> types</li>
     <li><code>import</code> statements</li>
   </ul>
-  <p>That's it. Code that runs must live inside a function. The only statements that can appear at the top level of a file are function definitions, struct definitions, and imports.</p>
+  <p>That's it. Code that runs must live inside a function. The only statements that can appear at the top level of a file are function definitions (plain or <code>puredef</code>), struct definitions, and imports.</p>
   <p>Order matters. A function must be defined before it is called, and a struct before it is used. If you call something the compiler hasn't seen yet, you get <code>Unknown function 'name'</code>.</p>
   <p>Put <code>main</code> at the bottom and the functions it calls above it:</p>
 <pre><code><span class="tok-kw">def</span> <span class="tok-fn">greet</span>(name: <span class="tok-type">String</span>) -&gt; <span class="tok-type">NoneType</span>

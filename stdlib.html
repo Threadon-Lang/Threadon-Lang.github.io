@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html" class="here">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="stdlib.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -103,6 +80,11 @@
 <section id="local-shadow">
   <h2>You can shadow it</h2>
   <p>The std lib is found on the module search path like anything else. If you put a file named <code>std.th</code> somewhere earlier on the search path, it wins over the real one. The automatic import looks up <code>std</code> through the normal search, so a local <code>std.th</code> is picked up and its functions are what you get. Same for a folder: a <code>std</code> module on the path shadows the library. See <a href="modules.html">Imports</a> for how the search path works.</p>
+</section>
+
+<section id="more">
+  <h2>Beyond the std lib</h2>
+  <p><code>std.th</code> is deliberately tiny. The <a href="libraries.html">Libraries</a> page documents thirteen more bundled modules, from <a href="math.html">math</a> and <a href="lib-strings.html">strings</a> to <a href="csv.html">csv</a>, <a href="vector.html">vector</a> and <a href="format.html">format</a>. Unlike <code>std</code>, you import them explicitly.</p>
 </section>
 
 <p class="pagenav">

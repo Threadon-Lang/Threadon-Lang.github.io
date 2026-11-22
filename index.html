@@ -17,37 +17,14 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html" class="here">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="index.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
 <section id="intro">
   <h2>What it is</h2>
-  <p>Threadon is a compiled programming language. It compiles down to LLVM IR, the intermediate language written by the LLVM project. That means no interpreter, no virtual machine, no garbage collector. The code you write is turned straight into native machine code.</p>
+  <p>Threadon is a compiled programming language. It compiles down to LLVM IR, the intermediate language written by the LLVM project. That means no interpreter and no virtual machine. Heap memory is reclaimed only when you call the explicit <a href="gc.html"><code>collect()</code></a> builtin. The code you write is turned straight into native machine code.</p>
   <p>Threadon is still young. It has functions, structs, collections, loops, imports, a small standard library, and strict type checking. Some things are not done yet, and this documentation is honest about that. The <a href="limits.html">Limits</a> page lists what's missing.</p>
   <p>Here's an example:</p>
 <pre><code><span class="tok-kw">struct</span> <span class="tok-type">Point</span>:
@@ -176,6 +153,10 @@ pip3 install threadon
     <div class="card">
       <h3><a href="threads.html">Threads</a></h3>
       <p>The <code>thread</code> statement, <code>thread_exit()</code>, and module-level threads.</p>
+    </div>
+    <div class="card">
+      <h3><a href="libraries.html">Libraries</a></h3>
+      <p>Thirteen bundled modules for math, strings, lists, randomness, bit ops, stats, CSV, paths, hashes, vectors, stacks, queues, maps and formatting.</p>
     </div>
   </div>
 </section>

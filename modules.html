@@ -17,31 +17,8 @@
   </div>
 </header>
 
-<nav class="toc">
-  <div class="wrap links">
-    <a href="index.html">Home</a>
-    <a href="basics.html">Basics</a>
-    <a href="strings.html">Strings</a>
-    <a href="types.html">Types</a>
-    <a href="variables.html">Variables</a>
-    <a href="operators.html">Operators</a>
-    <a href="casts.html">Casts</a>
-    <a href="flow.html">Flow</a>
-    <a href="functions.html">Functions</a>
-    <a href="structs.html">Structs</a>
-    <a href="unions.html">Unions</a>
-    <a href="references.html">References</a>
-    <a href="classes.html">Classes</a>
-    <a href="builtins.html">Builtins</a>
-    <a href="stdlib.html">Std lib</a>
-    <a href="modules.html" class="here">Imports</a>
-    <a href="cli.html">CLI</a>
-    <a href="debug.html">Debug</a>
-    <a href="examples.html">Examples</a>
-    <a href="limits.html">Limits</a>
-    <a href="threads.html">Threads</a>
-  </div>
-</nav>
+<div id="site-nav" data-current="modules.html"></div>
+<script src="nav.js"></script>
 
 <main class="wrap">
 
@@ -158,6 +135,14 @@ lang python
 v: <span class="tok-type">Vec3</span> = <span class="tok-type">Vec3</span>(<span class="tok-num">3.0</span>, <span class="tok-num">4.0</span>, <span class="tok-num">0.0</span>)
 print(v.length())</code></pre>
   <p>For <strong>Python</strong>, the bridge writes the C++ glue for you, so an ordinary Python class works unchanged &mdash; see <code>examples/16_python_classes</code>. For <strong>C</strong>, <strong>C++</strong>, and <strong>Rust</strong>, the same <code>class</code> directive is used, but you provide the glue symbols yourself: the class has the layout <code>struct {Class} { char* __handle; }</code>, the constructor is <code>{Class}___init__</code> returning that struct, and each method is <code>{Class}___{method}</code> taking the struct as its first argument. These symbols must be <code>extern "C"</code> and use the exact types listed in the manifest. For how these classes behave inside Threadon code, see the <a href="classes.html">Classes</a> page.</p>
+</section>
+
+<section id="bundled">
+  <h2>Bundled libraries</h2>
+  <p>Threadon ships opt-in modules in <code>stdlib/</code>: <a href="libraries.html">math, strings, lists, random, bitops, stats, csv, path, hash, vector, containers, intset and format</a>. They are found on the same search path and imported exactly like your own modules.</p>
+  <pre><code><span class="tok-kw">import</span> math
+<span class="tok-kw">from</span> strings <span class="tok-kw">import</span> split, join
+<span class="tok-kw">import</span> stats <span class="tok-kw">as</span> s</code></pre>
 </section>
 
 <section id="rules">

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hash — Threadon</title>
+<meta name="description" content="Deterministic polynomial and djb2 hashes for strings, integers and integer lists.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Hash</p>
+    <h1>Hash</h1>
+    <p class="tag">non-cryptographic hashes and checksums</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>Simple, deterministic hashes for strings and integers. The arithmetic stays in <code>Int64</code> by reducing modulo the prime 1,000,000,007. They are useful for buckets, quick comparisons and checksums, but they are not cryptographic.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">hash</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">hash</span>.<span class="tok-fn">string_hash</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">hash</span>.<span class="tok-fn">checksum16</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">299566379
+1323</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>string_hash(s)</code></td><td>polynomial rolling hash, multiplier 31, starting at 7</td></tr>
+<tr><td><code>djb2(s)</code></td><td>djb2-style hash, multiplier 33</td></tr>
+<tr><td><code>checksum16(s)</code></td><td>16-bit reduction of <code>string_hash</code></td></tr>
+<tr><td><code>hash_int(x)</code></td><td>hash of one <code>Int32</code></td></tr>
+<tr><td><code>hash_pair(a, b)</code></td><td>order-sensitive hash of two integers</td></tr>
+<tr><td><code>hash_list_int(xs)</code></td><td>order-sensitive hash of an integer list</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Equal inputs always hash equally, but collisions are possible and easy to force.</li>
+<li>Character codes come from <code>strings.ord</code>; only byte strings are supported.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="vector.html">Vector &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

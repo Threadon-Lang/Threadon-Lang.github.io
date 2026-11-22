@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random — Threadon</title>
+<meta name="description" content="A reproducible linear-congruential generator: seeds, integer and float draws, dice, choices and shuffles.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Random</p>
+    <h1>Random</h1>
+    <p class="tag">deterministic pseudo-random numbers</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>A small pseudo-random generator written entirely in Threadon. It uses a 31-bit linear congruential generator. The same seed always produces the same stream, which makes simulations and tests reproducible. It is not cryptographically secure and reads no entropy from the operating system.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">random</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">random</span>.<span class="tok-fn">seed</span>(<span class="tok-num">42</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">random</span>.<span class="tok-fn">randint</span>(<span class="tok-num">1</span>, <span class="tok-num">6</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">random</span>.<span class="tok-fn">rand_float</span>())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">4
+0.519819</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>seed(value)</code></td><td>reset the module-level state</td></tr>
+<tr><td><code>next_int()</code></td><td>next <code>Int64</code> in <code>[0, 2**31)</code></td></tr>
+<tr><td><code>randint(lo, hi)</code></td><td>inclusive <code>Int32</code> range; reversed bounds are swapped</td></tr>
+<tr><td><code>rand_float()</code></td><td><code>Float64</code> in <code>[0, 1)</code></td></tr>
+<tr><td><code>chance(percent)</code></td><td>true with the given probability</td></tr>
+<tr><td><code>choice_int(xs)</code></td><td>one element of a <code>List[Int32]</code>, or <code>0</code> when empty</td></tr>
+<tr><td><code>shuffle_int(xs)</code></td><td>Fisher-Yates shuffle of a copy of the list</td></tr>
+<tr><td><code>dice(sides)</code></td><td>roll from <code>1</code> to <code>sides</code></td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>The state is module-level, so all importers share one stream.</li>
+<li>The default seed is <code>42</code>; call <code>seed()</code> if you need a different sequence.</li>
+<li>Do not use this module for keys, tokens or anything security-sensitive.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="bitops.html">Bitops &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

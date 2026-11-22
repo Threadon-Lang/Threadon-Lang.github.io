@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitops — Threadon</title>
+<meta name="description" content="AND, OR, XOR, NOT, shifts and bit counting for UInt32, built from division and modulo.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Bitops</p>
+    <h1>Bitops</h1>
+    <p class="tag">bitwise operations for UInt32</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>Threadon has no <code>&amp;</code>, <code>|</code>, <code>~</code>, <code>&lt;&lt;</code> or <code>&gt;&gt;</code> operators. This module implements them for <code>UInt32</code> by peeling bits off with division and modulo. The results are correct but slower than hardware instructions.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">bitops</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">bitops</span>.<span class="tok-fn">band</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">12</span>), <span class="tok-type">UInt32</span>(<span class="tok-num">10</span>)))
+    <span class="tok-fn">print</span>(<span class="tok-fn">bitops</span>.<span class="tok-fn">shl</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">1</span>), <span class="tok-num">5</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">bitops</span>.<span class="tok-fn">bnot</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">0</span>)))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">8
+32
+4294967295</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>band(a, b)</code>, <code>bor(a, b)</code>, <code>bxor(a, b)</code></td><td>bitwise AND, OR, XOR over 32 bits</td></tr>
+<tr><td><code>bnot(a)</code></td><td>bitwise NOT</td></tr>
+<tr><td><code>shl(a, n)</code>, <code>shr(a, n)</code></td><td>shift left/right by <code>n</code> bits</td></tr>
+<tr><td><code>pow2(n)</code>, <code>full()</code></td><td>power of two; all bits set</td></tr>
+<tr><td><code>popcount(a)</code></td><td>number of set bits, as <code>Int32</code></td></tr>
+<tr><td><code>bit(a, n)</code></td><td>is bit <code>n</code> set?</td></tr>
+<tr><td><code>set_bit</code>, <code>clear_bit</code>, <code>toggle_bit</code></td><td>return a new <code>UInt32</code> with one bit changed</td></tr>
+<tr><td><code>trailing_zeros(a)</code></td><td>count of trailing zero bits (<code>32</code> for zero)</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>All arguments and results are <code>UInt32</code>; write <code>UInt32(...)</code> explicitly.</li>
+<li>Shifts wrap: bits shifted past the top are discarded.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="stats.html">Stats &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Libraries — Threadon</title>
+<meta name="description" content="The bundled Threadon libraries: math, strings, lists, random, bitops, stats, csv, path, hash, vector, containers, intset and format.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries</p>
+    <h1>Libraries</h1>
+    <p class="tag">bundled modules, opt in with import</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>Bundled libraries</h2>
+<p>Besides the <a href="stdlib.html">small std lib</a> that is imported automatically, Threadon ships a set of opt-in modules. They are ordinary <code>.th</code> files in <code>stdlib/</code>, so no external toolchain is needed. Import one by name and call its functions qualified:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">math</span>
+<span class="tok-kw">import</span> <span class="tok-fn">strings</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">math</span>.<span class="tok-fn">gcd</span>(<span class="tok-num">48</span>, <span class="tok-num">18</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">strings</span>.<span class="tok-fn">upper</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">6
+HELLO</div>
+<p>Each page below documents one module. Every module also has a <code>README.md</code> next to its source and a <code>test.th</code> suite in the repository.</p>
+</section>
+<section id="all">
+  <h2>All libraries</h2>
+    <div class="cards">
+    <div class="card">
+      <h3><a href="math.html">Math</a></h3>
+      <p>Integer and float math helpers: powers, factorials, gcd/lcm, rounding, square roots and constants.</p>
+    </div>
+    <div class="card">
+      <h3><a href="lib-strings.html">Strings</a></h3>
+      <p>String helpers for case conversion, trimming, searching, splitting, joining, replacing and padding.</p>
+    </div>
+    <div class="card">
+      <h3><a href="lists.html">Lists</a></h3>
+      <p>Helpers for List[Int32] and List[String]: sums, extremes, searching, sorting, reversing and joining.</p>
+    </div>
+    <div class="card">
+      <h3><a href="random.html">Random</a></h3>
+      <p>A reproducible linear-congruential generator: seeds, integer and float draws, dice, choices and shuffles.</p>
+    </div>
+    <div class="card">
+      <h3><a href="bitops.html">Bitops</a></h3>
+      <p>AND, OR, XOR, NOT, shifts and bit counting for UInt32, built from division and modulo.</p>
+    </div>
+    <div class="card">
+      <h3><a href="stats.html">Stats</a></h3>
+      <p>Means, medians, variance and standard deviation for integer and float lists.</p>
+    </div>
+    <div class="card">
+      <h3><a href="csv.html">CSV</a></h3>
+      <p>Parse and encode CSV rows held in strings, with quoted fields and escaped quotes.</p>
+    </div>
+    <div class="card">
+      <h3><a href="path.html">Path</a></h3>
+      <p>Basename, dirname, extension, join and normalize for path strings — no filesystem access.</p>
+    </div>
+    <div class="card">
+      <h3><a href="hash.html">Hash</a></h3>
+      <p>Deterministic polynomial and djb2 hashes for strings, integers and integer lists.</p>
+    </div>
+    <div class="card">
+      <h3><a href="vector.html">Vector</a></h3>
+      <p>Vec2 and Vec3 structs with addition, dot and cross products, lengths, normalization and distances.</p>
+    </div>
+    <div class="card">
+      <h3><a href="containers.html">Containers</a></h3>
+      <p>Functional stacks, queues and Dict-backed maps with String keys and values, built for Threadon's value semantics.</p>
+    </div>
+    <div class="card">
+      <h3><a href="intset.html">IntSet</a></h3>
+      <p>A functional set with add, remove, union, intersection and difference.</p>
+    </div>
+    <div class="card">
+      <h3><a href="format.html">Format</a></h3>
+      <p>Hex and binary strings, zero padding, fixed decimals, percentages and thousands separators.</p>
+    </div>
+    </div>
+</section>
+<section id="using">
+  <h2>Using a module</h2>
+<p>The importer searches the <code>-I</code> directories, then the main file's folder, then the bundled <code>stdlib/</code> directory. All four import forms work:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">math</span>
+<span class="tok-kw">import</span> <span class="tok-fn">math</span> <span class="tok-kw">as</span> <span class="tok-fn">m</span>
+<span class="tok-kw">from</span> <span class="tok-fn">math</span> <span class="tok-kw">import</span> <span class="tok-fn">gcd</span>, <span class="tok-fn">is_prime</span>
+<span class="tok-fn">lazyimport</span> <span class="tok-fn">random</span>
+<span class="tok-fn">lazyfrom</span> <span class="tok-fn">stats</span> <span class="tok-kw">import</span> <span class="tok-fn">mean_int</span></code></pre>
+<p>Only functions, structs and classes can be imported. See <a href="modules.html">Imports</a> for the full rules. A library can import other libraries: <code>stats</code>, for example, uses <code>lists</code> and <code>math</code>.</p>
+</section>
+
+<p class="pagenav">
+  <a href="stdlib.html">&larr; Back: Std lib</a>
+  <a href="math.html">Math &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>
