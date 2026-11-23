@@ -3,7 +3,7 @@
   const mount = document.getElementById("site-nav");
   if (!mount) return;
 
-  const libraryPages = new Set(["math.html", "lib-strings.html", "lists.html", "random.html", "bitops.html", "stats.html", "csv.html", "path.html", "hash.html", "vector.html", "containers.html", "intset.html", "format.html"]);
+  const libraryPages = new Set(["math.html", "lib-strings.html", "lists.html", "random.html", "bitops.html", "stats.html", "csv.html", "path.html", "hash.html", "vector.html", "containers.html", "intset.html", "format.html", "base64.html", "url.html", "checksum.html", "complex.html", "fraction.html", "heap.html", "strset.html", "date.html", "units.html", "color.html", "table.html", "validate.html", "graph.html"]);
 
   function render(markup) {
     mount.innerHTML = markup;

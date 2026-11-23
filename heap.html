@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heap — Threadon</title>
+<meta name="description" content="A binary min-heap over Int32 values with push, pop, peek and an ascending heapsort. Every operation returns a new value.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Heap</p>
+    <h1>Heap</h1>
+    <p class="tag">functional min-heap and heapsort</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>A heap gives fast access to the smallest element without sorting the whole collection. This implementation stores the heap in a flat <code>List[Int32]</code> and returns a new <code>Heap</code> after each change, matching Threadon's value semantics.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">heap</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">out</span>: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = <span class="tok-fn">heap</span>.<span class="tok-fn">sort</span>([<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">out</span>[<span class="tok-num">0</span>] == <span class="tok-num">1</span> <span class="tok-kw">and</span> <span class="tok-fn">out</span>[<span class="tok-num">2</span>] == <span class="tok-num">3</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">True</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>empty()</code></td><td>a new empty heap</td></tr>
+<tr><td><code>from_list(xs)</code></td><td>heap containing every value in a list</td></tr>
+<tr><td><code>size(h)</code>, <code>peek(h)</code></td><td>item count and smallest value (<code>0</code> when empty)</td></tr>
+<tr><td><code>push(h, v)</code></td><td>new heap with <code>v</code> added</td></tr>
+<tr><td><code>pop(h)</code></td><td>new heap without the smallest value</td></tr>
+<tr><td><code>sort(xs)</code></td><td>ascending list via heapsort</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>To read the value you are about to remove, call <code>peek(h)</code> before <code>pop(h)</code>.</li>
+<li>Popping an empty heap returns it unchanged.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="strset.html">String set &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

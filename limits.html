@@ -41,13 +41,13 @@
 <section id="data">
   <h2>Collections and strings</h2>
   <ul>
-    <li><strong>Only two collection types.</strong> <code>List</code> and <code>Dict</code>, each holding one row of types. There are no sets, no tuples, and no fixed-size arrays.</li>
-    <li><strong>Lists can grow, but only with the four methods.</strong> <code>append</code>, <code>pop</code>, <code>insert</code>, and <code>remove</code> exist and mutate the list in place. There is no <code>extend</code>, <code>sort</code>, <code>reverse</code>, <code>clear</code>, or concatenation syntax, and no way to splice one list into another. (Indexing and slicing to <em>read</em> a list do work &mdash; see <a href="strings.html#slicing">slices</a>.)</li>
+    <li><strong>The language has two collection types.</strong> <code>List</code> and <code>Dict</code>, each holding one row of types. Set-like behaviour lives in the <a href="intset.html">intset</a> and <a href="strset.html">strset</a> libraries; there are still no tuples or fixed-size arrays.</li>
+    <li><strong>Lists can grow, but only with the four methods.</strong> <code>append</code>, <code>pop</code>, <code>insert</code>, and <code>remove</code> exist and mutate the list in place; there is no <code>clear</code> or concatenation syntax. The <a href="lists.html">lists</a> library adds non-mutating <code>extend_int</code>, <code>sort_int</code>, <code>sort_str</code> and <code>reverse_int</code>, while <a href="heap.html">heap</a> adds heapsort. (Indexing and slicing to <em>read</em> a list do work &mdash; see <a href="strings.html#slicing">slices</a>.)</li>
     <li><strong>Under <code>--debug</code>, the risky list operations fail loudly.</strong> There's no compile-time check: <code>pop</code> on an empty list and <code>remove</code> of a missing element are runtime errors only under <code>--debug</code>. Without <code>--debug</code>, their behavior is unspecified. See <a href="debug.html">Debugging</a>.</li>
     <li><strong>No index while iterating.</strong> <code>for x in xs</code> yields only the values. Pair them with an index by hand: <code>for i in range(len(xs))</code> then <code>xs[i]</code>.</li>
     <li><strong>Dicts iterate keys, not pairs.</strong> <code>for k in d</code> gives the key; look the value up yourself. There's no <code>items()</code>-style iteration and no destructuring.</li>
     <li><strong>No membership test.</strong> <code>x in xs</code> isn't an expression; the <code>in</code> keyword appears only in <code>for</code>. Loop to find an element, and watch a missing <code>Dict</code> key &mdash; it reads as the zero value, or a <code>KeyError</code> under <code>--debug</code>. See <a href="types.html#zerovalues">Types</a>.</li>
-    <li><strong>Strings are a small feature set.</strong> You can join with <code>+</code>, index and slice, compare by content, turn numbers and bools into text with <code>String(...)</code>, convert back with <a href="casts.html">casts</a>, build characters with <a href="builtins.html#chr"><code>chr</code></a>, and interpolate with <code>f"..."</code>/<code>t"..."</code> (see <a href="strings.html">Strings</a>). <code>len(s)</code> works now, but there is still no iteration. Searching, replacing, case conversion, trimming, splitting and padding live in the <a href="lib-strings.html">strings</a> module, and number formatting in <a href="format.html">format</a>. Characters are read-only &mdash; <code>s[0] = "x"</code> is a compile error.</li>
+    <li><strong>Strings are a small feature set.</strong> You can join with <code>+</code>, index and slice, compare by content, turn numbers and bools into text with <code>String(...)</code>, convert back with <a href="casts.html">casts</a>, build characters with <a href="builtins.html#chr"><code>chr</code></a>, and interpolate with <code>f"..."</code>/<code>t"..."</code> (see <a href="strings.html">Strings</a>). <code>len(s)</code> works now, but there is still no iteration. Searching, replacing, case conversion, title case, line splitting, truncation, padding and word counts live in the <a href="lib-strings.html">strings</a> module, and number formatting in <a href="format.html">format</a>. Characters are read-only &mdash; <code>s[0] = "x"</code> is a compile error.</li>
     <li><strong>String escapes are minimal.</strong> Only <code>\n</code>, <code>\t</code>, <code>\"</code>, and <code>\\</code> (plus <code>{</code> and <code>}</code> inside interpolated <code>f"..."</code>/<code>t"..."</code> strings). No <code>\xNN</code>, <code>\u</code>, or <code>\0</code> escapes.</li>
     <li><strong>No <code>char</code> type.</strong> <code>chr(27)</code> returns a one-character <code>String</code>, not a distinct character type with its own conversions.</li>
     <li><strong>Floats print with a fixed six decimals.</strong> There is no formatting control: no rounding knob, no width, no scientific toggle. See <a href="types.html#floats">Types</a>.</li>
@@ -62,7 +62,7 @@
     <li><strong>No non-decimal literals.</strong> No <code>0x</code>, <code>0b</code>, or <code>0o</code>, and no exponent with a sign (<code>1e-3</code> is invalid). Digits, underscores, a dot, and a plain <code>e</code> are all you get.</li>
     <li><strong>No implicit conversions between different types.</strong> <code>1 + 2.5</code> and <code>1 == 1.0</code> are compile errors. The only leniency in the whole language: an integer literal adapts to the type it's assigned to. See <a href="types.html#checking">Types</a>.</li>
     <li><strong>Integer arithmetic wraps.</strong> No range checks on <code>+</code>, <code>-</code>, <code>*</code>, or shifts (there are no shifts). The only overflow you can catch is a string-to-number cast under <code>--debug</code>. See <a href="types.html#ints">Types</a>.</li>
-    <li><strong>No built-in math functions.</strong> Operators <code>+ - * / // % **</code> and the tiny <a href="stdlib.html">std lib</a> are in the language itself. The <a href="math.html">math</a>, <a href="stats.html">stats</a> and <a href="random.html">random</a> modules add powers, roots, rounding, statistics and a deterministic generator. There is still no <code>sin</code>, <code>cos</code> or <code>log</code>.</li>
+    <li><strong>No built-in math functions.</strong> Operators <code>+ - * / // % **</code> and the tiny <a href="stdlib.html">std lib</a> are in the language itself. The <a href="math.html">math</a>, <a href="stats.html">stats</a> and <a href="random.html">random</a> modules add powers, roots, rounding, statistics and a deterministic generator; <a href="complex.html">complex</a> and <a href="fraction.html">fraction</a> add complex and rational arithmetic. There is still no <code>sin</code>, <code>cos</code> or <code>log</code>.</li>
     <li><strong>No complex numbers</strong>; the widest type is <code>Int256</code>/<code>UInt256</code>.</li>
   </ul>
 </section>
@@ -88,9 +88,9 @@
     <li><strong>No function values.</strong> You can't store a function in a variable, pass one to another function, or return one. No closures, no lambdas, nothing higher-order.</li>
     <li><strong>No forward declaration.</strong> A function must be defined before it's called, top to bottom in the file. See <a href="functions.html#order">Functions</a>.</li>
     <li><strong>Same rule inside a class.</strong> A method can only call methods declared <em>above</em> it in the class body. The order of method definitions matters.</li>
-    <li><strong>No named arguments.</strong> Calls are positional. (Default parameter values do exist, so you can omit trailing arguments.)</li>
+    <li><strong>Named arguments work, but there is no overloading.</strong> <code>f(b=2, a=1)</code> is accepted, and default values can omit trailing arguments. Two functions still cannot share a name.</li>
     <li><strong>One return value.</strong> No tuples, no multiple returns, no out-parameters &mdash; combine several results in a struct instead.</li>
-    <li><strong>Only <code>print</code> is variadic.</strong> Every other function has a fixed arity.</li>
+    <li><strong>Variadic functions exist.</strong> <code>def total(*xs: List[Int32]) -&gt; Int32</code> collects extra arguments into a list, <code>**kwargs: Dict[String, T]</code> collects keywords, and calls can spread lists and dicts with <code>*</code> and <code>**</code>.</li>
     <li><strong>No trailing comma in a parameter list</strong> (and none in an import list). Calls and list/dict literals don't mind one.</li>
   </ul>
 </section>
@@ -101,7 +101,7 @@
     <li><strong>Value semantics.</strong> Both classes and structs copy on assignment and on function/method call. A mutation only sticks through a <code>^</code> reference or a direct field write. See <a href="classes.html#value-semantics">Classes</a>.</li>
     <li><strong>No multiple inheritance</strong>, no interfaces, no abstract classes, no traits or mixins. <code>class Dog(Base)</code> names exactly one base.</li>
     <li><strong>No static or class methods.</strong> Every method starts with <code>self</code>.</li>
-    <li><strong>No operator overloading.</strong> The only special methods are the constructor <code>__init__</code> and the printer <code>__str__</code>. Equality and arithmetic on your types can't be hooked (custom iteration works differently &mdash; it's a plain <code>done</code>/<code>value</code>/<code>advance</code> trio, see <a href="flow.html#for">Flow</a>).</li>
+    <li><strong>Operator overloading is limited.</strong> <code>__init__</code> and <code>__str__</code> are joined by dunder arithmetic and comparison methods such as <code>__add__</code> and <code>__eq__</code> (see <a href="classes.html">Classes</a>). Custom iteration still uses <code>done</code>/<code>value</code>/<code>advance</code>.</li>
     <li><strong>One constructor.</strong> A class has exactly <code>__init__</code> (or none), no overloads and no destructors.</li>
     <li><strong>Foreign classes have a hole.</strong> Instances of a foreign-module class (C, C++, Rust, Python) can't be passed to or returned from methods yet. See <a href="classes.html#foreign">Classes</a>.</li>
   </ul>
@@ -110,11 +110,11 @@
 <section id="io">
   <h2>The outside world</h2>
   <ul>
-    <li><strong>I/O means <code>print</code> and <code>input</code>.</strong> Stdout and stdin only: no files, no network, no sockets, no pipes. See <a href="builtins.html">Builtins</a>.</li>
+    <li><strong>Core I/O means <code>print</code> and <code>input</code>.</strong> Stdout and stdin only: no built-in files, network, sockets or pipes. Native modules can add platform-specific facilities through FFI, but nothing like that is part of the language. See <a href="builtins.html">Builtins</a>.</li>
     <li><strong>No command-line arguments.</strong> <code>main</code> takes none; there's no <code>argv</code>. The only exit signal is <code>main</code>'s return value. See <a href="functions.html#main">Functions</a>.</li>
     <li><strong>No environment variables</strong>, and no way to read or set them.</li>
     <li><strong>No strings for dates, times, or regex.</strong> Nothing in the standard library touches them.</li>
-    <li><strong>No true random numbers.</strong> There is no clock and no entropy source. The <a href="random.html">random</a> module is a reproducible pseudo-random generator with a fixed default seed, not a source of entropy.</li>
+    <li><strong>No true random numbers in the core.</strong> The <a href="random.html">random</a> module is a reproducible pseudo-random generator with a fixed default seed, not a source of entropy. The bundled native <code>time</code> module exposes a clock, but there is still no entropy source or built-in OS random API.</li>
     <li><strong>Threads are limited.</strong> Spawned only at module level, read and write module globals directly with no user-level locks &mdash; a read-modify-write race is your problem. There is no async, no mutex, no channel, and no way to wait for a specific thread from inside another. See the <a href="threads.html">Threads</a> page.</li>
   </ul>
 </section>

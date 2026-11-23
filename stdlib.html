@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Std lib — Threadon</title>
-<meta name="description" content="The Threadon standard library: abs, max, min, clamp, is_even, is_odd, range, and Iterable.">
+<meta name="description" content="The Threadon standard library: numeric helpers, Int64 variants, range, and Iterable.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,8 +24,8 @@
 
 <section id="what">
   <h2>What's in it</h2>
-  <p>The standard library is a single Threadon file, <code>stdlib/std.th</code>, written in the language itself. It has six helper functions and one class used for looping:</p>
-  <p>Six <code>Int32</code> helpers:</p>
+  <p>The standard library is a single Threadon file, <code>stdlib/std.th</code>, written in the language itself. It has small numeric helpers and one class used for looping:</p>
+  <p><code>Int32</code> helpers:</p>
   <table>
     <tr><th>Function</th><th>Returns</th><th>Example</th></tr>
     <tr><td><code>abs(x)</code></td><td><code>Int32</code>, the absolute value of <code>x</code></td><td><code>abs(-5)</code> &rarr; <code>5</code></td></tr>
@@ -34,6 +34,18 @@
     <tr><td><code>clamp(x, lo, hi)</code></td><td><code>Int32</code>, <code>x</code> forced between <code>lo</code> and <code>hi</code></td><td><code>clamp(10, 0, 5)</code> &rarr; <code>5</code></td></tr>
     <tr><td><code>is_even(n)</code></td><td><code>Bool</code></td><td><code>is_even(4)</code> &rarr; <code>True</code></td></tr>
     <tr><td><code>is_odd(n)</code></td><td><code>Bool</code></td><td><code>is_odd(4)</code> &rarr; <code>False</code></td></tr>
+    <tr><td><code>between(x, lo, hi)</code></td><td><code>Bool</code>, <code>True</code> when <code>x</code> is in the inclusive range</td><td><code>between(5, 1, 9)</code> &rarr; <code>True</code></td></tr>
+    <tr><td><code>is_multiple(n, k)</code></td><td><code>Bool</code>; <code>k == 0</code> is never a multiple</td><td><code>is_multiple(12, 4)</code> &rarr; <code>True</code></td></tr>
+    <tr><td><code>square_int(x)</code></td><td><code>Int64</code>, <code>x * x</code> with extra headroom</td><td><code>square_int(9)</code> &rarr; <code>81</code></td></tr>
+    <tr><td><code>diff_int(a, b)</code></td><td><code>Int32</code>, absolute difference</td><td><code>diff_int(3, 10)</code> &rarr; <code>7</code></td></tr>
+  </table>
+  <p><code>Int64</code> variants (suffixed to avoid colliding with opt-in modules):</p>
+  <table>
+    <tr><th>Function</th><th>Returns</th><th>Example</th></tr>
+    <tr><td><code>abs_i64(x)</code></td><td><code>Int64</code></td><td><code>abs_i64(-9)</code> &rarr; <code>9</code></td></tr>
+    <tr><td><code>max_i64(a, b)</code></td><td><code>Int64</code></td><td><code>max_i64(3, 8)</code> &rarr; <code>8</code></td></tr>
+    <tr><td><code>min_i64(a, b)</code></td><td><code>Int64</code></td><td><code>min_i64(3, 8)</code> &rarr; <code>3</code></td></tr>
+    <tr><td><code>clamp_i64(x, lo, hi)</code></td><td><code>Int64</code></td><td><code>clamp_i64(100, 0, 10)</code> &rarr; <code>10</code></td></tr>
   </table>
 </section>
 
@@ -84,7 +96,7 @@
 
 <section id="more">
   <h2>Beyond the std lib</h2>
-  <p><code>std.th</code> is deliberately tiny. The <a href="libraries.html">Libraries</a> page documents thirteen more bundled modules, from <a href="math.html">math</a> and <a href="lib-strings.html">strings</a> to <a href="csv.html">csv</a>, <a href="vector.html">vector</a> and <a href="format.html">format</a>. Unlike <code>std</code>, you import them explicitly.</p>
+  <p><code>std.th</code> is deliberately tiny. The <a href="libraries.html">Libraries</a> page documents twenty-six more bundled modules, from <a href="math.html">math</a> and <a href="lib-strings.html">strings</a> to <a href="base64.html">base64</a>, <a href="date.html">date</a>, <a href="graph.html">graph</a> and <a href="format.html">format</a>. Unlike <code>std</code>, you import them explicitly.</p>
 </section>
 
 <p class="pagenav">

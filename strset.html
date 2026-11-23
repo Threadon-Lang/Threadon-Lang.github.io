@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>String set — Threadon</title>
+<meta name="description" content="A functional set of String values with add, remove, membership and the usual union, intersection and difference operations.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / String set</p>
+    <h1>String set</h1>
+    <p class="tag">sets of strings</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>The <a href="intset.html">intset</a> module covers integers; this one does the same job for strings. A <code>StringSet</code> keeps insertion order and all operations return a new set, leaving their arguments untouched.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">strset</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">s</span>: <span class="tok-fn">strset</span>.<span class="tok-fn">StringSet</span> = <span class="tok-fn">strset</span>.<span class="tok-fn">from_list</span>([<span class="tok-str">&quot;a&quot;</span>, <span class="tok-str">&quot;b&quot;</span>, <span class="tok-str">&quot;a&quot;</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">strset</span>.<span class="tok-fn">size</span>(<span class="tok-fn">s</span>) == <span class="tok-num">2</span> <span class="tok-kw">and</span> <span class="tok-fn">strset</span>.<span class="tok-fn">contains</span>(<span class="tok-fn">s</span>, <span class="tok-str">&quot;b&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">True</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>empty_set()</code></td><td>a new empty set</td></tr>
+<tr><td><code>from_list(xs)</code></td><td>set of the distinct strings in a list</td></tr>
+<tr><td><code>to_list(s)</code>, <code>size(s)</code></td><td>values in insertion order, and item count</td></tr>
+<tr><td><code>contains(s, value)</code></td><td>membership test</td></tr>
+<tr><td><code>add(s, value)</code>, <code>remove(s, value)</code></td><td>new sets with the value added or removed</td></tr>
+<tr><td><code>union(a, b)</code>, <code>intersection(a, b)</code>, <code>difference(a, b)</code></td><td>set operations, always returning a new set</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Comparison is byte-for-byte: <code>"A"</code> and <code>"a"</code> are different values.</li>
+<li>Classes and lists have value semantics in Threadon, so a mutating method would not update the caller's set; functions are used instead.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="date.html">Date &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

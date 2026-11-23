@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checksum — Threadon</title>
+<meta name="description" content="FNV-1a, Adler-32 and CRC-8 checksums for strings and byte lists, with deterministic integer results.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Checksum</p>
+    <h1>Checksum</h1>
+    <p class="tag">small non-cryptographic digests</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>Checksums detect accidental changes to text or bytes. These are small, dependency-free implementations that stay in safe integer ranges by masking and reducing modulo fixed constants. They are <em>not</em> message authentication codes.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">checksum</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">checksum</span>.<span class="tok-fn">fnv1a</span>(<span class="tok-str">&quot;hello&quot;</span>) == <span class="tok-fn">checksum</span>.<span class="tok-fn">fnv1a</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">checksum</span>.<span class="tok-fn">adler32</span>(<span class="tok-str">&quot;hello&quot;</span>) &gt; <span class="tok-num">0</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">True
+True</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>fnv1a(s)</code></td><td>32-bit FNV-1a as an <code>Int64</code></td></tr>
+<tr><td><code>adler32(s)</code></td><td>Adler-32 reduced modulo 65521</td></tr>
+<tr><td><code>crc8(s)</code></td><td>8-bit CRC with polynomial <code>0x07</code></td></tr>
+<tr><td><code>checksum_bytes(xs)</code></td><td>FNV-1a over a byte <code>List[Int32]</code></td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Different inputs can collide; these functions are for quick sanity checks, not security.</li>
+<li>There is no bitwise XOR operator in Threadon, so the implementations use division and modulo instead.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="complex.html">Complex &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

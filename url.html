@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URL — Threadon</title>
+<meta name="description" content="Percent-encode strings, decode them again, and build or parse application/x-www-form-urlencoded query strings.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / URL</p>
+    <h1>URL</h1>
+    <p class="tag">percent encoding and query strings</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>URLs and form bodies need characters such as spaces and ampersands escaped. This module provides <code>quote</code>/<code>unquote</code> for single values and <code>encode_form</code>/<code>parse_query</code> for dictionaries of text values.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">url</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">url</span>.<span class="tok-fn">quote</span>(<span class="tok-str">&quot;a b&amp;c&quot;</span>) == <span class="tok-str">&quot;a%20b%26c&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">url</span>.<span class="tok-fn">unquote</span>(<span class="tok-str">&quot;a+b%2Fc&quot;</span>) == <span class="tok-str">&quot;a+b/c&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">True
+True</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>quote(s)</code></td><td>percent-encode all but <code>A-Za-z0-9-._~</code></td></tr>
+<tr><td><code>unquote(s)</code></td><td>decode <code>%HH</code>; <code>+</code> stays a plus</td></tr>
+<tr><td><code>encode_form(d)</code></td><td>query string from a <code>Dict[String, String]</code></td></tr>
+<tr><td><code>parse_query(q)</code></td><td>query string to a <code>Dict[String, String]</code></td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Malformed percent escapes are kept literally instead of raising an error.</li>
+<li><code>encode_form</code> uses the dictionary's <code>dict_key</code> order, not sorted order.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="checksum.html">Checksum &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

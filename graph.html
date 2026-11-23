@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph — Threadon</title>
+<meta name="description" content="A small directed graph type with edge insertion/removal, neighbours, reachability and breadth-first distances.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Libraries / Graph</p>
+    <h1>Graph</h1>
+    <p class="tag">directed graphs and BFS</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="libraries"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="what">
+  <h2>What it does</h2>
+<p>Graphs are useful for routes, dependencies and many other puzzles. A <code>Graph</code> has a fixed number of nodes numbered <code>0..n-1</code>, directed edges, and value semantics: adding an edge returns a new graph. Traversal is iterative, so it does not use the call stack.</p>
+</section>
+<section id="example">
+  <h2>Example</h2>
+<p>A short program using the module:</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">graph</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">g</span>: <span class="tok-fn">graph</span>.<span class="tok-fn">Graph</span> = <span class="tok-fn">graph</span>.<span class="tok-fn">empty</span>(<span class="tok-num">3</span>)
+    <span class="tok-fn">g</span> = <span class="tok-fn">graph</span>.<span class="tok-fn">add_edge</span>(<span class="tok-fn">g</span>, <span class="tok-num">0</span>, <span class="tok-num">1</span>)
+    <span class="tok-fn">g</span> = <span class="tok-fn">graph</span>.<span class="tok-fn">add_edge</span>(<span class="tok-fn">g</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">graph</span>.<span class="tok-fn">has_path</span>(<span class="tok-fn">g</span>, <span class="tok-num">0</span>, <span class="tok-num">2</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">True</div>
+</section>
+<section id="api">
+  <h2>API</h2>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>empty(n)</code></td><td>graph with <code>n</code> nodes and no edges</td></tr>
+<tr><td><code>add_edge(g, u, v)</code>, <code>remove_edge(g, u, v)</code></td><td>new graph with the edge added or removed</td></tr>
+<tr><td><code>neighbors(g, u)</code>, <code>has_edge(g, u, v)</code></td><td>outgoing edges and direct-edge test</td></tr>
+<tr><td><code>bfs(g, start)</code></td><td>shortest distances; <code>-1</code> when unreachable</td></tr>
+<tr><td><code>has_path(g, start, goal)</code></td><td>is the goal reachable?</td></tr>
+<tr><td><code>reachable(g, start)</code></td><td>reachable node indices in ascending order</td></tr>
+</table>
+</section>
+<section id="notes">
+  <h2>Notes and gotchas</h2>
+<ul>
+<li>Out-of-range node indices are ignored rather than treated as errors.</li>
+<li>Edges are stored as two flat lists (<code>from</code> and <code>to</code>) to keep the generated IR simple.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="libraries.html">&larr; Back: Libraries</a>
+  <a href="math.html">Math &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>
