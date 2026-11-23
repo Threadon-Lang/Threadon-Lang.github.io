@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exceptions — Threadon</title>
+<meta name="description" content="Threadon's error model: no catchable exceptions, compile-time errors, debug-mode runtime checks, and exit codes.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Exceptions</p>
+    <h1>Exceptions</h1>
+    <p class="tag">how failure works when nothing can catch it</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="exceptions.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="none">
+  <h2>No catchable exceptions</h2>
+  <p>Threadon has no <code>try</code>, <code>except</code>, <code>raise</code> or <code>throw</code>. There is no stack unwinding, no exception object travelling back to a caller, and no error value that a function can silently pass upward.</p>
+  <p>An operation either succeeds, is rejected by the compiler before anything runs, or stops the process. There is no fourth path where your code catches a failure and carries on from the middle of an expression.</p>
+  <p class="warn"><strong>Don't translate Python-style exception handling directly.</strong> Check the condition before performing the operation that could fail.</p>
+</section>
+
+<section id="compile">
+  <h2>Compile-time errors</h2>
+  <p>Most mistakes are caught before a program exists: type mismatches, unknown names, wrong argument counts, missing <code>return</code> statements, invalid imports, and out-of-range literals. The compiler prints the message, the line, and a caret pointing at the problem.</p>
+<pre><code>Error: If condition must be Bool, got Int32 at line 3
+      if x:
+      ^</code></pre>
+  <p>A compile-time error produces no executable and runs nothing. See <a href="basics.html#errors">Basics</a> for what the messages look like.</p>
+</section>
+
+<section id="runtime">
+  <h2>Runtime failures</h2>
+  <p>Some failures depend on values the compiler cannot know. With <code>--debug</code>, Threadon inserts checks for them. When a check fires, the process prints a <code>[RUNTIME ERROR]</code> block to stderr and exits with code <code>1</code>.</p>
+  <ul>
+    <li>Integer division or modulo by zero.</li>
+    <li>A <code>String</code> that does not start with a number when converting to <code>Int32</code>, <code>Int8</code> or <code>Float32</code>.</li>
+    <li>Integer results outside the target type's range.</li>
+    <li>Reading past the end of a list or string, or looking up a missing dict key.</li>
+    <li>Non-finite floats when <code>--flag-inf</code> is enabled.</li>
+  </ul>
+<pre><code>[RUNTIME ERROR]
+│ Error: Division by zero
+├─> Location: (null)
+└─> Process terminated with exit code 1</code></pre>
+  <p>The full list and the exact messages are on the <a href="debug.html">Debug</a> page. Without <code>--debug</code>, most of these checks are absent and the behavior is undefined. <code>--flag-inf</code> is independent of debug mode.</p>
+</section>
+
+<section id="exit">
+  <h2>Exit codes</h2>
+  <p>The value returned from <code>main</code> becomes the process exit code. Return <code>0</code> for success. A runtime check failure exits <code>1</code>. A compile-time error never starts a process at all.</p>
+  <p>A library function cannot throw an exception that changes the exit code. If a call can fail, return a status value and let <code>main</code> choose the exit code.</p>
+</section>
+
+<section id="patterns">
+  <h2>Handling failure without exceptions</h2>
+  <p>Check first. Test the divisor before dividing, compare an index with <code>len(xs)</code> before indexing, and validate a string before converting it. These checks work in release builds too, where the debug runtime checks are not present.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">safe_div</span>(a: <span class="tok-type">Int32</span>, b: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">if</span> b == <span class="tok-num">0</span>:
+        <span class="tok-kw">return</span> <span class="tok-num">0</span>
+    <span class="tok-kw">return</span> a // b
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(safe_div(<span class="tok-num">10</span>, <span class="tok-num">2</span>))
+    print(safe_div(<span class="tok-num">10</span>, <span class="tok-num">0</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<div class="out">5
+0</div>
+  <p>When the caller needs to tell success from failure, return a sentinel, a struct with an <code>ok</code> flag, or a union. Threadon has no built-in <code>Result</code> or <code>Option</code> type, but you can define one as a struct.</p>
+</section>
+
+<p class="pagenav">
+  <a href="debug.html">&larr; Back: Debug</a>
+  <a href="gc.html">Next: GC &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

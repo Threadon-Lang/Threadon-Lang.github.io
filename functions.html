@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Functions — Threadon</title>
-<meta name="description" content="Threadon functions: defining them, return rules, puredef purity checks, recursion, and the entry point.">
+<meta name="description" content="Threadon functions: defining them, defaults, variadic arguments, return rules, puredef purity checks, recursion, and the entry point.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -121,6 +121,43 @@ Joep</div>
 <p>The compiler guarantees that every operation inside the function body is valid for all types in the union. That's the tradeoff: you get flexibility, but you can't do anything type-specific inside the function without narrowing first.</p>
 <p>For the full picture — narrowing, control flow reversion, group types, and all the gotchas — see <a href="unions.html">Unions</a>.</p>
 </section>
+<section id="variadic">
+  <h2>Variadic parameters</h2>
+  <p>A parameter prefixed with <code>*</code> collects extra positional arguments into a <code>List[T]</code>. A parameter prefixed with <code>**</code> collects keyword arguments into a <code>Dict[String, T]</code>. The names are up to you.</p>
+  <p>Variadic parameters must come last. If you use both, <code>*args</code> comes before <code>**kwargs</code>. Ordinary parameters, including defaults, may come before them.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">total</span>(*xs: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>]) -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
+    <span class="tok-kw">for</span> x <span class="tok-kw">in</span> xs:
+        s += x
+    <span class="tok-kw">return</span> s
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    print(total())
+    print(total(<span class="tok-num">2</span>, <span class="tok-num">3</span>, <span class="tok-num">4</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">0
+9</div>
+  <p>With no extra arguments the list is empty. Call <code>total(2, 3, 4)</code> and <code>xs</code> is <code>[2, 3, 4]</code>.</p>
+  <p>Keyword arguments use the keyword name as a <code>String</code> key:</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">total</span>(first: <span class="tok-type">Int32</span>, *rest: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>], **opts: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>]) -&gt; <span class="tok-type">Int32</span>
+    s: <span class="tok-type">Int32</span> = first
+    <span class="tok-kw">for</span> x <span class="tok-kw">in</span> rest:
+        s += x
+    <span class="tok-kw">for</span> k <span class="tok-kw">in</span> opts:
+        s += opts[k]
+    <span class="tok-kw">return</span> s
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    xs: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = [<span class="tok-num">2</span>, <span class="tok-num">3</span>]
+    opts: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>] = {<span class="tok-str">"a"</span>: <span class="tok-num">4</span>, <span class="tok-str">"b"</span>: <span class="tok-num">5</span>}
+    print(total(<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>, x=<span class="tok-num">4</span>, y=<span class="tok-num">5</span>))
+    print(total(<span class="tok-num">1</span>, *xs, **opts))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">15
+15</div>
+  <p>At a call site, <code>*xs</code> and <code>**opts</code> pass whole containers of the right type. They cannot be mixed with extra positional values or keyword literals, and only one of each is allowed. Builtins, list mutators, <code>range()</code> and native calls do not accept keyword or spread arguments.</p>
+</section>
+
 <section id="main">
   <h2>The entry point</h2>
   <p>A program starts at a function named <code>main</code>. Its return value becomes the process exit code. Return <code>0</code> for success, anything else for failure. That's why every <code>main</code> in these docs ends with <code>return 0</code>.</p>

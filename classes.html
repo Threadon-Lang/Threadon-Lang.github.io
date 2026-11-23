@@ -138,6 +138,57 @@ print(t.max())</code></pre>
   <p>The details of writing the manifest and the glue code for each backend are on the <a href="modules.html#foreign">Imports</a> page.</p>
 </section>
 
+<section id="operators">
+  <h2>Operator overloads</h2>
+  <p>A class can give its own meaning to Threadon's operators by declaring methods with Python-style dunder names. The operator is rewritten into a normal method call, so the usual rules for methods, return types, and <a href="functions.html#pure">pure functions</a> apply.</p>
+  <table>
+    <tr><th>Operator</th><th>Method</th><th>Required return type</th></tr>
+    <tr><td><code>==</code></td><td><code>__eq__</code></td><td><code>Bool</code>, and the method must be <code>puredef</code></td></tr>
+    <tr><td><code>!=</code></td><td><code>__ne__</code></td><td><code>Bool</code></td></tr>
+    <tr><td><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td><code>__lt__</code> <code>__gt__</code> <code>__le__</code> <code>__ge__</code></td><td><code>Bool</code></td></tr>
+    <tr><td><code>+ - * / // % **</code></td><td><code>__add__ __sub__ __mul__ __truediv__ __floordiv__ __mod__ __pow__</code></td><td>the declaring class, exactly</td></tr>
+    <tr><td><code>-x</code></td><td><code>__neg__</code></td><td>the declaring class</td></tr>
+    <tr><td><code>not x</code></td><td><code>__bool__</code></td><td><code>Bool</code></td></tr>
+    <tr><td><code>x[i]</code></td><td><code>__getitem__</code></td><td>any type</td></tr>
+    <tr><td><code>x[i] = v</code></td><td><code>__setitem__</code></td><td>the declaring class</td></tr>
+  </table>
+  <p>Binary overloads take one more parameter besides <code>self</code>, and that parameter must have the same class type. Arithmetic results may not change class: <code>__add__</code> on <code>Point</code> must return <code>Point</code>, not another class or a number. <code>__eq__</code> must be declared with <code>puredef</code> so it cannot have side effects; the purity checker also rejects it if it writes a global or calls a non-pure function.</p>
+<pre><code><span class="tok-kw">class</span> <span class="tok-type">Score</span>:
+    n: <span class="tok-type">Int32</span>
+
+    <span class="tok-kw">def</span> <span class="tok-fn">__init__</span>(self: <span class="tok-type">Score</span>, n: <span class="tok-type">Int32</span>)
+        self.n = n
+
+    <span class="tok-kw">puredef</span> <span class="tok-fn">__eq__</span>(self: <span class="tok-type">Score</span>, other: <span class="tok-type">Score</span>) -&gt; <span class="tok-type">Bool</span>
+        <span class="tok-kw">return</span> self.n == other.n
+
+    <span class="tok-kw">def</span> <span class="tok-fn">__add__</span>(self: <span class="tok-type">Score</span>, other: <span class="tok-type">Score</span>) -&gt; <span class="tok-type">Score</span>
+        <span class="tok-kw">return</span> <span class="tok-type">Score</span>(self.n + other.n)
+
+    <span class="tok-kw">def</span> <span class="tok-fn">__getitem__</span>(self: <span class="tok-type">Score</span>, i: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+        <span class="tok-kw">return</span> self.n + i
+
+    <span class="tok-kw">def</span> <span class="tok-fn">__setitem__</span>(self: <span class="tok-type">Score</span>, i: <span class="tok-type">Int32</span>, v: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Score</span>
+        self.n = v + i
+        <span class="tok-kw">return</span> self
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    a: <span class="tok-type">Score</span> = <span class="tok-type">Score</span>(<span class="tok-num">10</span>)
+    b: <span class="tok-type">Score</span> = <span class="tok-type">Score</span>(<span class="tok-num">10</span>)
+    print(a == b)
+    print((a + b).n)
+    print(a[<span class="tok-num">3</span>])
+    a[<span class="tok-num">2</span>] = <span class="tok-num">40</span>
+    print(a.n)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+  <div class="out">True
+20
+13
+42</div>
+  <p>Because classes have <a href="#value-semantics">value semantics</a>, <code>__setitem__</code> returns the modified object and the compiler writes it back to the indexed variable, just as it does for a list mutation. Returning <code>NoneType</code> from <code>__setitem__</code> is a compile error.</p>
+  <p class="warn"><strong>Binary overloads are not inherited.</strong> A subclass that wants <code>==</code>, <code>+</code> or another binary operator must declare its own method; an inherited one is rejected. <code>__getitem__</code> may be inherited. Slices (<code>x[a:b]</code>) are not overloadable.</p>
+</section>
+
 <p class="pagenav">
   <a href="references.html">&larr; Back: References</a>
   <a href="builtins.html">Next: Builtins &rarr;</a>

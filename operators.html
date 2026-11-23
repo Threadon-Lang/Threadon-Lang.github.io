@@ -164,6 +164,11 @@ print(-n)   <span class="tok-cm"># 5</span></code></pre>
   <p>Convert one side first with a <a href="casts.html">cast</a>, or write literals that already match.</p>
 </section>
 
+<section id="overloading">
+  <h2>Overloading for classes</h2>
+  <p>These operators work on numbers and strings by default. A class can override them with dunder methods such as <code>__add__</code>, <code>__eq__</code> and <code>__getitem__</code>, including <code>[]</code> for reads and writes. The rules and a working example are on the <a href="classes.html#operators">Classes</a> page.</p>
+</section>
+
 <p class="pagenav">
   <a href="variables.html">&larr; Back: Variables</a>
   <a href="casts.html">Next: Casts &rarr;</a>
