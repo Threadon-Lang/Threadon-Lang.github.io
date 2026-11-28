@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cookbook — Threadon</title>
+<meta name="description" content="Runnable Threadon recipes for math, strings, lists, encoding, dates, units, graphs, tables, validation and more.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Cookbook</p>
+    <h1>Cookbook</h1>
+    <p class="tag">small programs you can copy</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="cookbook.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="intro">
+  <h2>How to use this page</h2>
+<p>This page collects the short example from every bundled library in one place. Each recipe links to the full page with its API table and output. The snippets are the same ones used to generate the library documentation, so they stay in sync with the reference.</p>
+</section>
+<section id="recipes">
+  <h2>Recipes</h2>
+<h3 id="recipe-math">Math</h3>
+<p>Integer and float math helpers: powers, factorials, gcd/lcm, rounding, square roots and constants. Full reference: <a href="math.html">Math</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">math</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">math</span>.<span class="tok-fn">pow_int</span>(<span class="tok-num">2</span>, <span class="tok-num">10</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">math</span>.<span class="tok-fn">gcd</span>(<span class="tok-num">48</span>, <span class="tok-num">18</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">math</span>.<span class="tok-fn">sqrt_f</span>(<span class="tok-num">81.0</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">math</span>.<span class="tok-fn">factorial</span>(<span class="tok-num">10</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-lib-strings">Strings</h3>
+<p>String helpers for case conversion, trimming, searching, splitting, joining, replacing and padding. Full reference: <a href="lib-strings.html">Strings</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">strings</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">s</span>: <span class="tok-type">String</span> = <span class="tok-fn">strings</span>.<span class="tok-fn">trim</span>(<span class="tok-str">&quot;  Hello, World!  &quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">strings</span>.<span class="tok-fn">upper</span>(<span class="tok-fn">s</span>))
+    <span class="tok-fn">parts</span>: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = <span class="tok-fn">strings</span>.<span class="tok-fn">split</span>(<span class="tok-fn">s</span>, <span class="tok-str">&quot;, &quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">strings</span>.<span class="tok-fn">join</span>(<span class="tok-fn">parts</span>, <span class="tok-str">&quot; | &quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-lists">Lists</h3>
+<p>Helpers for List[Int32] and List[String]: sums, extremes, searching, sorting, reversing and joining. Full reference: <a href="lists.html">Lists</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">lists</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">xs</span>: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = [<span class="tok-num">5</span>, <span class="tok-num">1</span>, <span class="tok-num">4</span>, <span class="tok-num">1</span>, <span class="tok-num">3</span>]
+    <span class="tok-fn">print</span>(<span class="tok-fn">lists</span>.<span class="tok-fn">sort_int</span>(<span class="tok-fn">xs</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">lists</span>.<span class="tok-fn">sum_int</span>(<span class="tok-fn">xs</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">lists</span>.<span class="tok-fn">unique_int</span>(<span class="tok-fn">xs</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-random">Random</h3>
+<p>A reproducible linear-congruential generator: seeds, integer and float draws, dice, choices and shuffles. Full reference: <a href="random.html">Random</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">random</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">random</span>.<span class="tok-fn">seed</span>(<span class="tok-num">42</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">random</span>.<span class="tok-fn">randint</span>(<span class="tok-num">1</span>, <span class="tok-num">6</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">random</span>.<span class="tok-fn">rand_float</span>())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-bitops">Bitops</h3>
+<p>AND, OR, XOR, NOT, shifts and bit counting for UInt32, built from division and modulo. Full reference: <a href="bitops.html">Bitops</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">bitops</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">bitops</span>.<span class="tok-fn">band</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">12</span>), <span class="tok-type">UInt32</span>(<span class="tok-num">10</span>)))
+    <span class="tok-fn">print</span>(<span class="tok-fn">bitops</span>.<span class="tok-fn">shl</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">1</span>), <span class="tok-num">5</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">bitops</span>.<span class="tok-fn">bnot</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">0</span>)))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-stats">Stats</h3>
+<p>Means, medians, variance and standard deviation for integer and float lists. Full reference: <a href="stats.html">Stats</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">stats</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">xs</span>: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = [<span class="tok-num">2</span>, <span class="tok-num">4</span>, <span class="tok-num">4</span>, <span class="tok-num">4</span>, <span class="tok-num">5</span>, <span class="tok-num">5</span>, <span class="tok-num">7</span>, <span class="tok-num">9</span>]
+    <span class="tok-fn">print</span>(<span class="tok-fn">stats</span>.<span class="tok-fn">mean_int</span>(<span class="tok-fn">xs</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">stats</span>.<span class="tok-fn">stddev_int</span>(<span class="tok-fn">xs</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-csv">CSV</h3>
+<p>Parse and encode CSV rows held in strings, with quoted fields and escaped quotes. Full reference: <a href="csv.html">CSV</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">csv</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">fields</span>: <span class="tok-type">List</span>[<span class="tok-type">String</span>] = <span class="tok-fn">csv</span>.<span class="tok-fn">parse_line</span>(<span class="tok-str">&quot;\&quot;Doe, Jane\&quot;,10&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">fields</span>[<span class="tok-num">0</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">csv</span>.<span class="tok-fn">encode_line</span>(<span class="tok-fn">fields</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-path">Path</h3>
+<p>Basename, dirname, extension, join and normalize for path strings — no filesystem access. Full reference: <a href="path.html">Path</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">path</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">p</span>: <span class="tok-type">String</span> = <span class="tok-str">&quot;/home/user/notes.txt&quot;</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">path</span>.<span class="tok-fn">basename</span>(<span class="tok-fn">p</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">path</span>.<span class="tok-fn">extension</span>(<span class="tok-fn">p</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">path</span>.<span class="tok-fn">join</span>(<span class="tok-str">&quot;a&quot;</span>, <span class="tok-str">&quot;b&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-hash">Hash</h3>
+<p>Deterministic polynomial and djb2 hashes for strings, integers and integer lists. Full reference: <a href="hash.html">Hash</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">hash</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">hash</span>.<span class="tok-fn">string_hash</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">hash</span>.<span class="tok-fn">checksum16</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-vector">Vector</h3>
+<p>Vec2 and Vec3 structs with addition, dot and cross products, lengths, normalization and distances. Full reference: <a href="vector.html">Vector</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">from</span> <span class="tok-fn">vector</span> <span class="tok-kw">import</span> <span class="tok-type">Vec2</span>, <span class="tok-fn">add2</span>, <span class="tok-fn">length2</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">a</span>: <span class="tok-type">Vec2</span> = <span class="tok-type">Vec2</span>(<span class="tok-fn">x</span>=<span class="tok-num">3.0</span>, <span class="tok-fn">y</span>=<span class="tok-num">4.0</span>)
+    <span class="tok-fn">b</span>: <span class="tok-type">Vec2</span> = <span class="tok-fn">add2</span>(<span class="tok-fn">a</span>, <span class="tok-type">Vec2</span>(<span class="tok-fn">x</span>=<span class="tok-num">1.0</span>, <span class="tok-fn">y</span>=<span class="tok-num">2.0</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">length2</span>(<span class="tok-fn">a</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">b</span>.<span class="tok-fn">x</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-containers">Containers</h3>
+<p>Functional stacks, queues and Dict-backed maps with String keys and values, built for Threadon's value semantics. Full reference: <a href="containers.html">Containers</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">containers</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">ages</span>: <span class="tok-fn">containers</span>.<span class="tok-type">StringIntMap</span> = <span class="tok-fn">containers</span>.<span class="tok-fn">empty_string_int_map</span>()
+    <span class="tok-fn">ages</span> = <span class="tok-fn">ages</span>.<span class="tok-fn">put</span>(<span class="tok-str">&quot;ann&quot;</span>, <span class="tok-num">30</span>)
+    <span class="tok-fn">ages</span> = <span class="tok-fn">ages</span>.<span class="tok-fn">put</span>(<span class="tok-str">&quot;bob&quot;</span>, <span class="tok-num">40</span>)
+    <span class="tok-fn">found</span>: <span class="tok-fn">containers</span>.<span class="tok-type">IntLookup</span> = <span class="tok-fn">ages</span>.<span class="tok-fn">get</span>(<span class="tok-str">&quot;bob&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">found</span>.<span class="tok-fn">found</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">found</span>.<span class="tok-fn">value</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">ages</span>.<span class="tok-fn">size</span>())
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-intset">IntSet</h3>
+<p>A functional set with add, remove, union, intersection and difference. Full reference: <a href="intset.html">IntSet</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">intset</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">a</span>: <span class="tok-fn">intset</span>.<span class="tok-type">IntSet</span> = <span class="tok-fn">intset</span>.<span class="tok-fn">from_list</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>])
+    <span class="tok-fn">b</span>: <span class="tok-fn">intset</span>.<span class="tok-type">IntSet</span> = <span class="tok-fn">intset</span>.<span class="tok-fn">from_list</span>([<span class="tok-num">3</span>, <span class="tok-num">4</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">intset</span>.<span class="tok-fn">size</span>(<span class="tok-fn">intset</span>.<span class="tok-fn">union</span>(<span class="tok-fn">a</span>, <span class="tok-fn">b</span>)))
+    <span class="tok-fn">print</span>(<span class="tok-fn">intset</span>.<span class="tok-fn">contains</span>(<span class="tok-fn">a</span>, <span class="tok-num">2</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-format">Format</h3>
+<p>Hex and binary strings, zero padding, fixed decimals, percentages and thousands separators. Full reference: <a href="format.html">Format</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">format</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">format</span>.<span class="tok-fn">hex32</span>(<span class="tok-type">UInt32</span>(<span class="tok-num">255</span>)))
+    <span class="tok-fn">print</span>(<span class="tok-fn">format</span>.<span class="tok-fn">fixed</span>(<span class="tok-num">3.14159</span>, <span class="tok-num">2</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">format</span>.<span class="tok-fn">commas</span>(<span class="tok-num">1234567</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-base64">Base64</h3>
+<p>RFC 4648 base64 encoding and decoding for strings and byte lists, written in pure Threadon. Full reference: <a href="base64.html">Base64</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">base64</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">base64</span>.<span class="tok-fn">encode</span>(<span class="tok-str">&quot;hello&quot;</span>) == <span class="tok-str">&quot;aGVsbG8=&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">base64</span>.<span class="tok-fn">decode</span>(<span class="tok-str">&quot;aGVsbG8=&quot;</span>) == <span class="tok-str">&quot;hello&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-url">URL</h3>
+<p>Percent-encode strings, decode them again, and build or parse application/x-www-form-urlencoded query strings. Full reference: <a href="url.html">URL</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">url</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">url</span>.<span class="tok-fn">quote</span>(<span class="tok-str">&quot;a b&amp;c&quot;</span>) == <span class="tok-str">&quot;a%20b%26c&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">url</span>.<span class="tok-fn">unquote</span>(<span class="tok-str">&quot;a+b%2Fc&quot;</span>) == <span class="tok-str">&quot;a+b/c&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-checksum">Checksum</h3>
+<p>FNV-1a, Adler-32 and CRC-8 checksums for strings and byte lists, with deterministic integer results. Full reference: <a href="checksum.html">Checksum</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">checksum</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">checksum</span>.<span class="tok-fn">fnv1a</span>(<span class="tok-str">&quot;hello&quot;</span>) == <span class="tok-fn">checksum</span>.<span class="tok-fn">fnv1a</span>(<span class="tok-str">&quot;hello&quot;</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">checksum</span>.<span class="tok-fn">adler32</span>(<span class="tok-str">&quot;hello&quot;</span>) &gt; <span class="tok-num">0</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-complex">Complex</h3>
+<p>A Complex struct plus add, subtract, multiply, scale, conjugate, magnitude and text conversion helpers. Full reference: <a href="complex.html">Complex</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">complex</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">z</span>: <span class="tok-fn">complex</span>.<span class="tok-fn">Complex</span> = <span class="tok-fn">complex</span>.<span class="tok-fn">make</span>(<span class="tok-num">3.0</span>, <span class="tok-num">4.0</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">complex</span>.<span class="tok-fn">norm</span>(<span class="tok-fn">z</span>) == <span class="tok-num">25.0</span>)
+    <span class="tok-fn">w</span>: <span class="tok-fn">complex</span>.<span class="tok-fn">Complex</span> = <span class="tok-fn">complex</span>.<span class="tok-fn">mul</span>(<span class="tok-fn">z</span>, <span class="tok-fn">z</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">complex</span>.<span class="tok-fn">norm</span>(<span class="tok-fn">w</span>) == <span class="tok-num">625.0</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-fraction">Fraction</h3>
+<p>A Fraction struct that reduces and normalises results, with the four arithmetic operations and float/text conversion. Full reference: <a href="fraction.html">Fraction</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">fraction</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">a</span>: <span class="tok-fn">fraction</span>.<span class="tok-fn">Fraction</span> = <span class="tok-fn">fraction</span>.<span class="tok-fn">make</span>(<span class="tok-num">1</span>, <span class="tok-num">2</span>)
+    <span class="tok-fn">b</span>: <span class="tok-fn">fraction</span>.<span class="tok-fn">Fraction</span> = <span class="tok-fn">fraction</span>.<span class="tok-fn">make</span>(<span class="tok-num">1</span>, <span class="tok-num">3</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">fraction</span>.<span class="tok-fn">to_string</span>(<span class="tok-fn">fraction</span>.<span class="tok-fn">add</span>(<span class="tok-fn">a</span>, <span class="tok-fn">b</span>)) == <span class="tok-str">&quot;5/6&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-heap">Heap</h3>
+<p>A binary min-heap over Int32 values with push, pop, peek and an ascending heapsort. Every operation returns a new value. Full reference: <a href="heap.html">Heap</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">heap</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">out</span>: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = <span class="tok-fn">heap</span>.<span class="tok-fn">sort</span>([<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">out</span>[<span class="tok-num">0</span>] == <span class="tok-num">1</span> <span class="tok-kw">and</span> <span class="tok-fn">out</span>[<span class="tok-num">2</span>] == <span class="tok-num">3</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-strset">String set</h3>
+<p>A functional set of String values with add, remove, membership and the usual union, intersection and difference operations. Full reference: <a href="strset.html">String set</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">strset</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">s</span>: <span class="tok-fn">strset</span>.<span class="tok-fn">StringSet</span> = <span class="tok-fn">strset</span>.<span class="tok-fn">from_list</span>([<span class="tok-str">&quot;a&quot;</span>, <span class="tok-str">&quot;b&quot;</span>, <span class="tok-str">&quot;a&quot;</span>])
+    <span class="tok-fn">print</span>(<span class="tok-fn">strset</span>.<span class="tok-fn">size</span>(<span class="tok-fn">s</span>) == <span class="tok-num">2</span> <span class="tok-kw">and</span> <span class="tok-fn">strset</span>.<span class="tok-fn">contains</span>(<span class="tok-fn">s</span>, <span class="tok-str">&quot;b&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-date">Date</h3>
+<p>Leap years, month lengths, civil-date conversion, weekdays and ISO date strings, all computed without a clock. Full reference: <a href="date.html">Date</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">date</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">date</span>.<span class="tok-fn">is_leap</span>(<span class="tok-num">2000</span>) <span class="tok-kw">and</span> <span class="tok-kw">not</span> <span class="tok-fn">date</span>.<span class="tok-fn">is_leap</span>(<span class="tok-num">1900</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">date</span>.<span class="tok-fn">add_days</span>(<span class="tok-str">&quot;2024-02-28&quot;</span>, <span class="tok-num">1</span>) == <span class="tok-str">&quot;2024-02-29&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-units">Units</h3>
+<p>Distance, mass, temperature and data-size conversions, plus a small duration formatter. Full reference: <a href="units.html">Units</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">units</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">units</span>.<span class="tok-fn">seconds_to_hms</span>(<span class="tok-num">3661</span>) == <span class="tok-str">&quot;1:01:01&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">units</span>.<span class="tok-fn">c_to_f</span>(<span class="tok-num">100.0</span>) == <span class="tok-num">212.0</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-color">Color</h3>
+<p>An RGB struct with clamping, hex parsing and formatting, brightness, mixing and a dark/light test. Full reference: <a href="color.html">Color</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">color</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">c</span>: <span class="tok-fn">color</span>.<span class="tok-fn">RGB</span> = <span class="tok-fn">color</span>.<span class="tok-fn">from_hex</span>(<span class="tok-str">&quot;#336699&quot;</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">color</span>.<span class="tok-fn">to_hex</span>(<span class="tok-fn">c</span>) == <span class="tok-str">&quot;#336699&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-table">Table</h3>
+<p>Render aligned text tables with automatic column widths, row/separator helpers and fixed-width progress bars. Full reference: <a href="table.html">Table</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">table</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">table</span>.<span class="tok-fn">separator</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>]) == <span class="tok-str">&quot;+---+----+&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-validate">Validate</h3>
+<p>Bool-returning checks for integers, floats, IPv4 addresses, hex colors, email-like strings and Luhn check digits. Full reference: <a href="validate.html">Validate</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">validate</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">validate</span>.<span class="tok-fn">is_ipv4</span>(<span class="tok-str">&quot;127.0.0.1&quot;</span>))
+    <span class="tok-fn">print</span>(<span class="tok-fn">validate</span>.<span class="tok-fn">luhn</span>(<span class="tok-str">&quot;4111111111111111&quot;</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+<h3 id="recipe-graph">Graph</h3>
+<p>A small directed graph type with edge insertion/removal, neighbours, reachability and breadth-first distances. Full reference: <a href="graph.html">Graph</a>. The documented output is on that page.</p>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">graph</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">g</span>: <span class="tok-fn">graph</span>.<span class="tok-fn">Graph</span> = <span class="tok-fn">graph</span>.<span class="tok-fn">empty</span>(<span class="tok-num">3</span>)
+    <span class="tok-fn">g</span> = <span class="tok-fn">graph</span>.<span class="tok-fn">add_edge</span>(<span class="tok-fn">g</span>, <span class="tok-num">0</span>, <span class="tok-num">1</span>)
+    <span class="tok-fn">g</span> = <span class="tok-fn">graph</span>.<span class="tok-fn">add_edge</span>(<span class="tok-fn">g</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>)
+    <span class="tok-fn">print</span>(<span class="tok-fn">graph</span>.<span class="tok-fn">has_path</span>(<span class="tok-fn">g</span>, <span class="tok-num">0</span>, <span class="tok-num">2</span>))
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+</section>
+
+<p class="pagenav">
+  <a href="cheatsheet.html">&larr; Back: Cheatsheet</a>
+  <a href="diagnostics.html">Diagnostics &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

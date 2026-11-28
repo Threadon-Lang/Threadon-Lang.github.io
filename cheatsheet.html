@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheatsheet — Threadon</title>
+<meta name="description" content="A one-page Threadon reference: types, declarations, flow, functions, collections, imports, unions, builtins and the C-like design rules.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Cheatsheet</p>
+    <h1>Cheatsheet</h1>
+    <p class="tag">the syntax on one page</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="cheatsheet.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="skeleton">
+  <h2>Program skeleton</h2>
+<p>Every executable program has one <code>main</code>. Indentation defines blocks; there are no braces and no semicolons.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">main</span>() -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-fn">name</span>: <span class="tok-type">String</span> = <span class="tok-str">&quot;world&quot;</span>
+    <span class="tok-fn">print</span>(<span class="tok-fn">f</span><span class="tok-str">&quot;hello {name}&quot;</span>)
+    <span class="tok-kw">return</span> <span class="tok-num">0</span></code></pre>
+</section>
+<section id="types">
+  <h2>Types</h2>
+<table>
+<tr><th>Family</th><th>Types</th><th>Notes</th></tr>
+<tr><td>Signed integers</td><td><code>Int8</code> ... <code>Int64</code>, <code>Int256</code></td><td>Wrap on overflow; choose the width explicitly.</td></tr>
+<tr><td>Unsigned integers</td><td><code>UInt8</code> ... <code>UInt64</code>, <code>UInt256</code></td><td>Needed for casts such as <code>UInt32(255)</code>.</td></tr>
+<tr><td>Floats</td><td><code>Float16</code>, <code>Float32</code>, <code>Float64</code></td><td>Printed with six decimals. <code>--flag-inf</code> rejects non-finite values.</td></tr>
+<tr><td>Other</td><td><code>Bool</code>, <code>String</code>, <code>NoneType</code></td><td>Strings are immutable byte strings.</td></tr>
+<tr><td>Collections</td><td><code>List[T]</code>, <code>Dict[K, V]</code></td><td>Passed by value; helpers return new values.</td></tr>
+<tr><td>User types</td><td><code>struct</code>, <code>class</code>, <code>union</code></td><td>Structs and classes have value semantics; unions are closed polymorphism.</td></tr>
+</table>
+</section>
+<section id="vars">
+  <h2>Variables and flow</h2>
+<pre><code><span class="tok-fn">x</span>: <span class="tok-type">Int32</span> = <span class="tok-num">1</span>          <span class="tok-cm"># declare</span>
+<span class="tok-fn">x</span> += <span class="tok-num">2</span>                <span class="tok-cm"># assign</span>
+<span class="tok-fn">s</span>: <span class="tok-type">String</span> = <span class="tok-str">&quot;abc&quot;</span>
+<span class="tok-fn">b</span>: <span class="tok-type">Bool</span> = <span class="tok-fn">x</span> &gt; <span class="tok-num">2</span> <span class="tok-kw">and</span> <span class="tok-fn">len</span>(<span class="tok-fn">s</span>) == <span class="tok-num">3</span>
+
+<span class="tok-kw">if</span> <span class="tok-fn">b</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">&quot;yes&quot;</span>)
+<span class="tok-kw">elif</span> <span class="tok-fn">x</span> == <span class="tok-num">3</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">&quot;three&quot;</span>)
+<span class="tok-kw">else</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">&quot;no&quot;</span>)
+
+<span class="tok-fn">i</span>: <span class="tok-type">Int32</span> = <span class="tok-num">0</span>
+<span class="tok-kw">while</span> <span class="tok-fn">i</span> &lt; <span class="tok-num">10</span>:
+    <span class="tok-kw">if</span> <span class="tok-fn">i</span> == <span class="tok-num">5</span>:
+        <span class="tok-fn">break</span>
+    <span class="tok-fn">i</span> += <span class="tok-num">1</span>
+
+<span class="tok-kw">for</span> <span class="tok-fn">v</span> <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">0</span>, <span class="tok-num">3</span>):
+    <span class="tok-fn">print</span>(<span class="tok-fn">v</span>)</code></pre>
+</section>
+<section id="functions">
+  <h2>Functions, purity and classes</h2>
+<p>Use <code>puredef</code> when a function must not print, read input, write globals, call a native module or start a thread. Purity is checked at compile time.</p>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">add</span>(<span class="tok-fn">a</span>: <span class="tok-type">Int32</span>, <span class="tok-fn">b</span>: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> <span class="tok-fn">a</span> + <span class="tok-fn">b</span>
+
+<span class="tok-fn">puredef</span> <span class="tok-fn">square</span>(<span class="tok-fn">x</span>: <span class="tok-type">Int32</span>) -&gt; <span class="tok-type">Int32</span>
+    <span class="tok-kw">return</span> <span class="tok-fn">x</span> * <span class="tok-fn">x</span>
+
+<span class="tok-kw">class</span> <span class="tok-fn">Counter</span>:
+    <span class="tok-fn">n</span>: <span class="tok-type">Int32</span>
+
+    <span class="tok-kw">def</span> <span class="tok-fn">__init__</span>(<span class="tok-fn">self</span>, <span class="tok-fn">start</span>: <span class="tok-type">Int32</span>)
+        <span class="tok-fn">self</span>.<span class="tok-fn">n</span> = <span class="tok-fn">start</span>
+
+    <span class="tok-kw">def</span> <span class="tok-fn">next</span>(<span class="tok-fn">self</span>) -&gt; <span class="tok-type">Int32</span>
+        <span class="tok-fn">self</span>.<span class="tok-fn">n</span> += <span class="tok-num">1</span>
+        <span class="tok-kw">return</span> <span class="tok-fn">self</span>.<span class="tok-fn">n</span></code></pre>
+</section>
+<section id="collections">
+  <h2>Lists and dicts</h2>
+<pre><code><span class="tok-fn">xs</span>: <span class="tok-type">List</span>[<span class="tok-type">Int32</span>] = [<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>]
+<span class="tok-fn">xs</span>.<span class="tok-fn">append</span>(<span class="tok-num">4</span>)
+<span class="tok-fn">xs</span>[<span class="tok-num">0</span>] = <span class="tok-num">9</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">len</span>(<span class="tok-fn">xs</span>))
+
+<span class="tok-fn">d</span>: <span class="tok-type">Dict</span>[<span class="tok-type">String</span>, <span class="tok-type">Int32</span>] = {<span class="tok-str">&quot;a&quot;</span>: <span class="tok-num">1</span>, <span class="tok-str">&quot;b&quot;</span>: <span class="tok-num">2</span>}
+<span class="tok-fn">d</span>[<span class="tok-str">&quot;c&quot;</span>] = <span class="tok-num">3</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">d</span>[<span class="tok-str">&quot;b&quot;</span>])
+<span class="tok-fn">print</span>(<span class="tok-fn">dict_key</span>(<span class="tok-fn">d</span>, <span class="tok-num">0</span>))</code></pre>
+</section>
+<section id="imports">
+  <h2>Imports</h2>
+<pre><code><span class="tok-kw">import</span> <span class="tok-fn">math</span>
+<span class="tok-kw">import</span> <span class="tok-fn">math</span> <span class="tok-kw">as</span> <span class="tok-fn">m</span>
+<span class="tok-kw">from</span> <span class="tok-fn">math</span> <span class="tok-kw">import</span> <span class="tok-fn">gcd</span>, <span class="tok-fn">is_prime</span>
+<span class="tok-fn">lazyimport</span> <span class="tok-fn">random</span>
+<span class="tok-fn">lazyfrom</span> <span class="tok-fn">stats</span> <span class="tok-kw">import</span> <span class="tok-fn">mean_int</span></code></pre>
+</section>
+<section id="unions">
+  <h2>Unions</h2>
+<p>A union value is one of its listed types. It is <em>not</em> an <code>Any</code> escape hatch: the compiler checks every member. There are no traits and no user-defined generics in the language.</p>
+<pre><code><span class="tok-kw">from</span> <span class="tok-fn">unions</span> <span class="tok-kw">import</span> <span class="tok-fn">Number</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">show</span>(<span class="tok-fn">v</span>: <span class="tok-fn">Number</span>)
+    <span class="tok-kw">if</span> <span class="tok-fn">isinstance</span>(<span class="tok-fn">v</span>, <span class="tok-type">Int32</span>):
+        <span class="tok-fn">print</span>(<span class="tok-fn">v</span> + <span class="tok-num">1</span>)
+    <span class="tok-kw">elif</span> <span class="tok-fn">isinstance</span>(<span class="tok-fn">v</span>, <span class="tok-type">String</span>):
+        <span class="tok-fn">print</span>(<span class="tok-fn">strings</span>.<span class="tok-fn">upper</span>(<span class="tok-fn">v</span>))
+
+<span class="tok-fn">show</span>(<span class="tok-type">Int32</span>(<span class="tok-num">7</span>))
+<span class="tok-fn">show</span>(<span class="tok-str">&quot;tiny&quot;</span>)</code></pre>
+</section>
+<section id="builtins">
+  <h2>Builtins</h2>
+<table>
+<tr><th>Builtin</th><th>Use</th></tr>
+<tr><td><code>print(...)</code></td><td>Print values separated by spaces.</td></tr>
+<tr><td><code>input()</code></td><td>Read one line as a String.</td></tr>
+<tr><td><code>len(x)</code></td><td>Byte length of a String, or item count of a List/Dict.</td></tr>
+<tr><td><code>chr(n)</code>, <code>ord(s)</code></td><td>Single-byte character conversion.</td></tr>
+<tr><td><code>dict_key(d, i)</code></td><td>Key at position i.</td></tr>
+<tr><td><code>collect()</code></td><td>Run one explicit garbage collection.</td></tr>
+<tr><td><code>thread</code>, <code>thread_exit()</code></td><td>Start or leave a thread.</td></tr>
+</table>
+</section>
+
+<p class="pagenav">
+  <a href="projects.html">&larr; Back: Projects</a>
+  <a href="cookbook.html">Cookbook &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

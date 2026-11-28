@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnostics — Threadon</title>
+<meta name="description" content="How Threadon formats compiler errors: clean Error: MESSAGE at line N output, warnings, color rules, common messages and runtime-error differences.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Diagnostics</p>
+    <h1>Diagnostics</h1>
+    <p class="tag">one clean line, once</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="diagnostics.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="shape">
+  <h2>Message shape</h2>
+<p>All compiler diagnostics go through <code>compiler/threadon/errors.py</code>. A compile-time error has one plain shape:</p>
+<pre class="msg"><code>Error: MESSAGE at line N</code></pre>
+<p>With a known source position the renderer adds the source line and a caret. Warnings use <code>Warning:</code> and notes use <code>Note:</code>. The compiler prints the message once; it does not dump LLVM IR, Python tracebacks or duplicate <code>Error:</code> prefixes.</p>
+</section>
+<section id="color">
+  <h2>Color and scripts</h2>
+<p>Colors are optional. <code>NO_COLOR=1</code> disables them; <code>FORCE_COLOR=0</code> does the same. On a terminal the label is colored and bold, but the text is otherwise identical. Redirecting output should not change what a script can parse.</p>
+</section>
+<section id="common">
+  <h2>Common messages</h2>
+<table>
+<tr><th>Message</th><th>Meaning</th></tr>
+<tr><td><code>Error: Cannot redefine builtin/standard library function 'collect'</code></td><td>A program tried to declare a function such as <code>collect</code>, <code>input</code> or <code>print</code>. Builtins and auto-imported stdlib functions are reserved.</td></tr>
+<tr><td><code>Error: ... at line 12</code></td><td>A parser, checker or IR-builder error. Fix the reported line first; later errors are often consequences.</td></tr>
+<tr><td><code>Error: no function 'main' found in the compiled module</code></td><td>The source compiled, but there is no entry point to run or link.</td></tr>
+<tr><td><code>Error: Type mismatch ...</code></td><td>The checker rejected an operation. Threadon does not insert implicit conversions; use an explicit cast.</td></tr>
+<tr><td><code>Error: invalid TOML ...</code></td><td>The project config used unsupported syntax. Keep to sections, strings and string arrays.</td></tr>
+</table>
+</section>
+<section id="runtime">
+  <h2>Compile-time versus runtime</h2>
+<p>Runtime errors from a generated program are emitted by LLVM code and keep their own message strings. They are deliberately not wrapped in <code>Error:</code>, because they are not compiler diagnostics. Use <a href="debug.html">debug mode</a> to turn some silent undefined behavior into explicit runtime checks, and <code>--flag-inf</code> for non-finite floats.</p>
+</section>
+<section id="report">
+  <h2>Reporting a problem</h2>
+<ul>
+<li>Copy the whole diagnostic, including the line number and caret line.</li>
+<li>Include the smallest source file that reproduces it.</li>
+<li>Say which command you ran and whether you used the repo compiler or an installed package.</li>
+<li>For benchmark or cache problems, include the relevant <code>threadon.toml</code> and <code>threadon.lock</code>.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="cookbook.html">&larr; Back: Cookbook</a>
+  <a href="faq.html">FAQ &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

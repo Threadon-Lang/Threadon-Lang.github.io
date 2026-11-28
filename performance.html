@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Performance — Threadon</title>
+<meta name="description" content="Threadon performance modes, optimizer and GC tuning, project caches, and the methodology behind the benchmark results.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Performance</p>
+    <h1>Performance</h1>
+    <p class="tag">measure the mode you actually run</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="performance.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="modes">
+  <h2>Ways to run</h2>
+<table>
+<tr><th>Mode</th><th>Command</th><th>Cost profile</th></tr>
+<tr><td>IR only</td><td><code>python3 -m threadon app.th -o app.ll</code></td><td>Fastest feedback when you only want to inspect generated code.</td></tr>
+<tr><td>JIT / lli</td><td><code>python3 -m threadon --run app.th</code></td><td>Convenient, but each launch includes Python compiler startup and <code>lli</code> startup.</td></tr>
+<tr><td>Native exe</td><td><code>python3 -m threadon --exe app app.th</code></td><td>Compiles once via <code>llc</code> and <code>gcc</code>; best run-time performance.</td></tr>
+<tr><td>Project build</td><td><code>python3 -m threadon build</code></td><td>Caches IR per config and source hash; skips the cache when native modules are involved.</td></tr>
+</table>
+</section>
+<section id="tuning">
+  <h2>Tuning checklist</h2>
+<table>
+<tr><th>Knob</th><th>Effect</th><th>When to use it</th></tr>
+<tr><td><code>-O N</code></td><td>Inline threshold; <code>0</code> means no inlining.</td><td>Try small values first. More inlining is not always faster and increases compile time.</td></tr>
+<tr><td><code>--exe</code></td><td>Produces a native executable instead of using <code>lli</code>.</td><td>For anything where startup or steady-state speed matters.</td></tr>
+<tr><td><code>collect()</code></td><td>Runs one explicit garbage collection.</td><td>Between batches of temporary strings, lists or dicts; see <a href="gc.html">GC</a>.</td></tr>
+<tr><td>Local lists</td><td>Pass-by-value copies data across calls.</td><td>Keep hot loops in one function rather than calling a helper per element.</td></tr>
+<tr><td>Project cache</td><td>Reuses IR when sources, includes and options are unchanged.</td><td>Large projects with many incremental runs; clear it after changing native modules.</td></tr>
+<tr><td><code>--debug</code></td><td>Adds runtime checks.</td><td>Development only; remove it for measurements.</td></tr>
+</table>
+</section>
+<section id="method">
+  <h2>How the numbers are measured</h2>
+<p>The <a href="benchmarks.html">benchmark results</a> time fresh processes, not an in-process loop. That is deliberate: startup is part of what a user pays when running <code>threadon --run</code>. Compilation is reported separately so it does not pollute execution numbers. Every case prints a checksum and the runner verifies that C++, Threadon and Python agree.</p>
+<p><code>vs C++</code> is <code>median / C++ median</code>. Values below 1 are faster; values above 1 are slower. Timings move between machines, so treat differences near 1 as parity rather than a win.</p>
+</section>
+<section id="checklist">
+  <h2>Before you benchmark</h2>
+<ul>
+<li>Measure the native executable if you care about runtime speed; measure <code>--run</code> if you care about edit-and-run latency.</li>
+<li>Use the same <code>-O</code> value for every run you compare.</li>
+<li>Keep debug checks and <code>THREADON_GC_STATS</code> off for timing runs.</li>
+<li>Run enough samples that the median is stable; the shipped runner defaults to 5 and the recorded table used 3.</li>
+<li>Compare against the repo compiler, not an older installed package.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="cli.html">&larr; Back: CLI</a>
+  <a href="benchmarks.html">Benchmarks &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

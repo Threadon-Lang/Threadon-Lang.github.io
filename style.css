@@ -168,3 +168,11 @@ footer.site {
   header.site h1 { font-size: 28px; }
   body { font-size: 16px; }
 }
+
+/* generated guide styles */
+pre.msg {
+  background: var(--code-bg);
+  color: #fca5a5;
+}
+.good { color: #15803d; font-weight: 600; }
+.bad { color: #b91c1c; font-weight: 600; }

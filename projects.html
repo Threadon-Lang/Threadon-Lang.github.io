@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects — Threadon</title>
+<meta name="description" content="Local Threadon projects: threadon.toml, path dependencies, compile cache, lockfile and the init/add/build/run/test/clean/cache commands.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Projects</p>
+    <h1>Projects</h1>
+    <p class="tag">no registry, no network, just local paths</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="projects.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="why">
+  <h2>Why projects</h2>
+<p>A Threadon project is any directory with a <code>threadon.toml</code> file. The config is deliberately small: a name, a main file, include paths, test paths and local path dependencies. There is no registry, no network fetch and no <code>pip</code>-style install step. A dependency is just another directory on disk.</p>
+<p>The standard library is implicit. You never list it as a dependency.</p>
+</section>
+<section id="create">
+  <h2>Create one</h2>
+<p>Create a project and run its generated entry point:</p>
+<pre><code><span class="tok-fn">python3</span> -<span class="tok-fn">m</span> <span class="tok-fn">threadon</span> <span class="tok-fn">init</span> <span class="tok-fn">myapp</span>
+<span class="tok-fn">cd</span> <span class="tok-fn">myapp</span>
+<span class="tok-fn">python3</span> -<span class="tok-fn">m</span> <span class="tok-fn">threadon</span> <span class="tok-fn">run</span></code></pre><p><code>init</code> writes <code>threadon.toml</code>, <code>src/main.th</code> and a <code>tests/</code> directory. Pass <code>--force</code> to overwrite an existing config. Pass <code>--dir DIR</code> to initialise somewhere other than the current directory.</p>
+</section>
+<section id="config">
+  <h2>threadon.toml</h2>
+<p>The generated file uses a narrow TOML subset: sections, quoted strings and arrays of strings. The parser works on Python 3.9 as well as newer versions; it uses <code>tomllib</code> when present and falls back to its own reader otherwise. Inline tables and nested sections are rejected on purpose.</p>
+<pre><code>[<span class="tok-fn">project</span>]
+<span class="tok-fn">name</span> = <span class="tok-str">&quot;myapp&quot;</span>
+<span class="tok-fn">version</span> = <span class="tok-str">&quot;0.1.0&quot;</span>
+<span class="tok-fn">main</span> = <span class="tok-str">&quot;src/main.th&quot;</span>
+
+[<span class="tok-fn">dependencies</span>]
+
+[<span class="tok-fn">paths</span>]
+<span class="tok-fn">include</span> = [<span class="tok-str">&quot;src&quot;</span>]
+<span class="tok-fn">test</span> = [<span class="tok-str">&quot;tests&quot;</span>]</code></pre><p>Paths are relative to the config file. <code>main</code> selects the source used by <code>run</code> and <code>build</code>; <code>include</code> is added to the import search path; <code>test</code> is where <code>threadon test</code> looks for <code>test.th</code> suites.</p>
+</section>
+<section id="commands">
+  <h2>Commands</h2>
+<table>
+<tr><th>Command</th><th>What it does</th></tr>
+<tr><td><code>python3 -m threadon init [NAME]</code></td><td>Write a new <code>threadon.toml</code> and a minimal source tree.</td></tr>
+<tr><td><code>python3 -m threadon add NAME PATH</code></td><td>Record a local path dependency and cache a snapshot of its files.</td></tr>
+<tr><td><code>python3 -m threadon build [FILE.th]</code></td><td>Compile the project source to LLVM IR and write the cache artefact.</td></tr>
+<tr><td><code>python3 -m threadon run [FILE.th]</code></td><td>Compile if needed, then execute with <code>lli</code>.</td></tr>
+<tr><td><code>python3 -m threadon test [-k PATTERN]</code></td><td>Compile and run each discovered <code>test.th</code>; <code>-k</code> filters names.</td></tr>
+<tr><td><code>python3 -m threadon clean</code></td><td>Remove the project compile cache under <code>.threadon/cache</code>.</td></tr>
+<tr><td><code>python3 -m threadon cache path</code></td><td>Print the user module cache directory.</td></tr>
+<tr><td><code>python3 -m threadon cache list</code></td><td>List cached module snapshots.</td></tr>
+<tr><td><code>python3 -m threadon cache clear [--modules]</code></td><td>Clear the project cache; with <code>--modules</code>, also clear the user cache.</td></tr>
+</table>
+</section>
+<section id="deps">
+  <h2>Local dependencies</h2>
+<p>Add a dependency with a name and a directory. The name is how you import it; the path is stored relative to your project so the folder can move as a unit.</p>
+<pre><code><span class="tok-fn">python3</span> -<span class="tok-fn">m</span> <span class="tok-fn">threadon</span> <span class="tok-fn">add</span> <span class="tok-fn">util</span> ../<span class="tok-fn">util</span>
+<span class="tok-fn">python3</span> -<span class="tok-fn">m</span> <span class="tok-fn">threadon</span> <span class="tok-fn">run</span></code></pre><p>The dependency's own <code>threadon.toml</code> is read if it has one, so its version and include paths travel with it. Its source files are copied into the user module cache as a snapshot. You can still pass explicit <code>-I DIR</code> flags; those are searched alongside project includes.</p>
+<div class="note"><p>No dependency ever downloads code. If a path does not exist, the compiler reports a project error rather than trying a registry.</p></div>
+</section>
+<section id="cache">
+  <h2>Lockfile and caches</h2>
+<p><code>threadon.lock</code> is plain JSON. It records a hash of the config plus a name, path, version and content hash for each dependency. Commit it if you want that resolution in version control. It is not an enforcement file yet: the compiler does not currently read it to reject a changed dependency.</p>
+<p>The compile cache lives in <code>&lt;root&gt;/.threadon/cache</code>. Its metadata records whether native modules were present: when a project switches to or away from a native module, the cached IR is skipped and rebuilt. Cached runs print <code>cached ...</code> so you can tell what happened.</p>
+</section>
+<section id="compat">
+  <h2>Compatibility</h2>
+<ul>
+<li>Python 3.9 or newer. <code>tomllib</code> is optional; the small parser handles the config format itself.</li>
+<li>Project discovery walks up from the current directory to find the nearest <code>threadon.toml</code>.</li>
+<li>If you pass a source file, its directory is used too, so invoking the compiler from outside the project still finds its imports.</li>
+<li>The bundled standard library is always searched last and cannot be shadowed by an accidental local <code>math.th</code>.</li>
+<li>Set <code>THREADON_CACHE_DIR</code> to move the user module cache away from <code>~/.cache/threadon/modules</code>.</li>
+</ul>
+</section>
+<section id="trouble">
+  <h2>Troubleshooting</h2>
+<table>
+<tr><th>Symptom</th><th>Fix</th></tr>
+<tr><td><code>no threadon.toml found</code></td><td>Run the command from inside the project, or pass <code>--dir</code> to <code>init</code>.</td></tr>
+<tr><td>A dependency import is missing</td><td>Check the name in <code>[dependencies]</code>, then run <code>cache clear</code> to refresh its snapshot.</td></tr>
+<tr><td>A native module changed but the old result is used</td><td>Run <code>clean</code>; native projects deliberately bypass the IR cache.</td></tr>
+<tr><td>Tests from another project are picked up</td><td>List the exact directories in <code>[paths] test</code> and use <code>-k</code> to filter.</td></tr>
+</table>
+</section>
+
+<p class="pagenav">
+  <a href="modules.html">&larr; Back: Imports</a>
+  <a href="cheatsheet.html">Cheatsheet &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

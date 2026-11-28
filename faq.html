@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ — Threadon</title>
+<meta name="description" content="Why Threadon is C-like, why unions replace traits and generics, when pattern matching arrives, how GC and native builds work, and where dependencies come from.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / FAQ</p>
+    <h1>FAQ</h1>
+    <p class="tag">short answers to the common questions</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="faq.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="answers">
+  <h2>Questions and answers</h2>
+<h3 id="q1">Why no traits, generics or Any?</h3>
+<p>Threadon is deliberately C-like. Concrete types and <a href="unions.html">unions</a> keep the generated IR simple and the diagnostics predictable. A union is closed polymorphism: the compiler knows every member and checks every use. There is no open-ended <code>Any</code> union and no user-defined generics.</p>
+<h3 id="q2">Is pattern matching on unions coming?</h3>
+<p>It is the next planned language feature after the project system. Until then, narrow a union with explicit type tests, as shown on the <a href="cheatsheet.html#unions">cheatsheet</a> and the <a href="unions.html">Unions</a> page.</p>
+<h3 id="q3">Why is <code>collect()</code> explicit?</h3>
+<p>There is no background collector and no allocation threshold. A call runs a full conservative mark-and-sweep on the calling thread. That makes pauses visible and keeps the runtime small; see <a href="gc.html">Garbage collector</a>.</p>
+<h3 id="q4">Why is the JIT so much slower than the native executable?</h3>
+<p>The benchmark times fresh processes. A JIT run pays Python compiler startup plus <code>lli -O2</code> startup on every launch. The native executable pays compilation once and then runs generated machine code directly. Compare the rows on <a href="benchmarks.html">Benchmarks</a>.</p>
+<h3 id="q5">Why are lists copied when passed to a function?</h3>
+<p>Value semantics make ownership obvious: a helper cannot resize your list behind your back. Functions in the bundled libraries return new lists. For tight loops, keep the work in one function so no copies are made.</p>
+<h3 id="q6">Why byte strings instead of Unicode strings?</h3>
+<p>String indexing and <code>len(s)</code> count bytes, which matches the LLVM representation. The <a href="lib-strings.html">strings</a> module is ASCII-oriented. Non-ASCII text can be stored, but there is no UTF-8 iteration layer.</p>
+<h3 id="q7">Why no catchable exceptions?</h3>
+<p>There is no exception unwinding in the generated IR. Errors are either compile-time diagnostics or explicit runtime checks; see <a href="exceptions.html">Exceptions</a>.</p>
+<h3 id="q8">Where do dependencies come from?</h3>
+<p>Only local directories listed in <code>threadon.toml</code>. There is no registry and no network fetch. <a href="projects.html">Projects</a> explains the cache and lockfile.</p>
+<h3 id="q9">Can I call C, C++, Rust or Python code?</h3>
+<p>Yes. Native modules are declared in manifests and built by the importer; Python classes use the embedded bridge. See <a href="classes.html">Classes</a> and <a href="modules.html">Imports</a>.</p>
+<h3 id="q10">Which compiler should I use for docs examples?</h3>
+<p>Use the repository compiler with <code>PYTHONPATH=compiler python3 -m threadon</code>. An installed package can be older than the checkout and may give different diagnostics.</p>
+</section>
+
+<p class="pagenav">
+  <a href="diagnostics.html">&larr; Back: Diagnostics</a>
+  <a href="cli.html">CLI &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>

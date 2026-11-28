@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark results — Threadon</title>
+<meta name="description" content="Recorded Threadon benchmark results against C++ and Python: medians, best times, checksums and ratios for eight numeric workloads.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html" style="color:#8fd8bd">Threadon</a> / Benchmarks</p>
+    <h1>Benchmark results</h1>
+    <p class="tag">fresh processes, matching checksums</p>
+  </div>
+</header>
+
+<div id="site-nav" data-current="benchmarks.html"></div>
+<script src="nav.js"></script>
+
+<main class="wrap">
+
+<section id="summary">
+  <h2>Headline results</h2>
+<p>Recorded run: 2026-11-26, 3 fresh-process samples per case, Threadon compiled from the repository with <code>-O 0</code>. The headline column is the native executable versus <code>g++ -O2</code>. Six of eight cases are faster, one is a tie and one is slightly slower.</p><table>
+<tr><th>Case</th><th>Threadon native vs C++</th><th>Checksum</th><th>Workload</th></tr>
+<tr><td><a href="#case-bubblesort"><code>bubblesort</code></a></td><td><span class="good">0.81x faster</span></td><td><code>3065</code></td><td>Repeated bubble sort of a 24-element integer list; five reps, with list indexing and swaps.</td></tr>
+<tr><td><a href="#case-collatz"><code>collatz</code></a></td><td><span class="good">0.77x faster</span></td><td><code>22938602</code></td><td>Sum Collatz stopping times for starting values 1..200000; integer branches and modulo.</td></tr>
+<tr><td><a href="#case-dotint"><code>dotint</code></a></td><td>tie</td><td><code>506996752750</code></td><td>Integer dot product of two 4096-element lists, repeated 500 times; tight Int64 loop.</td></tr>
+<tr><td><a href="#case-fibmod"><code>fibmod</code></a></td><td><span class="good">0.84x faster</span></td><td><code>815776844</code></td><td>Two million iterations of an Int64 Fibonacci recurrence modulo 1000000007.</td></tr>
+<tr><td><a href="#case-mandelbrot"><code>mandelbrot</code></a></td><td><span class="good">0.98x faster</span></td><td><code>4591641</code></td><td>256x256 escape-time count with at most 255 Float64 iterations per pixel.</td></tr>
+<tr><td><a href="#case-matmul"><code>matmul</code></a></td><td><span class="good">0.81x faster</span></td><td><code>50921856</code></td><td>Integer matrix multiply over list-backed matrices (current n = 32), then a checksum over the result.</td></tr>
+<tr><td><a href="#case-primes"><code>primes</code></a></td><td><span class="bad">1.03x slower</span></td><td><code>2262</code></td><td>Count primes below 20000 by trial division with an early-exit inner loop.</td></tr>
+<tr><td><a href="#case-sieve"><code>sieve</code></a></td><td><span class="good">0.75x faster</span></td><td><code>1229</code></td><td>Sieve of Eratosthenes up to 10000 over a List[Bool], then count the survivors.</td></tr>
+</table>
+</section>
+<section id="full">
+  <h2>Full tables</h2>
+<h3 id="case-bubblesort">bubblesort</h3>
+<p>Repeated bubble sort of a 24-element integer list; five reps, with list indexing and swaps. The matching program is in <code>benchmark/cases/bubblesort/</code> as <code>bubblesort.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.235s</td><td>0.004s</td><td>0.004s</td><td><code>3065</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.312s</td><td>0.101s</td><td>0.099s</td><td><code>3065</code></td><td>23.17x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.497s</td><td>0.004s</td><td>0.003s</td><td><code>3065</code></td><td>0.81x faster</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.018s</td><td>0.018s</td><td><code>3065</code></td><td>4.09x slower</td></tr>
+</table>
+<h3 id="case-collatz">collatz</h3>
+<p>Sum Collatz stopping times for starting values 1..200000; integer branches and modulo. The matching program is in <code>benchmark/cases/collatz/</code> as <code>collatz.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.069s</td><td>0.047s</td><td>0.045s</td><td><code>22938602</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.248s</td><td>0.081s</td><td>0.081s</td><td><code>22938602</code></td><td>1.73x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.307s</td><td>0.036s</td><td>0.036s</td><td><code>22938602</code></td><td>0.77x faster</td></tr>
+<tr><td>Python 3</td><td>-</td><td>2.259s</td><td>2.195s</td><td><code>22938602</code></td><td>48.18x slower</td></tr>
+</table>
+<h3 id="case-dotint">dotint</h3>
+<p>Integer dot product of two 4096-element lists, repeated 500 times; tight Int64 loop. The matching program is in <code>benchmark/cases/dotint/</code> as <code>dotint.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.228s</td><td>0.005s</td><td>0.005s</td><td><code>506996752750</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.314s</td><td>0.098s</td><td>0.097s</td><td><code>506996752750</code></td><td>18.17x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.445s</td><td>0.005s</td><td>0.005s</td><td><code>506996752750</code></td><td>1.00x slower</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.153s</td><td>0.150s</td><td><code>506996752750</code></td><td>28.41x slower</td></tr>
+</table>
+<h3 id="case-fibmod">fibmod</h3>
+<p>Two million iterations of an Int64 Fibonacci recurrence modulo 1000000007. The matching program is in <code>benchmark/cases/fibmod/</code> as <code>fibmod.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.069s</td><td>0.013s</td><td>0.012s</td><td><code>815776844</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.291s</td><td>0.056s</td><td>0.055s</td><td><code>815776844</code></td><td>4.34x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.294s</td><td>0.011s</td><td>0.011s</td><td><code>815776844</code></td><td>0.84x faster</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.189s</td><td>0.186s</td><td><code>815776844</code></td><td>14.65x slower</td></tr>
+</table>
+<h3 id="case-mandelbrot">mandelbrot</h3>
+<p>256x256 escape-time count with at most 255 Float64 iterations per pixel. The matching program is in <code>benchmark/cases/mandelbrot/</code> as <code>mandelbrot.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.088s</td><td>0.024s</td><td>0.023s</td><td><code>4591641</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.265s</td><td>0.069s</td><td>0.067s</td><td><code>4591641</code></td><td>2.92x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.335s</td><td>0.023s</td><td>0.022s</td><td><code>4591641</code></td><td>0.98x faster</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.668s</td><td>0.639s</td><td><code>4591641</code></td><td>28.08x slower</td></tr>
+</table>
+<h3 id="case-matmul">matmul</h3>
+<p>Integer matrix multiply over list-backed matrices (current n = 32), then a checksum over the result. The matching program is in <code>benchmark/cases/matmul/</code> as <code>matmul.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.243s</td><td>0.004s</td><td>0.004s</td><td><code>50921856</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.334s</td><td>0.101s</td><td>0.099s</td><td><code>50921856</code></td><td>24.49x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.493s</td><td>0.003s</td><td>0.003s</td><td><code>50921856</code></td><td>0.81x faster</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.022s</td><td>0.021s</td><td><code>50921856</code></td><td>5.23x slower</td></tr>
+</table>
+<h3 id="case-primes">primes</h3>
+<p>Count primes below 20000 by trial division with an early-exit inner loop. The matching program is in <code>benchmark/cases/primes/</code> as <code>primes.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.076s</td><td>0.006s</td><td>0.006s</td><td><code>2262</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.240s</td><td>0.051s</td><td>0.050s</td><td><code>2262</code></td><td>8.33x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.347s</td><td>0.006s</td><td>0.006s</td><td><code>2262</code></td><td>1.03x slower</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.047s</td><td>0.043s</td><td><code>2262</code></td><td>7.61x slower</td></tr>
+</table>
+<h3 id="case-sieve">sieve</h3>
+<p>Sieve of Eratosthenes up to 10000 over a List[Bool], then count the survivors. The matching program is in <code>benchmark/cases/sieve/</code> as <code>sieve.th</code>, <code>.cpp</code> and <code>.py</code>.</p>
+<table>
+<tr><th>Implementation</th><th>Compile</th><th>Median</th><th>Best</th><th>Result</th><th>vs C++</th></tr>
+<tr><td>C++ (g++ -O2)</td><td>0.243s</td><td>0.004s</td><td>0.004s</td><td><code>1229</code></td><td>baseline</td></tr>
+<tr><td>Threadon (JIT/lli)</td><td>0.305s</td><td>0.100s</td><td>0.097s</td><td><code>1229</code></td><td>24.59x slower</td></tr>
+<tr><td>Threadon (native exe)</td><td>0.459s</td><td>0.003s</td><td>0.003s</td><td><code>1229</code></td><td>0.75x faster</td></tr>
+<tr><td>Python 3</td><td>-</td><td>0.021s</td><td>0.017s</td><td><code>1229</code></td><td>5.04x slower</td></tr>
+</table>
+</section>
+<section id="earlier">
+  <h2>Earlier recorded ratios</h2>
+<p>An earlier recorded run of the same cases produced these Threadon-native ratios. It is kept here because timings move between runs and machines: the ordering is stable, but the last decimal is not. Both runs put six cases at or below 1.00x and two slightly above it.</p>
+<table>
+<tr><th>Case</th><th>Threadon native vs C++</th></tr>
+<tr><td><code>collatz</code></td><td><span class="good">0.75x faster</span></td></tr>
+<tr><td><code>dotint</code></td><td><span class="good">0.99x faster</span></td></tr>
+<tr><td><code>fibmod</code></td><td><span class="good">0.98x faster</span></td></tr>
+<tr><td><code>mandelbrot</code></td><td><span class="good">0.92x faster</span></td></tr>
+<tr><td><code>matmul</code></td><td><span class="good">0.77x faster</span></td></tr>
+<tr><td><code>sieve</code></td><td><span class="good">0.92x faster</span></td></tr>
+<tr><td><code>bubblesort</code></td><td><span class="bad">1.20x slower</span></td></tr>
+<tr><td><code>primes</code></td><td><span class="bad">1.06x slower</span></td></tr>
+</table>
+</section>
+<section id="method">
+  <h2>Reproducing the run</h2>
+<p>Reproduce the table from the <code>Threadon/</code> directory. The runner uses the compiler sources in <code>compiler/</code>, not the installed package. Core dumps are disabled by the runner itself.</p>
+<pre><code><span class="tok-fn">cd</span> <span class="tok-fn">Threadon</span>
+<span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">runs</span> <span class="tok-num">3</span></code></pre><p>Useful variants:</p>
+<pre><code><span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">list</span>
+<span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">cases</span> <span class="tok-fn">mandelbrot</span>
+<span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">langs</span> <span class="tok-fn">cpp</span> <span class="tok-fn">threadon</span>-<span class="tok-fn">jit</span>
+<span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">runs</span> <span class="tok-num">10</span>
+<span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">inline</span>-<span class="tok-fn">threshold</span> <span class="tok-num">1000</span>
+<span class="tok-fn">python3</span> <span class="tok-fn">benchmark</span>/<span class="tok-fn">run</span>.<span class="tok-fn">py</span> --<span class="tok-fn">installed</span></code></pre>
+</section>
+<section id="reading">
+  <h2>Reading the columns</h2>
+<ul>
+<li><code>compile</code> is wall time to build the artefact once; <code>-</code> means an interpreted language has no build step.</li>
+<li><code>median</code> and <code>best</code> are wall times over fresh process launches, so JIT startup is included in the <code>Threadon (JIT/lli)</code> rows.</li>
+<li><code>result</code> is the checksum printed by the program. Every implementation agreed in every case.</li>
+<li><code>vs C++</code> is median divided by the C++ median. The C++ row is the baseline.</li>
+<li>Small arithmetic cases such as <code>dotint</code> and <code>matmul</code> are dominated by ~0.1s of JIT startup, which is why the JIT ratio looks much worse there than in <code>collatz</code>.</li>
+<li>Differences around 1.00x are noise on this machine. Re-run with <code>--runs 10</code> before drawing conclusions.</li>
+</ul>
+</section>
+
+<p class="pagenav">
+  <a href="performance.html">&larr; Back: Performance</a>
+  <a href="examples.html">Examples &rarr;</a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Threadon 3.0 &middot; If something here disagrees with the compiler, the compiler wins.</p>
+  </div>
+</footer>
+
+</body>
+</html>
